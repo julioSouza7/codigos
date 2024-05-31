@@ -1,0 +1,26 @@
+#include <stdio.h>
+#include <string.h>
+
+int main() {
+    char senha[20];
+    int tentativas = 3;
+
+    while (tentativas > 0) {
+        printf("Digite a senha: ");
+        scanf("%s", senha);
+
+        if (strcmp(senha, "senha123") == 0) {
+            printf("Acesso concedido.\n");
+            break;
+        } else {
+            tentativas--;
+            if (tentativas > 0) {
+                printf("Senha incorreta. Você tem mais %d tentativa(s).\n", tentativas);
+            } else {
+                printf("Acesso negado.\n");
+            }
+        }
+    }
+
+    return 0;
+}
