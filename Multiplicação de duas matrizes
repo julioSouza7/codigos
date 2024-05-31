@@ -1,0 +1,35 @@
+#include <stdio.h>
+
+#define LINHA1 2
+#define COLUNA1 3
+#define LINHA2 3
+#define COLUNA2 2
+
+void multiplicarMatrizes(int mat1[LINHA1][COLUNA1], int mat2[LINHA2][COLUNA2], int resultado[LINHA1][COLUNA2]) {
+    for (int i = 0; i < LINHA1; i++) {
+        for (int j = 0; j < COLUNA2; j++) {
+            resultado[i][j] = 0;
+            for (int k = 0; k < COLUNA1; k++) {
+                resultado[i][j] += mat1[i][k] * mat2[k][j];
+            }
+        }
+    }
+}
+
+int main() {
+    int mat1[LINHA1][COLUNA1] = {{1, 2, 3}, {4, 5, 6}};
+    int mat2[LINHA2][COLUNA2] = {{7, 8}, {9, 10}, {11, 12}};
+    int resultado[LINHA1][COLUNA2];
+
+    multiplicarMatrizes(mat1, mat2, resultado);
+
+    printf("Resultado da multiplicação:\n");
+    for (int i = 0; i < LINHA1; i++) {
+        for (int j = 0; j < COLUNA2; j++) {
+            printf("%d ", resultado[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
