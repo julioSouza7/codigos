@@ -1,0 +1,31 @@
+#include <stdio.h>
+
+int main() {
+    char c;
+    int caracteres = 0, palavras = 0, linhas = 0;
+    int dentroPalavra = 0;
+
+    printf("Digite um texto (Ctrl+D para finalizar):\n");
+
+    do {
+        c = getchar();
+        if (c == '\n') {
+            linhas++;
+        }
+        if (c == ' ' || c == '\n' || c == '\t' || c == EOF) {
+            if (dentroPalavra) {
+                palavras++;
+                dentroPalavra = 0;
+            }
+        } else {
+            dentroPalavra = 1;
+            caracteres++;
+        }
+    } while (c != EOF);
+
+    printf("Caracteres: %d\n", caracteres);
+    printf("Palavras: %d\n", palavras);
+    printf("Linhas: %d\n", linhas);
+
+    return 0;
+}
