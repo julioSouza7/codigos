@@ -1,0 +1,30 @@
+#include <stdio.h>
+
+int main() {
+    int matriz[2][3];
+    int escalar;
+
+    // Preenchendo a matriz
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 3; j++) {
+            printf("Digite o valor para matriz[%d][%d]: ", i, j);
+            scanf("%d", &matriz[i][j]);
+        }
+    }
+
+    // Lendo o valor escalar
+    printf("Digite o valor escalar para multiplicação: ");
+    scanf("%d", &escalar);
+
+    // Multiplicando a matriz pelo escalar
+    printf("Matriz resultante:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 3; j++) {
+            matriz[i][j] *= escalar;
+            printf("%d ", matriz[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
