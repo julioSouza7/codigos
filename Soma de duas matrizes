@@ -1,0 +1,41 @@
+#include <stdio.h>
+
+int main() {
+    int matrizA[2][2], matrizB[2][2], matrizSoma[2][2];
+
+    // Preenchendo a matriz A
+    printf("Preenchendo a matriz A:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("Digite o valor para matrizA[%d][%d]: ", i, j);
+            scanf("%d", &matrizA[i][j]);
+        }
+    }
+
+    // Preenchendo a matriz B
+    printf("Preenchendo a matriz B:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("Digite o valor para matrizB[%d][%d]: ", i, j);
+            scanf("%d", &matrizB[i][j]);
+        }
+    }
+
+    // Somando as matrizes
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            matrizSoma[i][j] = matrizA[i][j] + matrizB[i][j];
+        }
+    }
+
+    // Exibindo a matriz resultante
+    printf("Matriz soma:\n");
+    for (int i = 0; i < 2; i++) {
+        for (int j = 0; j < 2; j++) {
+            printf("%d ", matrizSoma[i][j]);
+        }
+        printf("\n");
+    }
+
+    return 0;
+}
