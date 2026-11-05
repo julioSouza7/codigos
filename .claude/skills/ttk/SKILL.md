@@ -20,7 +20,24 @@ texto, cores e logo.
 | Slam | `slam.html` | 10,5–12 s | 2 linhas de impacto, rastros de luz, pulsa no riser e é sugado. |
 | CTA | `cta.html` | 12–15 s | Drop: anel explode, frase + **logo oficial** + subtítulo parados ≥ 2,5 s; equalizador abaixo da área segura. |
 
-`grain.html` vai por cima de tudo. As durações ficam no `index.html` raiz (`data-fps="60"`, `data-duration="15"`).
+`grain.html` vai por cima de tudo.
+
+## Corte de verdade (`assets/slice.js`)
+
+Toda linha neon que cruza texto **corta as palavras**: a lâmina varre, e no instante do corte o texto vira duas metades
+recortadas exatamente na diagonal da linha, que escorregam ao longo dela, abrem uma fenda e voam em sentidos opostos.
+Nunca deixe uma linha só passar por cima do texto.
+
+1. Envolva o que será cortado num contêiner de tela cheia: `<div id="xx-cut" style="position:absolute;inset:0" data-layout-allow-overlap>`.
+2. No script, **antes de criar qualquer tween**: `ttkSlice.prepare("#xx-cut")` (clona o contêiner com os mesmos ids
+   internos, então todo tween por seletor move as duas cópias juntas).
+3. Elementos criados por JS e animados por referência não seguem a cópia: anime por **classe** (ex.: `.pr-ch3`).
+4. Depois dos tweens: `ttkSlice.cut(tl, { el: "#xx-cut", line: "#xx-linha", cx, cy, deg, at, flyAt, flyDur })`
+   — `cx,cy` = ponto no meio da palavra, `deg` = inclinação (±12–22°), `at` = momento do corte. A linha só precisa de
+   `position:absolute; height; background; box-shadow; opacity:0` (sem `transform` no CSS; o script posiciona e gira).
+5. Não crie outra saída para o mesmo contêiner: as metades voando já são a saída.
+
+Usado em: gancho ("PRONTO."), prompt (X duplo: título + caixa/card) e slam ("SOBE O SOM." logo antes do drop). As durações ficam no `index.html` raiz (`data-fps="60"`, `data-duration="15"`).
 
 ## Passo a passo
 
@@ -28,7 +45,7 @@ texto, cores e logo.
 export HYPERFRAMES_NO_TELEMETRY=1
 B=<pasta-base>   # ex.: o scratchpad
 bash <skill>/scripts/setup.sh $B <nome>                 # instala HyperFrames + GSAP local
-cd $B/<nome> && cp -r <skill>/template/* .              # copia as cenas
+cd $B/<nome> && cp -r <skill>/template/* .              # copia as cenas + assets/slice.js
 bash <skill>/scripts/get_logo.sh <marca> assets         # logo oficial (lockup, ícone, glifo) + cor oficial
 python3 <skill>/scripts/synth.py assets/music_raw.wav 15 12.0 2.0
 ffmpeg -y -i assets/music_raw.wav -af loudnorm=I=-14:TP=-1.5 -ar 48000 assets/music.wav
