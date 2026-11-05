@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: var(--color-ground, #000); }
+    #sl-wrap { position: absolute; left: 0; right: 0; top: 470px; text-align: center; font-family: var(--font-display, Montserrat, sans-serif);
+      font-weight: 900; letter-spacing: -0.04em; line-height: 0.9; }
+    #sl-a { font-size: 170px; color: var(--color-ink, #fff); opacity: 0; }
+    #sl-b { font-size: 300px; color: var(--color-accent, #1ed760); text-shadow: 0 0 70px rgba(30,215,96,0.5); opacity: 0; }
+    .sl-streak { position: absolute; height: 4px; border-radius: 4px; background: #1ed760; box-shadow: 0 0 14px #1ed760; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="slam" data-width="1080" data-height="1920">
+    <div id="sl-streaks" class="clip" data-start="0" data-duration="1.5" data-layout-allow-overflow></div>
+    <div id="sl-wrap" class="clip" data-start="0" data-duration="1.5">
+      <div id="sl-a">SOBE O</div>
+      <div id="sl-b">SOM.</div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      var host = document.getElementById("sl-streaks");
+      var ys = [260, 380, 1180, 1300, 1420, 1560, 1700, 330, 1250, 1640];
+      ys.forEach(function (y, i) {
+        var el = document.createElement("div"); el.className = "sl-streak";
+        el.style.top = y + "px"; el.style.width = (260 + (i * 97) % 420) + "px"; el.style.left = "-700px"; host.appendChild(el);
+        tl.fromTo(el, { x: 0, opacity: 0.9 }, { x: 2600, opacity: 0.9, duration: 0.7, ease: "power2.in" }, 0.05 + (i % 5) * 0.09 + (i > 6 ? 0.5 : 0));
+      });
+      tl.fromTo("#sl-a", { opacity: 0, y: 80 }, { opacity: 1, y: 0, duration: 0.22, ease: "power4.out" }, 0);
+      tl.fromTo("#sl-b", { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.26, ease: "power4.out" }, 0.25);
+      [12, -10, 8, -6, 4, 0].forEach(function (x, i) { tl.to("#sl-wrap", { x: x, y: -x / 2, duration: 0.03, ease: "none" }, 0.51 + i * 0.03); });
+      // build to the drop: pulse with the riser, then suck in
+      tl.fromTo("#sl-b", { scale: 1 }, { scale: 1.08, duration: 0.6, immediateRender: false, ease: "sine.in" }, 0.75);
+      tl.to("#sl-wrap", { scale: 0.2, opacity: 0, filter: "blur(16px)", duration: 0.14, ease: "power3.in" }, 1.36);
+      window.__timelines["slam"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,54 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: var(--color-ground, #000); }
+    #gl-scan { position: absolute; inset: 0; opacity: 0.12;
+      background: repeating-linear-gradient(0deg, rgba(255,255,255,0.18) 0 2px, transparent 2px 6px); }
+    #gl-wrap { position: absolute; left: 0; right: 0; top: 500px; text-align: center; }
+    #gl-top { font-family: var(--font-display, Montserrat, sans-serif); font-weight: 900; font-size: 120px; letter-spacing: -0.02em;
+      color: var(--color-ink, #fff); opacity: 0; }
+    #gl-stack { position: relative; height: 200px; margin-top: 10px; }
+    .gl-word { position: absolute; left: 0; right: 0; top: 0; font-family: var(--font-display, Montserrat, sans-serif); font-weight: 900;
+      font-size: 168px; line-height: 1.1; letter-spacing: -0.04em; }
+    #gl-main { color: var(--color-accent, #1ed760); text-shadow: 0 0 50px rgba(30,215,96,0.45); }
+    #gl-ghost1 { color: #ffffff; opacity: 0; mix-blend-mode: screen; }
+    #gl-ghost2 { color: #1ed760; opacity: 0; clip-path: inset(38% 0 40% 0); }
+    #gl-bar { position: absolute; left: 140px; right: 140px; top: 1010px; height: 6px; background: var(--color-accent, #1ed760);
+      box-shadow: 0 0 22px #1ed760; transform-origin: 50% 50%; transform: scaleX(0); }
+    #gl-tag { position: absolute; left: 0; right: 0; top: 1060px; text-align: center; font-family: var(--font-mono, "Space Mono", monospace);
+      font-size: 34px; letter-spacing: 0.2em; color: rgba(255,255,255,0.75); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="glitch" data-width="1080" data-height="1920">
+    <div id="gl-scan"></div>
+    <div id="gl-wrap" class="clip" data-start="0" data-duration="2">
+      <div id="gl-top">PRA ESSA</div>
+      <div id="gl-stack" data-layout-allow-overlap>
+        <div id="gl-ghost1" class="gl-word">PLAYLIST</div>
+        <div id="gl-main" class="gl-word">PLAYLIST</div>
+        <div id="gl-ghost2" class="gl-word">PLAYLIST</div>
+      </div>
+    </div>
+    <div id="gl-bar" class="clip" data-start="0" data-duration="2"></div>
+    <div id="gl-tag" class="clip" data-start="0" data-duration="2">// SUA TRILHA, SEU DIA</div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    tl.fromTo("#gl-top", { opacity: 0, y: 50 }, { opacity: 1, y: 0, duration: 0.22, ease: "power3.out" }, 0);
+    tl.fromTo("#gl-main", { scale: 1.3, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.24, ease: "power4.out" }, 0.18);
+    // glitch hits: RGB-style offsets + sliced band (deterministic)
+    var hits = [0.45, 0.62, 1.05, 1.18];
+    hits.forEach(function (t, i) {
+      var dx = [24, -30, 18, -14][i];
+      tl.to("#gl-ghost1", { opacity: 0.85, x: dx, duration: 0.02 }, t);
+      tl.to("#gl-ghost2", { opacity: 1, x: -dx * 2, duration: 0.02 }, t);
+      tl.to("#gl-main", { x: -dx / 2, skewX: dx / 3, duration: 0.02 }, t);
+      tl.to("#gl-ghost1, #gl-ghost2", { opacity: 0, x: 0, duration: 0.02 }, t + 0.07);
+      tl.to("#gl-main", { x: 0, skewX: 0, duration: 0.02 }, t + 0.07);
+    });
+    tl.fromTo("#gl-bar", { scaleX: 0 }, { scaleX: 1, duration: 0.4, ease: "power3.out" }, 0.5);
+    tl.fromTo("#gl-tag", { opacity: 0 }, { opacity: 1, duration: 0.2 }, 0.4);
+    // exit: dark, then cut
+    tl.to("#gl-wrap, #gl-tag", { opacity: 0, scale: 0.96, duration: 0.16, ease: "power2.in" }, 1.82);
+    tl.to("#gl-bar", { opacity: 0, duration: 0.16 }, 1.82);
+    window.__timelines["glitch"] = tl;
+  </script>
+</template>

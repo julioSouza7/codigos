@@ -1,0 +1,55 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: var(--color-ground, #000); }
+    #ct-glow { position: absolute; left: 50%; top: 900px; width: 1600px; height: 1600px; margin: -800px 0 0 -800px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(30,215,96,0.20) 0%, rgba(30,215,96,0.05) 45%, rgba(30,215,96,0) 68%); opacity: 0; }
+    #ct-ring { position: absolute; left: 50%; top: 900px; width: 300px; height: 300px; margin: -150px 0 0 -150px; border-radius: 50%;
+      border: 8px solid var(--color-accent, #1ed760); opacity: 0; }
+    #ct-head { position: absolute; left: 0; right: 0; top: 420px; text-align: center; font-family: var(--font-display, Montserrat, sans-serif);
+      font-weight: 900; font-size: 170px; letter-spacing: -0.04em; color: var(--color-ink, #fff); opacity: 0; }
+    #ct-head i { font-style: normal; color: var(--color-accent, #1ed760); }
+    /* official Spotify lockup, green on black; untouched proportions, clear space kept around it */
+    #ct-logo { position: absolute; left: 50%; top: 790px; width: 600px; height: 187.5px; margin-left: -300px; opacity: 0; }
+    #ct-logo img { display: block; width: 600px; height: 187.5px; }
+    #ct-sub { position: absolute; left: 0; right: 0; top: 1130px; text-align: center; font-family: var(--font-mono, "Space Mono", monospace);
+      font-size: 38px; letter-spacing: 0.12em; color: rgba(255,255,255,0.8); opacity: 0; }
+    #ct-eq { position: absolute; left: 60px; right: 60px; top: 1420px; height: 300px; }
+    .ct-bar { position: absolute; bottom: 0; width: 22px; height: 300px; border-radius: 11px; background: var(--color-accent, #1ed760);
+      opacity: 0.55; transform-origin: 50% 100%; transform: scaleY(0.05); }
+  </style>
+  <div id="root" data-composition-id="cta" data-width="1080" data-height="1920">
+    <div id="ct-glow"></div>
+    <div id="ct-ring" class="clip" data-start="0" data-duration="3" data-layout-allow-overflow></div>
+    <div id="ct-head" class="clip" data-start="0" data-duration="3">DÊ PLAY<i>.</i></div>
+    <div id="ct-logo" class="clip" data-start="0" data-duration="3"><img src="assets/spotify.svg" alt="Spotify" /></div>
+    <div id="ct-sub" class="clip" data-start="0" data-duration="3">SUA TRILHA COMEÇA AQUI</div>
+    <div id="ct-eq" class="clip" data-start="0" data-duration="3" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      function mulberry32(a) { return function () { a |= 0; a = a + 0x6D2B79F5 | 0; var t = Math.imul(a ^ a >>> 15, 1 | a);
+        t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+      var rnd = mulberry32(7);
+      var tl = gsap.timeline({ paused: true });
+      // drop hits at 0: ring burst + glow
+      tl.fromTo("#ct-ring", { scale: 0.3, opacity: 1 }, { scale: 6, opacity: 0, duration: 0.7, ease: "power2.out" }, 0);
+      tl.fromTo("#ct-glow", { opacity: 0, scale: 0.7 }, { opacity: 1, scale: 1, duration: 0.6, ease: "power3.out" }, 0);
+      tl.fromTo("#ct-head", { opacity: 0, y: 70, scale: 1.12 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power4.out" }, 0.05);
+      tl.fromTo("#ct-logo", { opacity: 0, y: 30, scale: 0.94 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "power3.out" }, 0.3);
+      tl.fromTo("#ct-sub", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 0.6);
+      // title holds still; motion lives in the equalizer below the safe zone
+      var host = document.getElementById("ct-eq");
+      var n = 26;
+      for (var i = 0; i < n; i++) {
+        var el = document.createElement("div"); el.className = "ct-bar"; el.style.left = (i * 37.5) + "px"; host.appendChild(el);
+        for (var k = 0; k < 12; k++) {
+          var v = 0.12 + 0.88 * rnd() * (1 - Math.abs(i - n / 2) / n);
+          if (k === 0) tl.fromTo(el, { scaleY: 0.05 }, { scaleY: v, duration: 0.25, ease: "sine.inOut" }, 0.1);
+          else tl.to(el, { scaleY: v, duration: 0.25, ease: "sine.inOut" }, 0.1 + k * 0.25);
+        }
+      }
+      tl.fromTo("#ct-glow", { scale: 1 }, { scale: 1.12, duration: 2.4, immediateRender: false, ease: "sine.inOut" }, 0.6);
+      window.__timelines["cta"] = tl;
+    })();
+  </script>
+</template>

@@ -1,0 +1,72 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: var(--color-ground, #000); }
+    .pr-head { position: absolute; left: 0; right: 0; top: 260px; text-align: center; font-family: var(--font-display, Montserrat, sans-serif);
+      font-weight: 900; font-size: 160px; line-height: 0.95; letter-spacing: -0.04em; color: var(--color-ink, #fff); opacity: 0; }
+    .pr-head i { font-style: normal; color: var(--color-accent, #1ed760); }
+    #pr-box { position: absolute; left: 90px; width: 840px; top: 700px; height: 130px; border-radius: 26px; background: #121212;
+      border: 2px solid #333; box-shadow: 0 0 0 rgba(30,215,96,0); opacity: 0; }
+    #pr-text { position: absolute; left: 40px; top: 40px; font-family: var(--font-mono, "Space Mono", monospace); font-size: 42px; color: #fff; white-space: pre; }
+    #pr-text span { opacity: 0; }
+    #pr-text .pr-g { color: var(--color-accent, #1ed760); }
+    #pr-caret { display: inline-block; width: 22px; height: 46px; margin-left: 4px; vertical-align: -8px; background: var(--color-accent, #1ed760); }
+    #pr-card { position: absolute; left: 90px; width: 840px; top: 880px; height: 300px; border-radius: 26px; background: #181818; opacity: 0; }
+    #pr-cover { position: absolute; left: 36px; top: 36px; width: 150px; height: 150px; border-radius: 12px;
+      background: linear-gradient(135deg, #1ed760 0%, #0b5f2c 100%); }
+    #pr-name { position: absolute; left: 220px; top: 48px; font-family: var(--font-display, Montserrat, sans-serif); font-weight: 900; font-size: 54px; color: #fff; }
+    #pr-sub { position: absolute; left: 220px; top: 124px; font-family: var(--font-mono, "Space Mono", monospace); font-size: 30px; color: #b3b3b3; }
+    #pr-track { position: absolute; left: 36px; width: 700px; top: 236px; height: 10px; border-radius: 6px; background: #3a3a3a; }
+    #pr-prog { position: absolute; left: 0; top: 0; width: 100%; height: 10px; border-radius: 6px; background: var(--color-accent, #1ed760);
+      transform-origin: 0 50%; transform: scaleX(0); }
+    #pr-eq { position: absolute; left: 750px; top: 196px; width: 60px; height: 60px; }
+    .pr-eqb { position: absolute; bottom: 0; width: 10px; height: 60px; border-radius: 3px; background: var(--color-accent, #1ed760);
+      transform-origin: 50% 100%; transform: scaleY(0.2); }
+    .pr-x { position: absolute; left: -300px; width: 1700px; height: 10px; border-radius: 10px; background: var(--color-accent, #1ed760);
+      box-shadow: 0 0 24px #1ed760, 0 0 80px rgba(30,215,96,0.8); transform-origin: 0 50%; opacity: 0; }
+    #pr-x1 { top: 380px; transform: rotate(38deg); }
+    #pr-x2 { top: 1450px; transform: rotate(-38deg); }
+    #pr-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="prompt" data-width="1080" data-height="1920">
+    <div id="pr-h1" class="pr-head clip" data-start="0" data-duration="1.6">VOCÊ<br><i>PEDE.</i></div>
+    <div id="pr-h2" class="pr-head clip" data-start="1.5" data-duration="1.5">ELE<br><i>TOCA.</i></div>
+    <div id="pr-box" class="clip" data-start="0" data-duration="3"><div id="pr-text"></div></div>
+    <div id="pr-card" class="clip" data-start="0" data-duration="3">
+      <div id="pr-cover"></div><div id="pr-name">Mix do dia</div><div id="pr-sub">feito pra você</div>
+      <div id="pr-track"><div id="pr-prog"></div></div>
+      <div id="pr-eq"><div class="pr-eqb" style="left:0"></div><div class="pr-eqb" style="left:16px"></div><div class="pr-eqb" style="left:32px"></div><div class="pr-eqb" style="left:48px"></div></div>
+    </div>
+    <div id="pr-x1" class="pr-x clip" data-start="0" data-duration="3" data-layout-allow-overflow></div>
+    <div id="pr-x2" class="pr-x clip" data-start="0" data-duration="3" data-layout-allow-overflow></div>
+    <div id="pr-flash" class="clip" data-start="0" data-duration="3"></div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      var txt = document.getElementById("pr-text");
+      var s = "toca algo pra hoje";
+      var g = document.createElement("span"); g.className = "pr-g"; g.textContent = "> "; txt.appendChild(g);
+      var spans = [g];
+      for (var i = 0; i < s.length; i++) { var sp = document.createElement("span"); sp.textContent = s[i]; txt.appendChild(sp); spans.push(sp); }
+      var caret = document.createElement("i"); caret.id = "pr-caret"; txt.appendChild(caret);
+      tl.fromTo("#pr-h1", { opacity: 0, y: 60, scale: 1.08 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power4.out" }, 0);
+      tl.fromTo("#pr-box", { opacity: 0, y: 40 }, { opacity: 1, y: 0, duration: 0.3, ease: "power3.out" }, 0.05);
+      spans.forEach(function (sp, i) { tl.to(sp, { opacity: 1, duration: 0.01 }, 0.3 + i * 0.045); });
+      [0.25, 0.5, 0.75, 1.0, 1.25].forEach(function (t, i) { tl.to("#pr-caret", { opacity: i % 2 ? 1 : 0.15, duration: 0.01 }, 1.2 + i * 0.12); });
+      tl.to("#pr-box", { borderColor: "#1ed760", boxShadow: "0 0 40px rgba(30,215,96,0.35)", duration: 0.15 }, 1.25);
+      tl.to("#pr-h1", { opacity: 0, y: -60, filter: "blur(10px)", duration: 0.14, ease: "power3.in" }, 1.42);
+      tl.fromTo("#pr-h2", { opacity: 0, y: 60, scale: 1.08 }, { opacity: 1, y: 0, scale: 1, duration: 0.3, ease: "power4.out" }, 1.52);
+      tl.fromTo("#pr-card", { opacity: 0, y: 70, scale: 0.95 }, { opacity: 1, y: 0, scale: 1, duration: 0.35, ease: "back.out(1.6)" }, 1.4);
+      tl.fromTo("#pr-prog", { scaleX: 0 }, { scaleX: 0.42, duration: 1.3, ease: "none" }, 1.6);
+      var eq = gsap.utils.toArray(".pr-eqb");
+      var hs = [[0.9,0.3,0.7,0.5],[0.4,1,0.35,0.8],[0.7,0.5,0.95,0.3],[0.3,0.8,0.5,1],[0.85,0.4,0.6,0.55],[0.5,0.9,0.3,0.75]];
+      hs.forEach(function (row, k) { eq.forEach(function (el, j) { tl.to(el, { scaleY: row[j], duration: 0.18, ease: "sine.inOut" }, 1.6 + k * 0.2); }); });
+      // exit: neon X slashes + flash (reference "crossed out" moment)
+      tl.fromTo("#pr-x1", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.18, ease: "power3.out" }, 2.6);
+      tl.fromTo("#pr-x2", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.18, ease: "power3.out" }, 2.68);
+      tl.fromTo("#pr-flash", { opacity: 0 }, { opacity: 0.85, duration: 0.06 }, 2.9);
+      tl.to("#pr-h2, #pr-box, #pr-card", { opacity: 0, duration: 0.08 }, 2.9);
+      window.__timelines["prompt"] = tl;
+    })();
+  </script>
+</template>

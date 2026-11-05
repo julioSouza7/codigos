@@ -1,0 +1,41 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; background: var(--color-ground, #000); }
+    #hk-glow { position: absolute; left: 50%; top: 820px; width: 1500px; height: 1500px; margin: -750px 0 0 -750px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(30,215,96,0.22) 0%, rgba(30,215,96,0.06) 42%, rgba(30,215,96,0) 66%); }
+    #hk-wrap { position: absolute; left: 0; right: 0; top: 560px; text-align: center; }
+    #hk-top { font-family: var(--font-mono, "Space Mono", monospace); font-weight: 700; font-size: 64px; letter-spacing: 0.18em;
+      color: var(--color-ink, #fff); }
+    #hk-big { margin-top: 26px; font-family: var(--font-display, Montserrat, sans-serif); font-weight: 900; font-size: 190px;
+      line-height: 0.95; letter-spacing: -0.04em; color: var(--color-ink, #fff); text-shadow: 0 0 60px rgba(30,215,96,0.35); }
+    #hk-big i { font-style: normal; color: var(--color-accent, #1ed760); }
+    .hk-line { position: absolute; left: -200px; width: 1500px; height: 8px; border-radius: 8px; background: var(--color-accent, #1ed760);
+      box-shadow: 0 0 24px #1ed760, 0 0 70px rgba(30,215,96,0.8); transform-origin: 0 50%; opacity: 0; }
+    #hk-l1 { top: 1150px; transform: rotate(-24deg); }
+    #hk-l2 { top: 520px; transform: rotate(18deg); }
+  </style>
+  <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
+    <div id="hk-glow"></div>
+    <div id="hk-wrap" class="clip" data-start="0" data-duration="2">
+      <div id="hk-top">VOCÊ NÃO ESTÁ</div>
+      <div id="hk-big">PRONTO<i>.</i></div>
+    </div>
+    <div id="hk-l1" class="hk-line clip" data-start="0" data-duration="2" data-layout-allow-overflow></div>
+    <div id="hk-l2" class="hk-line clip" data-start="0" data-duration="2" data-layout-allow-overflow></div>
+  </div>
+  <script>
+    const tl = gsap.timeline({ paused: true });
+    // frame 0 already reads "VOCÊ NÃO ESTÁ PRONTO." — slam settles in
+    tl.fromTo("#hk-big", { scale: 1.1 }, { scale: 1, duration: 0.28, ease: "power4.out" }, 0);
+    [8, -7, 5, -3, 0].forEach(function (x, i) { tl.to("#hk-wrap", { x: x, duration: 0.035, ease: "none" }, 0.28 + i * 0.035); });
+    tl.fromTo("#hk-glow", { scale: 0.85, opacity: 0.6 }, { scale: 1.15, opacity: 1, duration: 1.75, ease: "power2.inOut" }, 0);
+    // neon slashes sweep across (reference look)
+    tl.fromTo("#hk-l1", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.32, ease: "power3.out" }, 0.9);
+    tl.to("#hk-l1", { opacity: 0, duration: 0.2 }, 1.3);
+    tl.fromTo("#hk-l2", { scaleX: 0, opacity: 1 }, { scaleX: 1, duration: 0.25, ease: "power3.out" }, 1.55);
+    // exit: whip up with blur
+    tl.to("#hk-wrap", { y: -140, opacity: 0, filter: "blur(14px)", duration: 0.2, ease: "power3.in" }, 1.78);
+    tl.to("#hk-l2, #hk-glow", { opacity: 0, duration: 0.18 }, 1.8);
+    window.__timelines["hook"] = tl;
+  </script>
+</template>
