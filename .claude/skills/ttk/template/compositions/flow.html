@@ -1,0 +1,51 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    .fl-node { position: absolute; top: 495px; width: 330px; height: 130px; margin-left: -165px; border: 2px solid rgba(235,240,237,0.8); border-radius: 6px;
+      background: rgba(10,11,10,0.9); text-align: center; opacity: 0; }
+    .fl-node b { display: block; margin-top: 32px; font-family: var(--font-mono); font-weight: 700; font-size: 32px; letter-spacing: 0.06em; color: #f2f5f3; }
+    .fl-node span { display: block; margin-top: 6px; font-family: var(--font-mono); font-size: 18px; color: rgba(200,210,204,0.55); }
+    #fl-n1 { left: 400px; } #fl-n2 { left: 960px; } #fl-n3 { left: 1520px; }
+    #fl-stamp { position: absolute; left: 855px; top: 380px; width: 320px; padding: 10px 0 4px; text-align: center; border: 6px solid #ff4f8b; border-radius: 10px;
+      font-family: var(--font-display); font-weight: 800; font-size: 96px; line-height: 1; color: #ff4f8b; background: rgba(255,79,139,0.12);
+      box-shadow: 0 0 40px rgba(255,79,139,0.55), inset 0 0 30px rgba(255,79,139,0.35); text-shadow: 0 0 24px rgba(255,79,139,0.8); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="flow" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="fl-grp" class="tk-full">
+        <div id="fl-lines" class="tk-full"></div>
+        <div id="fl-n1" class="fl-node"><b>CLAUDE</b><span>você pede</span></div>
+        <div id="fl-cut" class="tk-full"><div id="fl-n2" class="fl-node"><b>MCP SERVER</b><span>a ponte</span></div></div>
+        <div id="fl-n3" class="fl-node"><b>AFTER EFFECTS</b><span>o app</span></div>
+        <div id="fl-stamp">NÃO.</div>
+      </div>
+      <div id="fl-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      TTK.slicePrepare("#fl-cut");
+      var lines = document.getElementById("fl-lines"), fx = document.getElementById("fl-fx");
+      var sp = TTK.spark(fx, "fl-sp", 34);
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fl-n1", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2)" }, 0.02);
+      TTK.fly(tl, sp, [[565, 560], [795, 560]], [0.28], { at: 0.22, ease: "power2.inOut", draw: lines, lineCls: "dim" });
+      tl.fromTo("#fl-n2", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2)" }, 0.5);
+      TTK.fly(tl, sp, [[1125, 560], [1355, 560]], [0.28], { at: 0.62, ease: "power2.inOut", draw: lines, lineCls: "dim" });
+      tl.fromTo("#fl-n3", { opacity: 0, scale: 0.85 }, { opacity: 1, scale: 1, duration: 0.18, ease: "back.out(2)" }, 0.9);
+      tl.to(sp, { opacity: 0, duration: 0.08 }, 0.95);
+      // a second ember slashes the middle of the chain — it is cut out
+      var sp2 = TTK.spark(fx, "fl-sp2", 40);
+      var deg = Math.atan2(110 - 1000, 1240 - 690) * 180 / Math.PI;
+      TTK.fly(tl, sp2, [[690, 1000], [1240, 110]], [0.13], { at: 1.08, ease: "power1.in", draw: fx, lineCls: "hot", fadeOut: 1.24 });
+      TTK.slice(tl, { el: "#fl-cut", cx: 960, cy: 560, deg: deg, at: 1.15, flyAt: 1.32, flyDur: 0.4, fly: 300, fall: 220, gap: 20 });
+      TTK.burst(tl, fx, 960, 560, 1.15, 26, 300, 41);
+      tl.to("#fl-fx .tk-line", { opacity: 0, duration: 0.3 }, 1.4);
+      // stamp
+      tl.fromTo("#fl-stamp", { opacity: 0, scale: 2.4, rotation: -12 }, { opacity: 1, scale: 1, rotation: -12, duration: 0.13, ease: "power4.in", immediateRender: false }, 1.22);
+      [8, -6, 4, 0].forEach(function (x, i) { tl.to("#fl-grp", { x: x, y: -x, duration: 0.03, ease: "none" }, 1.35 + i * 0.03); });
+      tl.to("#fl-grp", { opacity: 0, y: 30, filter: "blur(8px)", duration: 0.18, ease: "power2.in" }, 1.8);
+      window.__timelines["flow"] = tl;
+    })();
+  </script>
+</template>

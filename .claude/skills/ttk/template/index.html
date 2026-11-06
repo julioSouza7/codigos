@@ -1,51 +1,102 @@
 <!doctype html>
 <html lang="pt-BR" data-resolution="portrait"
   data-composition-variables='[
-    {"id":"color-ground","type":"color","label":"Fundo","default":"#000000"},
+    {"id":"color-ground","type":"color","label":"Fundo","default":"#050505"},
     {"id":"color-ink","type":"color","label":"Texto","default":"#FFFFFF"},
     {"id":"color-accent","type":"color","label":"Destaque","default":"#1ED760"},
-    {"id":"font-display","type":"string","label":"Fonte de título","default":"Montserrat"}
+    {"id":"color-alt","type":"color","label":"Negação","default":"#FF4F8B"}
   ]'>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=1080, height=1920" />
     <script src="assets/vendor/gsap.min.js"></script>
-    <script src="assets/slice.js"></script>
+    <script src="assets/ttk.js"></script>
     <style>
-      /* LOOK (ttk): ground #000, ink #FFF, accent #1ED760 (Spotify green, only on black/white);
-         Montserrat 900 headlines, Space Mono UI labels; neon green light lines, glitch, timeline UI, prompt typing. */
+      /* LOOK (ttk / screen-on-desk): a phone shot of a monitor on a desk, green-lit slatted wall (Spotify green #1ED760),
+         animation plays on the monitor (1920x1080 screen space). Protagonist = glowing ember spark that draws, writes, cuts.
+         Display: Barlow Condensed 800 (ember letters). UI: JetBrains Mono. Captions: Inter. Negation accent #FF4F8B. */
+      @font-face { font-family: "Barlow Condensed"; src: url("assets/fonts/barlowc-800.woff2") format("woff2"); font-weight: 800; }
+      @font-face { font-family: "Inter"; src: url("assets/fonts/inter-700.woff2") format("woff2"); font-weight: 100 900; }
+      @font-face { font-family: "JetBrains Mono"; src: url("assets/fonts/jbmono-500.woff2") format("woff2"); font-weight: 100 900; }
       :root {
-        --color-ground: #000000; --color-ink: #ffffff; --color-accent: #1ed760;
-        --font-display: "Montserrat", sans-serif; --font-mono: "Space Mono", monospace;
-        --fg: var(--color-ink); --brand: var(--color-accent); --font-body: "Montserrat", sans-serif;
+        --color-ground: #050505; --color-ink: #ffffff; --color-accent: #1ed760; --color-alt: #ff4f8b;
+        --font-display: "Barlow Condensed", sans-serif; --font-mono: "JetBrains Mono", monospace; --font-ui: "Inter", sans-serif;
+        --fg: var(--color-ink); --brand: var(--color-accent); --font-body: "Inter", sans-serif;
       }
       * { margin: 0; padding: 0; box-sizing: border-box; }
       html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--color-ground); }
-      #root { position: relative; width: 100%; height: 100%; background: var(--color-ground); }
+      #root { position: relative; width: 100%; height: 100%; background: var(--color-ground); overflow: hidden; }
+      #camera { position: absolute; inset: 0; }
+
+      /* screen space: 1920x1080 mapped onto the monitor glass */
+      .tk-scr { position: absolute; left: 20px; top: 548px; width: 1920px; height: 1080px; transform-origin: 0 0;
+        transform: scale(0.541667); overflow: hidden; }
+      .tk-full { position: absolute; left: 0; top: 0; width: 1920px; height: 1080px; }
+      .tk-c { position: absolute; left: 0; width: 1920px; text-align: center; white-space: nowrap; }
+      .tk-big { font-family: var(--font-display); font-weight: 800; letter-spacing: -0.01em; line-height: 1; }
+      .tk-white { color: #f7f7f2; text-shadow: 0 0 18px rgba(255,255,255,0.45), 0 0 60px rgba(255,255,255,0.18); }
+      .tk-ember { background: linear-gradient(180deg, #ffffff 0%, #dcffe8 22%, #5df08f 48%, #1ed760 68%, #0c8a3d 100%);
+        -webkit-background-clip: text; background-clip: text; color: transparent;
+        filter: drop-shadow(0 0 14px rgba(30,215,96,0.85)) drop-shadow(0 0 48px rgba(30,215,96,0.45)); }
+      .tk-alt { color: var(--color-alt); text-shadow: 0 0 20px rgba(255,79,139,0.7), 0 0 60px rgba(255,79,139,0.35); }
+      .tk-ch { display: inline-block; opacity: 0; }
+
+      .tk-sp { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; z-index: 20; }
+      .tk-sp-head { position: absolute; left: 0; top: 0; width: 34px; height: 34px; margin: -17px 0 0 -17px; border-radius: 50%;
+        background: radial-gradient(circle, #ffffff 0%, #f0fff5 22%, #6ff59b 42%, rgba(30,215,96,0.55) 58%, rgba(30,215,96,0) 72%);
+        box-shadow: 0 0 30px 8px rgba(30,215,96,0.55), 0 0 90px 20px rgba(30,215,96,0.25); }
+      .tk-sp-tail { position: absolute; left: -300px; top: -6px; width: 300px; height: 12px; border-radius: 12px; transform-origin: 100% 50%;
+        background: linear-gradient(90deg, rgba(30,215,96,0) 0%, rgba(30,215,96,0.35) 55%, #c9ffda 100%); filter: blur(2px); }
+      .tk-line { position: absolute; height: 4px; border-radius: 4px; transform-origin: 0 50%; background: #7cf5a4;
+        box-shadow: 0 0 10px rgba(30,215,96,0.9), 0 0 28px rgba(30,215,96,0.5); }
+      .tk-line.dim { background: rgba(124,245,164,0.55); box-shadow: 0 0 8px rgba(30,215,96,0.5); height: 3px; }
+      .tk-line.hot { background: #f2fff6; height: 7px; box-shadow: 0 0 14px #fff, 0 0 34px #1ed760, 0 0 90px rgba(30,215,96,0.8); }
+      .tk-pt { position: absolute; left: 0; top: 0; border-radius: 50%; opacity: 0; margin: -5px 0 0 -5px;
+        background: radial-gradient(circle, #fff 0%, #8cf7b1 45%, rgba(30,215,96,0) 75%); }
+      .tk-pt.alt { background: radial-gradient(circle, #fff 0%, #ff9ec0 45%, rgba(255,79,139,0) 75%); }
+      .tk-kw { display: inline-block; padding: 0 6px; border-radius: 3px; opacity: 0; color: #f2f2f2; background-color: rgba(30,215,96,0); }
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="15" data-fps="60" data-width="1080" data-height="1920">
-      <div id="hook" data-composition-id="hook" data-composition-src="compositions/hook.html"
-        data-start="0" data-duration="2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
-      <div id="glitch" data-composition-id="glitch" data-composition-src="compositions/glitch.html"
-        data-start="2" data-duration="2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
-      <div id="timeline" data-composition-id="timeline" data-composition-src="compositions/timeline.html"
-        data-start="4" data-duration="3.5" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
-      <div id="prompt" data-composition-id="prompt" data-composition-src="compositions/prompt.html"
-        data-start="7.5" data-duration="3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
-      <div id="slam" data-composition-id="slam" data-composition-src="compositions/slam.html"
-        data-start="10.5" data-duration="1.5" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
-      <div id="cta" data-composition-id="cta" data-composition-src="compositions/cta.html"
-        data-start="12" data-duration="3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="16" data-fps="60" data-width="1080" data-height="1920">
+      <div id="camera">
+        <div id="env" data-composition-id="env" data-composition-src="compositions/env.html"
+          data-start="0" data-duration="16" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
 
-      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="15" data-track-index="4" data-volume="1"></audio>
+        <div id="hook" style="z-index:2" data-composition-id="hook" data-composition-src="compositions/hook.html"
+          data-start="0" data-duration="1.8" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="ready" style="z-index:2" data-composition-id="ready" data-composition-src="compositions/ready.html"
+          data-start="1.8" data-duration="1.8" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="write" style="z-index:2" data-composition-id="write" data-composition-src="compositions/write.html"
+          data-start="3.6" data-duration="1.9" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="ae" style="z-index:2" data-composition-id="ae" data-composition-src="compositions/ae.html"
+          data-start="5.5" data-duration="1.9" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="andno" style="z-index:2" data-composition-id="andno" data-composition-src="compositions/andno.html"
+          data-start="7.4" data-duration="1.2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="flow" style="z-index:2" data-composition-id="flow" data-composition-src="compositions/flow.html"
+          data-start="8.6" data-duration="2" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="code" style="z-index:2" data-composition-id="code" data-composition-src="compositions/code.html"
+          data-start="10.6" data-duration="1.8" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="prompt" style="z-index:2" data-composition-id="prompt" data-composition-src="compositions/prompt.html"
+          data-start="12.4" data-duration="3.6" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
 
+        <div id="caps" style="z-index:3" data-composition-id="caps" data-composition-src="compositions/caps.html"
+          data-start="0" data-duration="16" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        <div id="glass" style="z-index:4" data-composition-id="glass" data-composition-src="compositions/glass.html"
+          data-start="0" data-duration="16" data-track-index="3" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      </div>
+
+      <div id="ui" style="z-index:40" data-composition-id="ui" data-composition-src="compositions/ui.html"
+        data-start="0" data-duration="16" data-track-index="5" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
       <div id="grain" style="z-index:50" data-composition-id="grain" data-composition-src="compositions/grain.html"
-        data-start="0" data-duration="15" data-track-index="3" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+        data-start="0" data-duration="16" data-track-index="6" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+
+      <audio id="music" class="clip" src="assets/mix.wav" data-start="0" data-duration="16" data-track-index="4" data-volume="1"></audio>
     </div>
     <script>
       const tl = gsap.timeline({ paused: true });
+      // handheld phone camera on everything inside #camera; kicks = [time, strength] on impacts
+      TTK.camera(tl, "#camera", 16, [[0.45, 0.03], [3.45, 0.045], [6.75, 0.03], [7.45, 0.02], [9.8, 0.03], [11.6, 0.05]], 20);
       window.__timelines["main"] = tl;
       tl.seek(0);
     </script>
