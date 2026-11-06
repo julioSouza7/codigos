@@ -55,9 +55,10 @@ tema (5–8 batidas de 1,2–2,2 s) e escolha para cada batida o efeito que tem 
 | Régua + escrita pela faísca | conceito com tempo/ferramentas | `template/write.html` (rótulos trocáveis) |
 | Negação rosa com borrão | pergunta ou objeção ("E se errar?") | `template/andno.html`, `examples/agentes/a-neg.html` |
 | Caixa de prompt digitada | pedido, roteiro, instrução | `template/prompt.html` (abre de uma linha ou fecha numa linha) |
-| Mergulho pelo "O" | virada para o fim | `template/ready.html`, `examples/reels/r-loop.html` (faísca orbita o 1º O) |
+| Mergulho pelo "O" | virada para o fim | `template/ready.html`, `examples/reels/r-loop.html` (faísca orbita o 1º O), `examples/spotify/s-dive.html` (espiral tipo botão de volume) |
+| Riscar a palavra no quadro 0 | gancho que nega algo ("SILÊNCIO?") | `examples/spotify/s-neg.html` (a linha do risco vira a régua da cena seguinte) |
 
-`examples/reels` (Instagram Reels) e `examples/agentes` (agentes de IA) são dois vídeos aprovados com roteiro próprio
+`examples/reels` (Instagram Reels), `examples/agentes` (agentes de IA) e `examples/spotify` (Spotify, roteiro próprio) são vídeos aprovados com roteiro próprio
 (index, cenas, `events.json`). Copie a cena mais parecida, troque textos e posições medidas.
 
 **Cor do tema**: depois de copiar as cenas, rode
@@ -109,6 +110,9 @@ bash <skill>/scripts/get_logo.sh <marca> assets    # logo oficial + cor oficial 
 - Listras de persiana duras parecem código de barras: máscara suave + `blur(6px)`.
 - `get_logo.sh instagram` traz o glifo monocromático **preto** (some na tela escura): use a versão branca
   (`sed 's/fill="#0a0a08"/fill="#ffffff"/'`), permitida sobre fundo escuro; sem brilho/sombra no logo do Instagram.
+- Palavra com um "O" que precisa cair numa posição exata (mergulho, ícone no lugar do O): use grade CSS
+  `grid-template-columns: 1fr auto 1fr` com o O na coluna do meio — fica centrado sem depender de medida
+  (`s-dive.html`, `s-final.html`; desloque a grade se as metades tiverem larguras muito diferentes).
 - `measure.cjs` pode errar a largura de palavras curtas grandes ("FEIT" saiu ~30% mais estreito): confira no snapshot
   e recentralize quando uma palavra divide a linha com um ícone.
 - Duas cenas com impacto a menos de 0,55 s uma da outra geram `gsap_tween_tail` na luz do ambiente (`env.html`): afaste os hits.

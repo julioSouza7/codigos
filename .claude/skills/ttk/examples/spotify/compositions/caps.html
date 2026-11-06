@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .cp-line { position: absolute; left: 110px; top: 78px; width: 1500px; font-family: var(--font-ui); font-weight: 600; font-size: 38px;
+      line-height: 1.35; color: #f2f2f2; white-space: normal; }
+  </style>
+  <div id="root" data-composition-id="caps" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="cp-1" class="cp-line clip" data-start="0" data-duration="1.75"></div>
+      <div id="cp-2" class="cp-line clip" data-start="1.8" data-duration="1.95"></div>
+      <div id="cp-3" class="cp-line clip" data-start="3.8" data-duration="1.95"></div>
+      <div id="cp-4" class="cp-line clip" data-start="5.8" data-duration="1.75"></div>
+      <div id="cp-5" class="cp-line clip" data-start="7.6" data-duration="1.55"></div>
+      <div id="cp-6" class="cp-line clip" data-start="9.2" data-duration="2.15"></div>
+      <div id="cp-7" class="cp-line clip" data-start="11.4" data-duration="1.75"></div>
+      <div id="cp-8" class="cp-line clip" data-start="13.2" data-duration="2.8"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      var L = [
+        ["cp-1", "Silêncio de manhã? Nem pensar.", 0.05, 1.2],
+        ["cp-2", "Cada hora do dia tem uma trilha.", 1.85, 3.0],
+        ["cp-3", "Acordar, treinar, focar… e repetir.", 3.85, 5.0],
+        ["cp-4", "A que você sempre pula sai fora.", 5.85, 6.9],
+        ["cp-5", "Uma mistura feita pra você.", 7.65, 8.6],
+        ["cp-6", "Pede a playlist do seu jeito.", 9.25, 10.3],
+        ["cp-7", "E aumenta o som.", 11.45, 12.2],
+        ["cp-8", "Agora é só dar play.", 13.25, 13.9]
+      ];
+      L.forEach(function (l) { TTK.karaoke(tl, document.getElementById(l[0]), l[1].split(" "), l[2], l[3], true); });
+      window.__timelines["caps"] = tl;
+    })();
+  </script>
+</template>
