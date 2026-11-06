@@ -1,0 +1,40 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #rh-grp { transform-origin: 960px 470px; }
+    #rh-t1 { top: 150px; font-size: 240px; }
+    #rh-t2 { top: 420px; font-size: 300px; }
+  </style>
+  <div id="root" data-composition-id="r-hook" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="rh-grp" class="tk-full">
+        <div id="rh-t1" class="tk-c tk-big tk-white">PAROU DE</div>
+        <div id="rh-cut" class="tk-full"><div id="rh-t2" class="tk-c tk-big tk-ember">ROLAR?</div></div>
+      </div>
+      <div id="rh-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      TTK.slicePrepare("#rh-cut");
+      var fx = document.getElementById("rh-fx");
+      var sp = TTK.spark(fx, "rh-sp", 42);
+      var tl = gsap.timeline({ paused: true });
+      // frame 0 already reads the whole question; it keeps scrolling up like a feed...
+      tl.fromTo("#rh-grp", { y: 60 }, { y: 0, duration: 0.55, ease: "power3.out" }, 0);
+      // ...until the ember slices it: the scroll stops
+      var deg = Math.atan2(330 - 900, 1700 - 220) * 180 / Math.PI;
+      TTK.fly(tl, sp, [[220, 900], [1700, 330]], [0.14], { at: 0.42, ease: "power1.in", draw: fx, lineCls: "hot", fadeOut: 0.6 });
+      TTK.slice(tl, { el: "#rh-cut", cx: 960, cy: 585, deg: deg, at: 0.52, slide: 80, gap: 24, flyAt: 9, flyDur: 0.1 });
+      TTK.burst(tl, fx, 960, 585, 0.52, 30, 380, 3);
+      tl.to("#rh-fx .tk-line", { opacity: 0, duration: 0.3 }, 0.7);
+      [10, -8, 6, -3, 0].forEach(function (x, i) { tl.to("#rh-grp", { x: x, duration: 0.03, ease: "none" }, 0.55 + i * 0.03); });
+      // exit: squash into a line that snaps away
+      tl.to("#rh-grp", { scaleY: 0.02, scaleX: 1.15, duration: 0.15, ease: "power3.in" }, 1.5);
+      tl.to("#rh-grp", { opacity: 0, duration: 0.04 }, 1.64);
+      var ln = TTK.drawLine(tl, fx, [260, 470], [1660, 470], 1.62, 0.01, "none", "hot");
+      tl.to(ln, { scaleX: 0, x: 700, duration: 0.16, ease: "power3.in" }, 1.64);
+      window.__timelines["r-hook"] = tl;
+    })();
+  </script>
+</template>

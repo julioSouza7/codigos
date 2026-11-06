@@ -39,6 +39,33 @@ Formato: **1080×1920, 60 fps, 16 s, PT-BR, trilha sintetizada + efeitos sonoros
 | Revelação | `code.html` | 10,6–12,4 | "ISSO É" digitado, faísca pousa no ✳ de "Claude", **drop**: "CODE" em brasa, cortado e reunido. |
 | Prompt | `prompt.html` | 12,4–16 | As duas linhas viram a caixa; texto digitado com a faísca como cursor e trechos destacados; barra de render no final. |
 
+## Vídeos novos: mesma linguagem, roteiro e ordem próprios
+
+Não repita o roteiro da referência ("não é um MCP… isso é Claude Code") nem a ordem do template. Escreva a história do
+tema (5–8 batidas de 1,2–2,2 s) e escolha para cada batida o efeito que tem sentido nela:
+
+| Efeito | Quando usar | Exemplo pronto |
+| --- | --- | --- |
+| Faísca vira o "O" (logo ou símbolo) | gancho ou revelação final | `template/hook.html`, `examples/reels/r-final.html`, `examples/agentes/a-final.html` (✓ desenhado) |
+| Corte que congela as metades | "parou", "interrompe" | `examples/reels/r-hook.html` (`flyAt` fora da cena) |
+| Corte que reúne (`rejoin`) | impacto de uma ideia-chave | `template/code.html`, `examples/agentes/a-hook.html` |
+| Fatiar só um item e trocar por outro | "corta o erro", "tira o que sobra" | `examples/agentes/a-log.html` |
+| Painel tomba em 3D e é fatiado | "corta tudo que não serve" | `template/ae.html`, `examples/reels/r-panel.html` |
+| Fluxo com nós + volta em loop + carimbo | processo, etapas, ciclo | `examples/agentes/a-flow.html`, `examples/reels/r-flow.html` |
+| Régua + escrita pela faísca | conceito com tempo/ferramentas | `template/write.html` (rótulos trocáveis) |
+| Negação rosa com borrão | pergunta ou objeção ("E se errar?") | `template/andno.html`, `examples/agentes/a-neg.html` |
+| Caixa de prompt digitada | pedido, roteiro, instrução | `template/prompt.html` (abre de uma linha ou fecha numa linha) |
+| Mergulho pelo "O" | virada para o fim | `template/ready.html`, `examples/reels/r-loop.html` (faísca orbita o 1º O) |
+
+`examples/reels` (Instagram Reels) e `examples/agentes` (agentes de IA) são dois vídeos aprovados com roteiro próprio
+(index, cenas, `events.json`). Copie a cena mais parecida, troque textos e posições medidas.
+
+**Cor do tema**: depois de copiar as cenas, rode
+`python3 <skill>/scripts/theme.py <projeto> <cor> <cor-negação> "<gradiente da brasa>" <cor-luz-2>`
+(troca todos os tons de verde do template pelos da cor nova). Copiou cenas de um projeto já tematizado? Passe a paleta
+dele em `SRC_ACCENT`, `SRC_ALT`, `SRC_EMBER`, `SRC_WALL2`. Paletas usadas: Instagram `#FF0069 #FCAF45` + brasa
+amarelo→laranja→magenta→roxo; agentes `#38D6FF #FF4F8B` + brasa ciano→azul, luz 2 `#7B61FF`.
+
 ## Passo a passo
 
 ```bash
@@ -80,5 +107,11 @@ bash <skill>/scripts/get_logo.sh <marca> assets    # logo oficial + cor oficial 
   no CSS e entram com `immediateRender: false`.
 - Teclado em perspectiva com teclas grandes parece piso de azulejo: teclas pequenas (~34 px), teclado estreito, escuro.
 - Listras de persiana duras parecem código de barras: máscara suave + `blur(6px)`.
+- `get_logo.sh instagram` traz o glifo monocromático **preto** (some na tela escura): use a versão branca
+  (`sed 's/fill="#0a0a08"/fill="#ffffff"/'`), permitida sobre fundo escuro; sem brilho/sombra no logo do Instagram.
+- `measure.cjs` pode errar a largura de palavras curtas grandes ("FEIT" saiu ~30% mais estreito): confira no snapshot
+  e recentralize quando uma palavra divide a linha com um ícone.
+- Duas cenas com impacto a menos de 0,55 s uma da outra geram `gsap_tween_tail` na luz do ambiente (`env.html`): afaste os hits.
+- A cena do mergulho precisa de ≥ 1,8 s (chegada da faísca + 0,42 s de zoom).
 - Marca real: logo oficial (nunca símbolo desenhado), regras da marca (Spotify: verde só sobre preto/branco, não
   esticar/recolorir). Sem números inventados. Peça conceitual: publicar como anúncio oficial exige autorização.
