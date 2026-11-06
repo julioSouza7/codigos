@@ -1,0 +1,37 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #rd-zoom { transform-origin: 1475px 575px; }
+    #rd-t1 { top: 140px; font-size: 240px; }
+    #rd-t2 { top: 420px; font-size: 300px; }
+  </style>
+  <div id="root" data-composition-id="ready" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="rd-zoom" class="tk-full">
+        <div id="rd-t1" class="tk-c tk-big tk-white"></div>
+        <div id="rd-t2" class="tk-c tk-big"></div>
+        <div id="rd-fx" class="tk-full"></div>
+      </div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var OX = 1475, OY = 575;
+      var a = TTK.letters(document.getElementById("rd-t1"), "NÃO TÁ");
+      var b = TTK.letters(document.getElementById("rd-t2"), "PRONTO");
+      b.forEach(function (s) { s.classList.add("tk-ember"); });
+      var fx = document.getElementById("rd-fx");
+      var sp = TTK.spark(fx, "rd-sp", 44);
+      var tl = gsap.timeline({ paused: true });
+      a.forEach(function (s, i) { tl.fromTo(s, { opacity: 0, y: 40, scale: 1.25 }, { opacity: 1, y: 0, scale: 1, duration: 0.14, ease: "power3.out" }, 0.02 + i * 0.06); });
+      b.forEach(function (s, i) { tl.fromTo(s, { opacity: 0, y: 50, scale: 1.3 }, { opacity: 1, y: 0, scale: 1, duration: 0.16, ease: "power3.out" }, 0.38 + i * 0.07); });
+      // the ember dives in and parks inside the last O
+      TTK.fly(tl, sp, [[-120, 980], [OX - 380, 760], [OX, OY]], [0.22, 0.2], { at: 0.82, ease: "power2.inOut" });
+      TTK.burst(tl, fx, OX, OY, 1.24, 22, 220, 5);
+      tl.fromTo("#rd-sp .tk-sp-head", { scale: 1 }, { scale: 2.2, duration: 0.2, ease: "back.out(3)", immediateRender: false }, 1.24);
+      // camera dives THROUGH the O: the hole becomes the next shot
+      tl.fromTo("#rd-zoom", { scale: 1, x: 0, y: 0 }, { scale: 22, x: 960 - OX, y: 540 - OY, duration: 0.42, ease: "power3.in", immediateRender: false }, 1.38);
+      window.__timelines["ready"] = tl;
+    })();
+  </script>
+</template>

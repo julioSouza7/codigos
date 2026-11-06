@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .cp-line { position: absolute; left: 110px; top: 78px; width: 1500px; font-family: var(--font-ui); font-weight: 600; font-size: 38px;
+      line-height: 1.35; color: #f2f2f2; white-space: normal; }
+  </style>
+  <div id="root" data-composition-id="caps" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="cp-1" class="cp-line clip" data-start="0" data-duration="1.75"></div>
+      <div id="cp-2" class="cp-line clip" data-start="1.8" data-duration="2.15"></div>
+      <div id="cp-3" class="cp-line clip" data-start="4" data-duration="1.95"></div>
+      <div id="cp-4" class="cp-line clip" data-start="6" data-duration="1.75"></div>
+      <div id="cp-5" class="cp-line clip" data-start="7.8" data-duration="1.15"></div>
+      <div id="cp-6" class="cp-line clip" data-start="9" data-duration="1.75"></div>
+      <div id="cp-7" class="cp-line clip" data-start="10.8" data-duration="1.75"></div>
+      <div id="cp-8" class="cp-line clip" data-start="12.6" data-duration="3.4"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      var L = [
+        ["cp-1", "Você pede uma vez.", 0.05, 0.7],
+        ["cp-2", "“Organiza minha semana, os e-mails e o relatório.”", 1.85, 3.3],
+        ["cp-3", "O agente planeja, executa e confere.", 4.05, 5.3],
+        ["cp-4", "Usa as ferramentas que precisar.", 6.05, 7.0],
+        ["cp-5", "E se errar?", 7.85, 8.3],
+        ["cp-6", "Ele acha o erro e refaz.", 9.05, 10.0],
+        ["cp-7", "E só te chama quando acabou.", 10.85, 11.9],
+        ["cp-8", "Isso é um agente de IA.", 12.65, 13.4]
+      ];
+      L.forEach(function (l) { TTK.karaoke(tl, document.getElementById(l[0]), l[1].split(" "), l[2], l[3], true); });
+      window.__timelines["caps"] = tl;
+    })();
+  </script>
+</template>

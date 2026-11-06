@@ -1,0 +1,50 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #hk-grp { transform-origin: 960px 470px; }
+    #hk-t1 { top: 150px; font-size: 250px; }
+    .hk-l { position: absolute; top: 440px; font-size: 300px; opacity: 0; }
+    #hk-s { left: 613px; } #hk-m { left: 1027px; }
+    #hk-icon { position: absolute; left: 797px; top: 487px; width: 210px; height: 210px; opacity: 0;
+      filter: drop-shadow(0 0 22px rgba(30,215,96,0.9)) drop-shadow(0 0 70px rgba(30,215,96,0.5)); }
+    #hk-icon img { display: block; width: 210px; height: 210px; }
+    #hk-ring { position: absolute; left: 802px; top: 492px; width: 200px; height: 200px; border-radius: 50%; border: 6px solid #c9ffda;
+      box-shadow: 0 0 30px #1ed760; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="hk-grp" class="tk-full">
+        <div id="hk-t1" class="tk-c tk-big tk-white">SOLTA O</div>
+        <div id="hk-s" class="hk-l tk-big tk-ember">S</div>
+        <div id="hk-icon"><img src="assets/spotify-icon.svg" alt="Spotify" /></div>
+        <div id="hk-m" class="hk-l tk-big tk-ember">M</div>
+        <div id="hk-ring"></div>
+      </div>
+      <div id="hk-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var fx = document.getElementById("hk-fx");
+      var sp = TTK.spark(fx, "hk-sp", 40);
+      var tl = gsap.timeline({ paused: true });
+      // frame 0: "SOLTA O" + the ember already streaking in
+      TTK.fly(tl, sp, [[2000, 1020], [902, 592]], [0.45], { at: 0, ease: "power2.in" });
+      tl.fromTo("#hk-t1", { scale: 1.06 }, { scale: 1, duration: 0.45, ease: "power2.out" }, 0);
+      // impact: the ember becomes the O (official Spotify icon), letters slam in, sparks fly
+      tl.to("#hk-sp", { opacity: 0, duration: 0.06 }, 0.46);
+      TTK.burst(tl, fx, 902, 592, 0.45, 34, 420, 11);
+      tl.fromTo("#hk-ring", { scale: 0.4, opacity: 1 }, { scale: 3.2, opacity: 0, duration: 0.5, ease: "power2.out", immediateRender: false }, 0.45);
+      tl.fromTo("#hk-icon", { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2.2)", immediateRender: false }, 0.45);
+      tl.fromTo("#hk-s, #hk-m", { scale: 1.35, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.16, ease: "power4.out", immediateRender: false }, 0.47);
+      [10, -8, 6, -4, 2, 0].forEach(function (x, i) { tl.to("#hk-grp", { x: x, y: -x / 2, duration: 0.03, ease: "none" }, 0.5 + i * 0.03); });
+      tl.fromTo("#hk-grp", { scale: 1 }, { scale: 1.03, duration: 0.9, ease: "sine.inOut", immediateRender: false }, 0.7);
+      // exit: everything squashes into a glowing line (like the reference), the line snaps to the centre
+      tl.to("#hk-grp", { scaleY: 0.02, scaleX: 1.2, duration: 0.16, ease: "power3.in" }, 1.45);
+      tl.to("#hk-grp", { opacity: 0, duration: 0.04 }, 1.61);
+      var ln = TTK.drawLine(tl, fx, [260, 470], [1660, 470], 1.58, 0.01, "none", "hot");
+      tl.to(ln, { scaleX: 0, x: 700, duration: 0.18, ease: "power3.in" }, 1.6);
+      window.__timelines["hook"] = tl;
+    })();
+  </script>
+</template>

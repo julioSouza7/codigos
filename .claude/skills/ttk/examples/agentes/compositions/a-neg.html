@@ -1,0 +1,50 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #an-grp { transform-origin: 960px 590px; }
+    .an-t1 { top: 200px; font-size: 220px; } .an-t { top: 430px; font-size: 300px; }
+    .an-gh { opacity: 0; }
+    .an-gh .w { color: #ffffff; } .an-gh .p { color: #ff4f8b; }
+    #an-dot { position: absolute; left: 948px; top: 820px; width: 24px; height: 24px; border-radius: 50%; background: radial-gradient(circle, #fff, #ff9ebf 45%, rgba(255,79,139,0) 75%);
+      box-shadow: 0 0 20px rgba(255,79,139,0.9); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="a-neg" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="an-grp" class="tk-full">
+        <div id="an-g3" class="tk-c tk-big an-t an-gh"><span class="p">ERRAR?</span></div>
+        <div id="an-g2" class="tk-c tk-big an-t an-gh"><span class="p">ERRAR?</span></div>
+        <div id="an-g1" class="tk-c tk-big an-t an-gh"><span class="p">ERRAR?</span></div>
+        <div id="an-t0" class="tk-c tk-big an-t1"></div>
+        <div id="an-t" class="tk-c tk-big an-t"></div>
+        <div id="an-dot"></div>
+      </div>
+      <div id="an-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var c0 = TTK.letters(document.getElementById("an-t0"), "E SE");
+      c0.forEach(function (s) { s.classList.add("tk-white"); });
+      var ch = TTK.letters(document.getElementById("an-t"), "ERRAR?");
+      ch.forEach(function (s) { s.classList.add("tk-alt"); });
+      var fx = document.getElementById("an-fx");
+      var tl = gsap.timeline({ paused: true });
+      [0, 2, 3].forEach(function (i, k) { tl.fromTo(c0[i], { opacity: 0, y: 30, scale: 1.3 }, { opacity: 1, y: 0, scale: 1, duration: 0.12, ease: "power3.out" }, 0.02 + k * 0.05); });
+      ch.forEach(function (s, k) { tl.fromTo(s, { opacity: 0, y: 30, scale: 1.3 }, { opacity: 1, y: 0, scale: 1, duration: 0.12, ease: "power3.out" }, 0.16 + k * 0.05); });
+      // a pink ember bounces under the word
+      tl.fromTo("#an-dot", { opacity: 0, y: 0 }, { opacity: 1, y: 0, duration: 0.05 }, 0.35);
+      [[-60, 0.12], [0, 0.12], [-30, 0.1], [0, 0.1]].forEach(function (b, i) { tl.to("#an-dot", { y: b[0], duration: b[1], ease: i % 2 ? "power2.in" : "power2.out" }, 0.4 + i * 0.11); });
+      // horizontal smear + strike
+      tl.to("#an-grp", { scaleX: 1.35, duration: 0.14, ease: "power3.in" }, 0.8);
+      [["#an-g1", 50, 0.45], ["#an-g2", 110, 0.28], ["#an-g3", 180, 0.14]].forEach(function (g) {
+        tl.fromTo(g[0], { opacity: 0, x: 0 }, { opacity: g[2], x: g[1], duration: 0.12, ease: "power3.in" }, 0.8); });
+      TTK.drawLine(tl, fx, [180, 590], [1740, 590], 0.84, 0.08, "power3.out", "hot");
+      TTK.burst(tl, fx, 1300, 590, 0.9, 16, 200, 31, "alt");
+      // collapse to a line
+      tl.to("#an-grp", { scaleY: 0.02, duration: 0.14, ease: "power3.in" }, 0.96);
+      tl.to("#an-grp", { opacity: 0, duration: 0.04 }, 1.1);
+      tl.to("#an-fx .tk-line", { scaleX: 0, x: 780, duration: 0.12, ease: "power3.in" }, 1.08);
+      window.__timelines["a-neg"] = tl;
+    })();
+  </script>
+</template>

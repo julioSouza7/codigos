@@ -1,0 +1,21 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #ui-vig { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 70% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%); }
+    #ui-pill { position: absolute; left: 0; right: 0; top: 262px; text-align: center; opacity: 0; }
+    #ui-pill span { display: inline-block; padding: 10px 22px 8px; border-radius: 8px; background: rgba(8,8,8,0.82);
+      font-family: var(--font-display); font-weight: 800; font-size: 46px; letter-spacing: 0.01em; color: #fff; }
+    #ui-pill b { color: var(--color-accent, #ff0069); font-weight: 800; }
+  </style>
+  <div id="root" data-composition-id="ui" data-width="1080" data-height="1920">
+    <div id="ui-vig" data-layout-ignore></div>
+    <div id="ui-pill" class="clip" data-start="0" data-duration="16"><span><b>✳</b> COMENTE <b>"REELS"</b> E RECEBA O ROTEIRO</span></div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo("#ui-pill", { opacity: 0, y: -10 }, { opacity: 1, y: 0, duration: 0.3, ease: "power2.out" }, 0.9);
+      window.__timelines["ui"] = tl;
+    })();
+  </script>
+</template>

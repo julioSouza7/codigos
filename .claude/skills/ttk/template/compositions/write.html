@@ -1,0 +1,51 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #wr-t1 { top: 160px; font-size: 230px; }
+    #wr-t2 { top: 400px; font-size: 210px; }
+    .wr-tick { position: absolute; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; background: #9ff7bd;
+      box-shadow: 0 0 12px #1ed760; opacity: 0; }
+    .wr-lab { position: absolute; font-family: var(--font-mono); font-size: 18px; color: rgba(200,255,220,0.55); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="write" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="wr-grp" class="tk-full">
+        <div id="wr-lines" class="tk-full"></div>
+        <div id="wr-t1" class="tk-c tk-big tk-white">ANÚNCIO</div>
+        <div id="wr-t2" class="tk-c tk-big tk-ember">DO SPOTIFY</div>
+      </div>
+      <div id="wr-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var Y = 760, lines = document.getElementById("wr-lines"), fx = document.getElementById("wr-fx");
+      var sp = TTK.spark(fx, "wr-sp", 38);
+      var tl = gsap.timeline({ paused: true });
+      // continuity: the ember that went into the O is here, at the centre
+      tl.fromTo("#wr-sp .tk-sp-head", { scale: 2.2 }, { scale: 1, duration: 0.2, ease: "power2.out" }, 0);
+      var r = TTK.fly(tl, sp, [[960, 540], [960, Y], [200, Y], [520, Y], [520, 120]], [0.1, 0.28, 0.1, 0.18], { at: 0, ease: "power2.inOut" });
+      TTK.drawLine(tl, lines, [960, Y], [200, Y], 0.1, 0.28, "power2.inOut", "dim");
+      TTK.drawLine(tl, lines, [960, Y], [1720, Y], 0.1, 0.34, "power2.inOut", "dim");
+      TTK.drawLine(tl, lines, [520, Y], [520, 120], 0.48, 0.18, "power2.inOut", "dim");
+      // timeline ruler: ticks + timecodes pop as the line passes
+      for (var i = 0; i < 13; i++) {
+        var x = 240 + i * 120, d = document.createElement("div"); d.className = "wr-tick"; d.style.left = x + "px"; d.style.top = Y + "px"; lines.appendChild(d);
+        var tt = 0.1 + (Math.abs(x - 960) / 760) * 0.3;
+        tl.fromTo(d, { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.12, ease: "back.out(3)" }, tt);
+        if (i % 3 === 0) { var lb = document.createElement("div"); lb.className = "wr-lab"; lb.textContent = "00:0" + (i / 3) + ":00"; lb.style.left = (x - 40) + "px"; lb.style.top = (Y + 22) + "px"; lines.appendChild(lb);
+          tl.fromTo(lb, { opacity: 0 }, { opacity: 1, duration: 0.1 }, tt + 0.04); }
+      }
+      // the ember writes the title
+      TTK.write(tl, "#wr-t1", sp, [418, 1502, 285], 0.68, 0.36, "power1.inOut");
+      TTK.write(tl, "#wr-t2", sp, [330, 1590, 510], 1.04, 0.36, "power1.inOut");
+      tl.to(sp, { rotation: 0, duration: 0.01 }, 1.04);
+      // then it traces a bracket around it and leaves
+      var r2 = TTK.fly(tl, sp, [[1590, 510], [1700, 650], [240, 650]], [0.1, 0.24], { at: 1.4, ease: "power2.in", draw: lines, lineCls: "dim" });
+      tl.to(sp, { opacity: 0, duration: 0.1 }, 1.74);
+      // exit
+      tl.to("#wr-grp", { y: 40, opacity: 0, filter: "blur(10px)", duration: 0.16, ease: "power2.in" }, 1.72);
+      window.__timelines["write"] = tl;
+    })();
+  </script>
+</template>

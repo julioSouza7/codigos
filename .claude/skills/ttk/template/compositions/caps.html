@@ -1,0 +1,36 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    .cp-line { position: absolute; left: 110px; top: 78px; width: 1500px; font-family: var(--font-ui); font-weight: 600; font-size: 38px;
+      line-height: 1.35; color: #f2f2f2; white-space: normal; }
+  </style>
+  <div id="root" data-composition-id="caps" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="cp-1" class="cp-line clip" data-start="0" data-duration="1.75"></div>
+      <div id="cp-2" class="cp-line clip" data-start="1.8" data-duration="1.75"></div>
+      <div id="cp-3" class="cp-line clip" data-start="3.6" data-duration="1.85"></div>
+      <div id="cp-4" class="cp-line clip" data-start="5.5" data-duration="1.85"></div>
+      <div id="cp-5" class="cp-line clip" data-start="7.4" data-duration="1.15"></div>
+      <div id="cp-6" class="cp-line clip" data-start="8.6" data-duration="1.95"></div>
+      <div id="cp-7" class="cp-line clip" data-start="10.6" data-duration="1.75"></div>
+      <div id="cp-8" class="cp-line clip" data-start="12.4" data-duration="3.6"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      var L = [
+        ["cp-1", "Solta o som.", 0.15, 0.9],
+        ["cp-2", "Você não tá pronto pra isso.", 1.85, 3.0],
+        ["cp-3", "Fiz esse anúncio do Spotify", 3.7, 5.0],
+        ["cp-4", "sem nem abrir o After Effects.", 5.55, 6.9],
+        ["cp-5", "E não,", 7.45, 7.9],
+        ["cp-6", "não é um MCP controlando o After Effects.", 8.65, 10.2],
+        ["cp-7", "Isso é Claude Code.", 10.65, 11.6],
+        ["cp-8", "Você descreve pro Claude como o anúncio deve ser.", 12.45, 13.7]
+      ];
+      L.forEach(function (l) { TTK.karaoke(tl, document.getElementById(l[0]), l[1].split(" "), l[2], l[3], true); });
+      window.__timelines["caps"] = tl;
+    })();
+  </script>
+</template>

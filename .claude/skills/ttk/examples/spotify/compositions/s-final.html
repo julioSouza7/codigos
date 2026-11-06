@@ -1,0 +1,52 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #fn-grp { transform-origin: 960px 576px; }
+    #fn-top { top: 290px; font-family: var(--font-mono); font-weight: 700; font-size: 36px; letter-spacing: 0.42em; color: #e9eee9; }
+    #fn-row { position: absolute; left: -110px; top: 400px; width: 1920px; display: grid; grid-template-columns: 1fr 230px 1fr; column-gap: 26px; align-items: center; font-size: 340px; }
+    #fn-a { justify-self: end; opacity: 0; } #fn-b { justify-self: start; opacity: 0; }
+    #fn-icon { position: absolute; left: 735px; top: 461px; width: 230px; height: 230px; opacity: 0; }
+    #fn-icon img { display: block; width: 230px; height: 230px; }
+    #fn-ring { position: absolute; left: 735px; top: 461px; width: 230px; height: 230px; border-radius: 50%; border: 6px solid #c7f5d7;
+      box-shadow: 0 0 30px #1ed760; opacity: 0; }
+    #fn-sub { top: 790px; font-family: var(--font-mono); font-size: 32px; letter-spacing: 0.22em; color: rgba(225,235,230,0.8); opacity: 0; }
+    #fn-sub b { color: #1ed760; font-weight: 700; }
+    #fn-flash { position: absolute; inset: 0; background: #fff; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="s-final" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="fn-grp" class="tk-full">
+        <div id="fn-top" class="tk-c"></div>
+        <div id="fn-row" class="tk-big"><span id="fn-a" class="tk-ember">T</span><span></span><span id="fn-b" class="tk-ember">CA.</span></div>
+        <div id="fn-icon"><img src="assets/spotify-icon.svg" alt="Spotify" /></div>
+        <div id="fn-ring"></div>
+        <div id="fn-sub" class="tk-c">SUA TRILHA, <b>SUA HORA</b></div>
+      </div>
+      <div id="fn-fx" class="tk-full"></div>
+      <div id="fn-flash"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var top = TTK.letters(document.getElementById("fn-top"), "AGORA É SÓ DAR PLAY");
+      var fx = document.getElementById("fn-fx");
+      var sp = TTK.spark(fx, "fn-sp", 44);
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fn-flash", { opacity: 0.5 }, { opacity: 0, duration: 0.25, ease: "power2.out" }, 0);
+      tl.fromTo("#fn-sp .tk-sp-head", { scale: 2.2 }, { scale: 1, duration: 0.2, ease: "power2.out", immediateRender: false }, 0);
+      top.forEach(function (s, i) { tl.fromTo(s, { opacity: 0 }, { opacity: 1, duration: 0.02 }, 0.05 + i * 0.03); });
+      TTK.fly(tl, sp, [[960, 540], [700, 900], [850, 576]], [0.14, 0.2], { at: 0, ease: "power2.inOut" });
+      // DROP: the ember becomes the "O" — a check
+      tl.to("#fn-sp", { opacity: 0, duration: 0.05 }, 0.35);
+      TTK.burst(tl, fx, 850, 576, 0.34, 40, 520, 81);
+      tl.fromTo("#fn-ring", { scale: 0.4, opacity: 1 }, { scale: 3.4, opacity: 0, duration: 0.55, ease: "power2.out", immediateRender: false }, 0.34);
+      tl.fromTo("#fn-icon", { scale: 0.2, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.3, ease: "back.out(2.2)", immediateRender: false }, 0.34);
+      tl.fromTo("#fn-a, #fn-b", { scale: 1.4, opacity: 0 }, { scale: 1, opacity: 1, duration: 0.16, ease: "power4.out", immediateRender: false }, 0.36);
+      [12, -10, 7, -4, 0].forEach(function (x, i) { tl.to("#fn-grp", { x: x, y: -x / 2, duration: 0.03, ease: "none" }, 0.4 + i * 0.03); });
+      TTK.drawLine(tl, fx, [520, 760], [1400, 760], 0.62, 0.3, "power2.out", "dim");
+      tl.fromTo("#fn-sub", { opacity: 0, y: 12 }, { opacity: 1, y: 0, duration: 0.25 }, 0.72);
+      tl.fromTo("#fn-grp", { scale: 1 }, { scale: 1.03, duration: 2.4, ease: "sine.inOut", immediateRender: false }, 0.9);
+      window.__timelines["s-final"] = tl;
+    })();
+  </script>
+</template>

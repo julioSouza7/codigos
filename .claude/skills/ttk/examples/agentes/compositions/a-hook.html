@@ -1,0 +1,53 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #sl-grp { transform-origin: 960px 560px; }
+    #sl-is { top: 160px; font-size: 240px; }
+    .sl-big { top: 430px; font-size: 320px; }
+    .sl-fl { color: transparent; -webkit-text-stroke: 4px #6ae0ff; opacity: 0; filter: blur(1px) drop-shadow(0 0 18px rgba(56,214,255,0.9)); }
+    #sl-sub { top: 790px; font-family: var(--font-mono); font-size: 28px; letter-spacing: 0.2em; color: rgba(220,235,226,0.7); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="a-hook" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="sl-grp" class="tk-full">
+        <div id="sl-lines" class="tk-full"></div>
+        <div id="sl-is" class="tk-c tk-big tk-white">VOCÊ PEDE</div>
+        <div id="sl-cut" class="tk-full">
+          <div id="sl-f2" class="tk-c tk-big sl-big sl-fl">UMA VEZ.</div>
+          <div id="sl-f1" class="tk-c tk-big sl-big sl-fl">UMA VEZ.</div>
+          <div id="sl-big" class="tk-c tk-big sl-big tk-ember" style="opacity:0">UMA VEZ.</div>
+        </div>
+        <div id="sl-sub" class="tk-c">E ELE FAZ O RESTO</div>
+      </div>
+      <div id="sl-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+            TTK.slicePrepare("#sl-cut");
+      var lines = document.getElementById("sl-lines"), fx = document.getElementById("sl-fx");
+      var sp = TTK.spark(fx, "sl-sp", 40);
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo("#sl-is", { y: 30 }, { y: 0, duration: 0.3, ease: "power3.out" }, 0);
+      // the ember falls from the top and lands where the number will be
+      TTK.fly(tl, sp, [[1900, 980], [960, 595]], [0.2], { at: 0, ease: "power2.in", fadeOut: 0.24 });
+      tl.fromTo("#sl-big", { opacity: 0, scale: 1.6 }, { opacity: 1, scale: 1, duration: 0.14, ease: "power4.in" }, 0.2);
+      tl.fromTo("#sl-f1", { opacity: 0, scale: 1 }, { opacity: 0.55, scale: 1.04, duration: 0.2, ease: "power2.out" }, 0.34);
+      tl.fromTo("#sl-f2", { opacity: 0, scale: 1 }, { opacity: 0.28, scale: 1.09, duration: 0.25, ease: "power2.out" }, 0.34);
+      [0.3, 0.6, 0.35, 0.6, 0.4].forEach(function (o, i) { tl.to("#sl-f1", { opacity: o, duration: 0.05 }, 0.58 + i * 0.05); });
+      TTK.burst(tl, fx, 960, 595, 0.34, 36, 600, 17);
+      [12, -10, 7, -4, 0].forEach(function (x, i) { tl.to("#sl-grp", { x: x, y: -x / 2, duration: 0.03, ease: "none" }, 0.34 + i * 0.03); });
+      // horizontal blade: the word splits top/bottom and locks back
+      var sp2 = TTK.spark(fx, "sl-sp2", 40);
+      TTK.fly(tl, sp2, [[-60, 820], [1980, 380]], [0.12], { at: 0.62, ease: "power1.in", draw: fx, lineCls: "hot", fadeOut: 0.76 });
+      TTK.slice(tl, { el: "#sl-cut", cx: 960, cy: 595, deg: Math.atan2(380 - 820, 1980 + 60) * 180 / Math.PI, at: 0.7, slide: 110, gap: 26, rejoin: true, flyAt: 0.9, flyDur: 0.16 });
+      tl.to("#sl-fx .tk-line", { opacity: 0, duration: 0.2 }, 0.85);
+      tl.fromTo("#sl-sub", { opacity: 0, y: 10 }, { opacity: 1, y: 0, duration: 0.15 }, 0.9);
+      tl.to("#sl-grp", { scaleY: 0.02, duration: 0.12, ease: "power3.in" }, 1.42);
+      tl.to("#sl-grp", { opacity: 0, duration: 0.03 }, 1.54);
+      var ln = TTK.drawLine(tl, fx, [260, 560], [1660, 560], 1.52, 0.01, "none", "hot");
+      tl.to(ln, { scaleX: 0, duration: 0.08, ease: "power3.in" }, 1.53);
+      window.__timelines["a-hook"] = tl;
+    })();
+  </script>
+</template>
