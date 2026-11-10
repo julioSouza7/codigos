@@ -1,0 +1,43 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #sn-grp { transform-origin: 960px 560px; }
+    .sn-t { top: 400px; font-size: 320px; }
+    .sn-gh { opacity: 0; color: #3dd6ff; }
+    #sn-sub { top: 260px; font-family: var(--font-mono); font-weight: 700; font-size: 36px; letter-spacing: 0.45em; color: #e9eee9; }
+  </style>
+  <div id="root" data-composition-id="s-neg" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="sn-grp" class="tk-full">
+        <div id="sn-sub" class="tk-c">DE MANHÃ?</div>
+        <div id="sn-g3" class="tk-c tk-big sn-t sn-gh">SILÊNCIO?</div>
+        <div id="sn-g2" class="tk-c tk-big sn-t sn-gh">SILÊNCIO?</div>
+        <div id="sn-g1" class="tk-c tk-big sn-t sn-gh">SILÊNCIO?</div>
+        <div id="sn-t" class="tk-c tk-big sn-t tk-alt">SILÊNCIO?</div>
+      </div>
+      <div id="sn-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      var fx = document.getElementById("sn-fx");
+      var sp = TTK.spark(fx, "sn-sp", 40);
+      var tl = gsap.timeline({ paused: true });
+      // frame 0: the whole question is on screen, trembling slightly
+      tl.fromTo("#sn-t", { scale: 1.05 }, { scale: 1, duration: 0.5, ease: "power2.out" }, 0);
+      [4, -3, 3, -2, 0].forEach(function (x, i) { tl.to("#sn-t", { x: x, duration: 0.05, ease: "none" }, 0.1 + i * 0.05); });
+      // the ember strikes it through: horizontal smear, ghosts, strike line
+      TTK.fly(tl, sp, [[-60, 565], [1980, 565]], [0.2], { at: 0.5, ease: "power1.in", draw: fx, lineCls: "hot", fadeOut: 0.72 });
+      tl.to("#sn-grp", { scaleX: 1.3, duration: 0.14, ease: "power3.in" }, 0.62);
+      [["#sn-g1", 50, 0.45], ["#sn-g2", 110, 0.28], ["#sn-g3", 180, 0.14]].forEach(function (g) {
+        tl.fromTo(g[0], { opacity: 0, x: 0 }, { opacity: g[2], x: g[1], duration: 0.12, ease: "power3.in" }, 0.62); });
+      TTK.burst(tl, fx, 1500, 565, 0.7, 20, 240, 91, "alt");
+      // and it collapses into a line that becomes the next shot's ruler
+      tl.to("#sn-grp", { scaleY: 0.02, duration: 0.14, ease: "power3.in" }, 1.1);
+      tl.to("#sn-grp", { opacity: 0, duration: 0.04 }, 1.24);
+      tl.to("#sn-fx .tk-line", { y: 760 - 565, duration: 0.3, ease: "power3.inOut" }, 1.3);
+      tl.to("#sn-fx .tk-line", { opacity: 0, duration: 0.15 }, 1.65);
+      window.__timelines["s-neg"] = tl;
+    })();
+  </script>
+</template>

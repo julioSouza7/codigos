@@ -1,0 +1,47 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    .fl-node { position: absolute; top: 470px; width: 300px; height: 180px; margin-left: -150px; border: 2px solid rgba(235,240,237,0.8); border-radius: 18px;
+      background: rgba(10,11,10,0.9); text-align: center; opacity: 0; }
+    .fl-node b { display: block; margin-top: 48px; font-family: var(--font-mono); font-weight: 700; font-size: 32px; letter-spacing: 0.06em; color: #f2f5f3; }
+    .fl-node span { display: block; margin-top: 10px; font-family: var(--font-mono); font-size: 22px; color: rgba(200,210,204,0.6); }
+    #fl-n1 { left: 400px; } #fl-n2 { left: 960px; } #fl-n3 { left: 1520px; }
+    #fl-n3.on { border-color: #2ec5ff; }
+    #fl-stamp { position: absolute; left: 730px; top: 250px; width: 460px; padding: 10px 0 4px; text-align: center; border: 6px solid #2ec5ff; border-radius: 10px;
+      font-family: var(--font-display); font-weight: 800; font-size: 92px; line-height: 1; color: #2ec5ff; background: rgba(46,197,255,0.12);
+      box-shadow: 0 0 40px rgba(46,197,255,0.55), inset 0 0 30px rgba(46,197,255,0.35); text-shadow: 0 0 24px rgba(46,197,255,0.8); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="s-flow" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="fl-grp" class="tk-full">
+        <div id="fl-lines" class="tk-full"></div>
+        <div id="fl-n1" class="fl-node"><b>ACORDAR</b><span>lo-fi calmo</span></div>
+        <div id="fl-n2" class="fl-node"><b>TREINO</b><span>batida pesada</span></div>
+        <div id="fl-n3" class="fl-node"><b>FOCO</b><span>sem letra</span></div>
+        <div id="fl-stamp">NO REPEAT</div>
+      </div>
+      <div id="fl-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+            var lines = document.getElementById("fl-lines"), fx = document.getElementById("fl-fx");
+      var sp = TTK.spark(fx, "fl-sp", 34);
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo("#fl-n1", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.2, ease: "back.out(2)" }, 0.02);
+      TTK.fly(tl, sp, [[550, 560], [810, 560]], [0.24], { at: 0.2, ease: "power2.inOut", draw: lines, lineCls: "dim" });
+      tl.fromTo("#fl-n2", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.2, ease: "back.out(2)" }, 0.42);
+      TTK.fly(tl, sp, [[1110, 560], [1370, 560]], [0.24], { at: 0.52, ease: "power2.inOut", draw: lines, lineCls: "dim" });
+      tl.fromTo("#fl-n3", { opacity: 0, y: 60 }, { opacity: 1, y: 0, duration: 0.2, ease: "back.out(2)" }, 0.74);
+            // the loop closes: from CONFERE back to PLANEJA, then a faster second lap
+      TTK.fly(tl, sp, [[1520, 650], [1520, 800], [400, 800], [400, 650]], [0.1, 0.36, 0.1], { at: 0.9, ease: "power1.inOut", draw: lines, lineCls: "dim" });
+      tl.set(sp, { opacity: 1 }, 0.9);
+      TTK.fly(tl, sp, [[565, 560], [1355, 560]], [0.22], { at: 1.5, ease: "power2.inOut", fadeOut: 1.74 });
+      ["#fl-n1", "#fl-n2", "#fl-n3"].forEach(function (n, i) { tl.to(n, { borderColor: "#2ec5ff", boxShadow: "0 0 40px rgba(46,197,255,0.5)", duration: 0.1 }, 1.5 + i * 0.09); });
+      tl.fromTo("#fl-stamp", { opacity: 0, scale: 2.4, rotation: -10 }, { opacity: 1, scale: 1, rotation: -8, duration: 0.13, ease: "power4.in", immediateRender: false }, 1.32);
+      [8, -6, 4, 0].forEach(function (x, i) { tl.to("#fl-grp", { x: x, y: -x, duration: 0.03, ease: "none" }, 1.45 + i * 0.03); });
+      tl.to("#fl-grp", { opacity: 0, y: 30, filter: "blur(8px)", duration: 0.18, ease: "power2.in" }, 1.8);
+      window.__timelines["s-flow"] = tl;
+    })();
+  </script>
+</template>

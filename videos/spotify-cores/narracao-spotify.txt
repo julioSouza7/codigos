@@ -1,0 +1,26 @@
+NARRAÇÃO — anúncio Spotify (vale para as 3 cores: roxo, laranja, azul)
+
+No ElevenLabs: voz Carla · modelo Eleven Multilingual v2 · velocidade 1,1
+Cole o bloco abaixo inteiro (as pausas <break> separam as frases, não apague):
+
+Silêncio de manhã? Nem pensar. <break time="0.8s" />
+Cada hora tem sua trilha. <break time="0.8s" />
+Acordar, treinar, focar. <break time="0.8s" />
+A que você pula sai fora. <break time="0.8s" />
+Mistura feita pra você. <break time="0.8s" />
+Pede a playlist do seu jeito. <break time="0.8s" />
+E aumenta o som. <break time="0.8s" />
+Agora é só dar play.
+
+Baixe o MP3 e me mande aqui na conversa. Eu encaixo cada frase no tempo da cena
+e coloco o áudio nos 3 vídeos (não precisa renderizar de novo).
+
+Tempo  | Na tela                         | Frase
+0,0 s  | "SILÊNCIO?" riscado             | Silêncio de manhã? Nem pensar.
+1,8 s  | faísca escreve "CADA HORA"      | Cada hora tem sua trilha.
+3,8 s  | fluxo Acordar → Treino → Foco   | Acordar, treinar, focar.
+5,8 s  | lista: a faixa pulada é cortada | A que você pula sai fora.
+7,6 s  | "FEITA PRA VOCÊ."               | Mistura feita pra você.
+9,2 s  | prompt digitado                 | Pede a playlist do seu jeito.
+11,4 s | mergulho pelo "O" (volume)      | E aumenta o som.
+13,2 s | "T(logo)CA." — final            | Agora é só dar play.

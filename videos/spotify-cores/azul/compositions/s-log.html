@@ -1,0 +1,58 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #lg-grp { perspective: 1500px; }
+    #lg-panel { position: absolute; left: 340px; top: 250px; width: 1240px; height: 600px; border: 2px solid #3a3d3b; border-radius: 10px;
+      background: rgba(12,13,12,0.92); box-shadow: 0 0 60px rgba(46,197,255,0.08); transform-origin: 620px 300px; opacity: 0; }
+    #lg-head { position: absolute; left: 0; right: 0; top: 0; height: 56px; border-bottom: 2px solid #2a2c2b; padding: 14px 24px;
+      font-family: var(--font-mono); font-size: 24px; color: #d8dcd9; }
+    #lg-head i { font-style: normal; color: #2ec5ff; margin-left: 12px; }
+    .lg-row { position: absolute; left: 380px; width: 1160px; height: 56px; font-family: var(--font-mono); font-size: 32px; line-height: 56px; color: #d9dedb; opacity: 0; white-space: nowrap; }
+    .lg-row b { display: inline-block; width: 78px; color: #2ec5ff; font-weight: 700; }
+    .lg-row.err { color: #ff4f8b; } .lg-row.err b { color: #ff4f8b; }
+    .lg-row.fix { color: #f2fcff; } .lg-row.fix b { color: #2ec5ff; }
+    .lg-bar { position: absolute; left: 0; bottom: 6px; height: 3px; width: 1160px; background: rgba(255,255,255,0.08); }
+    #lg-r3 { background: rgba(255,79,139,0.08); }
+  </style>
+  <div id="root" data-composition-id="s-log" data-width="1080" data-height="1920">
+    <div class="tk-scr" data-layout-ignore>
+      <div id="lg-grp" class="tk-full">
+        <div id="lg-panel"><div id="lg-head">sua_playlist<i>● tocando agora</i></div></div>
+        <div id="lg-r0" class="lg-row" style="top:330px"><b>01</b>acordar devagar</div>
+        <div id="lg-r1" class="lg-row" style="top:400px"><b>02</b>café passado</div>
+        <div id="lg-r2" class="lg-row" style="top:470px"><b>03</b>estrada vazia</div>
+        <div id="lg-cut" class="tk-full"><div id="lg-r3" class="lg-row err" style="top:540px"><b>04</b>aquela que você sempre pula</div></div>
+        <div id="lg-r4" class="lg-row fix" style="top:540px"><b>04</b>uma descoberta nova ✦</div>
+        <div id="lg-r5" class="lg-row" style="top:610px"><b>05</b>volta pra casa</div>
+        <div id="lg-r6" class="lg-row" style="top:680px"><b>06</b>fim de tarde</div>
+      </div>
+      <div id="lg-fx" class="tk-full"></div>
+    </div>
+  </div>
+  <script>
+    (function () {
+      TTK.slicePrepare("#lg-cut");
+      var fx = document.getElementById("lg-fx");
+      var tl = gsap.timeline({ paused: true });
+      // the log stands up from the desk in 3D
+      tl.fromTo("#lg-panel", { opacity: 0, rotationX: 48, y: 80 }, { opacity: 1, rotationX: 0, y: 0, duration: 0.4, ease: "power3.out" }, 0);
+      ["#lg-r0", "#lg-r1", "#lg-r2"].forEach(function (r, i) { tl.fromTo(r, { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.14, ease: "power2.out" }, 0.22 + i * 0.1); });
+      // the error shows up...
+      tl.fromTo("#lg-r3", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.14, ease: "power2.out" }, 0.55);
+      [10, -8, 6, -4, 0].forEach(function (x, i) { tl.to("#lg-r3", { x: x, duration: 0.03, ease: "none" }, 0.7 + i * 0.03); });
+      // ...the ember slices it out of the log
+      var sp = TTK.spark(fx, "lg-sp", 40);
+      var deg = Math.atan2(520 - 600, 1700 - 280) * 180 / Math.PI;
+      TTK.fly(tl, sp, [[280, 600], [1700, 520]], [0.12], { at: 0.78, ease: "power1.in", draw: fx, lineCls: "hot", fadeOut: 0.95 });
+      TTK.slice(tl, { el: "#lg-cut", cx: 960, cy: 568, deg: deg, at: 0.85, flyAt: 0.98, flyDur: 0.38, fly: 260, fall: 260, gap: 16 });
+      TTK.burst(tl, fx, 960, 568, 0.85, 26, 300, 71, "alt");
+      tl.to("#lg-fx .tk-line", { opacity: 0, duration: 0.25 }, 1.0);
+      // and the fix takes its place
+      tl.fromTo("#lg-r4", { opacity: 0, x: 80 }, { opacity: 1, x: 0, duration: 0.2, ease: "power3.out" }, 1.1);
+      tl.fromTo("#lg-r5", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.14, ease: "power2.out" }, 1.28);
+      tl.fromTo("#lg-r6", { opacity: 0, x: -30 }, { opacity: 1, x: 0, duration: 0.14, ease: "power2.out" }, 1.4);
+      tl.to("#lg-grp", { opacity: 0, y: 30, filter: "blur(8px)", duration: 0.18, ease: "power2.in" }, 1.6);
+      window.__timelines["s-log"] = tl;
+    })();
+  </script>
+</template>
