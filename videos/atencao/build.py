@@ -50,7 +50,7 @@ def words_html(th):
     for i, (a, b, bg, col, text, anim, cap) in enumerate(beats):
         s, d, wid = round(a - B, 3), round(b - a, 3), "wd-%d" % i
         if text == "#SEC":
-            inner = ('<div class="wd-num"><span id="wd-7" class="wn">7</span><span id="wd-8" class="wn">8</span></div>'
+            inner = ('<div class="wd-num"><span id="wd-n7" class="wn">7</span><span id="wd-n8" class="wn">8</span></div>'
                      '<div class="wd-sec">SEGUNDOS</div>')
         elif text == "#TIMER":
             inner = ('<div class="wd-tl"><span class="wd-tdot"></span>VOCÊ ESTÁ AQUI HÁ</div>'
@@ -83,8 +83,8 @@ def words_html(th):
             js.append('tl.fromTo("#wd-arrow", { y: 120, opacity: 0 }, { y: 0, opacity: 1, duration: 0.3, ease: "back.out(2.4)", immediateRender: false }, %s);' % round(s + 0.08, 3))
             js.append('tl.fromTo("#wd-arrow", { y: 0 }, { y: -18, duration: 0.22, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, %s);' % round(s + 0.4, 3))
         if anim == "num":
-            js.append('numIn("#wd-7", %s, 0.18); tl.fromTo("#wd-7", { opacity: 1 }, { opacity: 0, duration: 0.001, immediateRender: false }, %s);'
-                      ' numIn("#wd-8", %s); tl.fromTo(".wd-sec", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out", immediateRender: false }, %s);'
+            js.append('numIn("#wd-n7", %s, 0.18); tl.fromTo("#wd-n7", { opacity: 1 }, { opacity: 0, duration: 0.001, immediateRender: false }, %s);'
+                      ' numIn("#wd-n8", %s); tl.fromTo(".wd-sec", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out", immediateRender: false }, %s);'
                       ' tl.fromTo(".wd-num", { scale: 1 }, { scale: 1.06, duration: 0.6, ease: "sine.out", immediateRender: false }, %s);'
                       % (s, round(s + 0.22, 3), round(s + 0.22, 3), round(s + 0.25, 3), round(s + 0.22, 3)))
         if anim == "timer":
