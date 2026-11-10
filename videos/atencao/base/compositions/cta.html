@@ -1,0 +1,103 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #ct-grp { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; transform-origin: 540px 960px; }
+    .ct-line { position: absolute; left: 0; width: 1080px; text-align: center; font-family: var(--font-display); line-height: 1;
+      color: #f4f2ee; white-space: nowrap; text-shadow: 0 0 26px rgba(255,255,255,0.22), 0 0 60px rgba({{ACC_RGB}},0.35); }
+    #ct-a { top: 806px; font-size: 112px; }
+    #ct-b { top: 932px; font-size: 128px; }
+    .ct-ch { display: inline-block; opacity: 0; }
+    #ct-dot { color: var(--acc); display: inline-block; opacity: 0; }
+    #ct-ul { position: absolute; left: 180px; top: 1078px; width: 668px; height: 12px; border-radius: 3px; background: var(--acc);
+      transform-origin: 0 50%; box-shadow: 0 0 24px rgba({{ACC_RGB}},0.7); }
+    #ct-tag { position: absolute; left: 0; width: 1080px; top: 1150px; text-align: center; opacity: 0; }
+    #ct-tag span { display: inline-block; padding: 16px 36px 12px; background: var(--acc); color: #0b0b0c; font-family: var(--font-display);
+      font-size: 56px; line-height: 1; transform: rotate(-4deg); box-shadow: 0 18px 50px rgba(0,0,0,0.5); }
+    #ct-x { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #ct-end { position: absolute; inset: 0; background: #0a0a0b; opacity: 0; }
+    #ct-enddot { position: absolute; left: 527px; top: 947px; width: 26px; height: 26px; border-radius: 50%; background: var(--acc); opacity: 0;
+      box-shadow: 0 0 30px rgba({{ACC_RGB}},0.9); }
+    .ct-p { position: absolute; left: 0; top: 0; border-radius: 50%; opacity: 0; }
+    .ct-ring { position: absolute; border-radius: 50%; border: 4px solid var(--acc-light); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="cta" data-width="1080" data-height="1920">
+    <div id="ct-grp">
+      <div id="ct-x" data-layout-ignore></div>
+      <div id="ct-a" class="ct-line"></div>
+      <div id="ct-b" class="ct-line"></div>
+      <div id="ct-ul"></div>
+      <div id="ct-tag"><span>VENDA MAIS ↑</span></div>
+    </div>
+    <div id="ct-end" data-layout-ignore></div>
+    <div id="ct-enddot" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      var THEME = "{{THEME}}";
+      function rng(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      var R = rng(31), tl = gsap.timeline({ paused: true });
+      function letters(id, txt) {
+        var el = document.getElementById(id), out = [];
+        txt.split("").forEach(function (c) {
+          var s = document.createElement("span"); s.className = "ct-ch"; s.textContent = c === " " ? " " : c; el.appendChild(s); out.push(s);
+        });
+        return out;
+      }
+      var A = letters("ct-a", "PRENDA A"), B = letters("ct-b", "ATENÇÃO");
+      var dot = document.createElement("span"); dot.id = "ct-dot"; dot.textContent = "."; document.getElementById("ct-b").appendChild(dot);
+      A.forEach(function (s, i) {
+        tl.fromTo(s, { opacity: 0, y: 40, filter: "blur(10px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.22, ease: "power3.out" }, 0.05 + i * 0.035);
+      });
+      B.forEach(function (s, i) {
+        tl.fromTo(s, { opacity: 0, y: 50, scale: 1.2, filter: "blur(12px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, 0.38 + i * 0.04);
+      });
+      tl.fromTo("#ct-dot", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(3)" }, 0.72);
+      tl.fromTo("#ct-ul", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 0.75);
+      tl.fromTo("#ct-tag", { opacity: 0, scale: 1.5, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.05);
+      tl.fromTo("#ct-grp", { x: 0, y: 0 }, { x: 6, y: -4, duration: 0.05, ease: "none", yoyo: true, repeat: 3, immediateRender: false }, 1.22);
+      tl.fromTo("#ct-grp", { scale: 1 }, { scale: 1.03, duration: 2.6, ease: "sine.inOut", immediateRender: false }, 1.3);
+
+      // theme flourish on the accent dot of "ATENÇÃO." (dot sits around x 860, y 1040)
+      var X = document.getElementById("ct-x"), dx = 876, dy = 1030;
+      if (THEME === "copo") {
+        var drop = document.createElement("div"); drop.className = "ct-p";
+        drop.style.cssText = "width:22px;height:30px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;background:{{ACC_LIGHT}};left:" + (dx - 11) + "px;top:300px";
+        X.appendChild(drop);
+        tl.fromTo(drop, { opacity: 1, y: 0 }, { opacity: 1, y: dy - 300 - 20, duration: 0.42, ease: "power2.in", immediateRender: false }, 1.6);
+        tl.fromTo(drop, { opacity: 1 }, { opacity: 0, duration: 0.02, immediateRender: false }, 2.02);
+        for (var k = 0; k < 3; k++) {
+          var rg = document.createElement("div"); rg.className = "ct-ring"; rg.style.cssText = "left:" + (dx - 40) + "px;top:" + (dy - 18) + "px;width:80px;height:36px";
+          X.appendChild(rg);
+          tl.fromTo(rg, { opacity: 0.9, scale: 0.3 }, { opacity: 0, scale: 2.4 + k * 0.6, duration: 0.8, ease: "power2.out", immediateRender: false }, 2.02 + k * 0.12);
+        }
+        tl.fromTo("#ct-dot", { scale: 1 }, { scale: 1.6, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 2.02);
+      }
+      if (THEME === "pavio") {
+        for (var j = 0; j < 22; j++) {
+          var p = document.createElement("div"); p.className = "ct-p"; var sz = 5 + R() * 5;
+          p.style.cssText = "width:" + sz + "px;height:" + sz + "px;background:" + (j % 3 ? "#fff1cf" : "{{ACC_LIGHT}}") + ";box-shadow:0 0 10px {{ACC}};left:" + dx + "px;top:" + dy + "px";
+          X.appendChild(p);
+          var a = R() * Math.PI * 2, r = 70 + R() * 120;
+          tl.fromTo(p, { x: 0, y: 0, opacity: 1 }, { x: Math.cos(a) * r, y: Math.sin(a) * r + 40, opacity: 0, duration: 0.7, ease: "power3.out", immediateRender: false }, 1.7 + (j % 4) * 0.05);
+        }
+        tl.fromTo("#ct-dot", { scale: 1 }, { scale: 1.5, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 1.7);
+      }
+      if (THEME === "balao") {
+        var bl = document.createElement("div"); bl.className = "ct-p"; bl.style.cssText = "left:" + (dx - 14) + "px;top:" + (dy - 70) + "px;width:60px;height:130px;border-radius:0";
+        bl.innerHTML = '<svg viewBox="0 0 60 130" width="60" height="130"><path d="M30,74 C22,72 3,56 3,32 C3,14 15,2 30,2 C45,2 57,14 57,32 C57,56 38,72 30,74 Z" fill="{{ACC}}"/>' +
+          '<ellipse cx="20" cy="22" rx="5" ry="10" transform="rotate(-25 20 22)" fill="#fff" opacity="0.55"/><path d="M26,80 L30,73 L34,80 Z" fill="{{ACC_DEEP}}"/>' +
+          '<path d="M30,80 C 24,96 36,110 30,130" fill="none" stroke="rgba(244,242,238,0.6)" stroke-width="2"/></svg>';
+        X.appendChild(bl);
+        tl.fromTo("#ct-dot", { opacity: 1 }, { opacity: 0, duration: 0.05, immediateRender: false }, 1.65);
+        tl.fromTo(bl, { opacity: 1, scale: 0.3, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: "back.out(2.2)", immediateRender: false }, 1.65);
+        tl.fromTo(bl, { y: 0 }, { y: -420, duration: 2.0, ease: "sine.in", immediateRender: false }, 2.0);
+        tl.fromTo(bl, { rotation: -8 }, { rotation: 8, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 2.0);
+      }
+      // end: fade to black, one accent dot remains
+      tl.fromTo("#ct-end", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in" }, 3.72);
+      tl.fromTo("#ct-enddot", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(3)" }, 3.9);
+      window.__timelines["cta"] = tl;
+    })();
+  </script>
+</template>

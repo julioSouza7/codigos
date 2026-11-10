@@ -1,0 +1,28 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+    #rc-box { position: absolute; left: 0; width: 1080px; top: 118px; height: 40px; text-align: center; }
+    #rc-in { display: inline-block; position: relative; padding-left: 26px; height: 40px; }
+    #rc-dot { position: absolute; left: 0; top: 13px; width: 13px; height: 13px; border-radius: 50%; background: var(--acc); }
+    .rc-t { position: absolute; left: 26px; top: 0; font-family: var(--font-mono); font-weight: 700; font-size: 29px; line-height: 40px;
+      letter-spacing: 0.06em; color: #e9e7e2; white-space: nowrap; }
+    #rc-w { visibility: hidden; position: static; }
+  </style>
+  <div id="root" data-composition-id="rec" data-width="1080" data-height="1920">
+    <div id="rc-box" data-layout-ignore><div id="rc-in"><div id="rc-dot"></div><span id="rc-w" class="rc-t">00:00</span>
+{{REC_SPANS}}
+    </div></div>
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      tl.fromTo("#rc-dot", { opacity: 1 }, { opacity: 0.15, duration: 0.5, ease: "steps(1)", yoyo: true, repeat: 38 }, 0);
+      // dark digits while the words sit on the cream flood (global times = local times, host starts at 0)
+      [[8.95, 9.35], [10.55, 10.95], [11.95, 12.65], [13.5, 13.75], [15.0, 15.3]].forEach(function (c) {
+        tl.fromTo(".rc-t", { color: "#e9e7e2" }, { color: "#2b2a28", duration: 0.001, immediateRender: false }, c[0]);
+        tl.fromTo(".rc-t", { color: "#2b2a28" }, { color: "#e9e7e2", duration: 0.001, immediateRender: false }, c[1]);
+      });
+      window.__timelines["rec"] = tl;
+    })();
+  </script>
+</template>

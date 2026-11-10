@@ -1,0 +1,174 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #hk-stage { position: absolute; inset: 0; transform-origin: 540px 1000px; }
+    #hk-label { position: absolute; left: 0; width: 1080px; top: 214px; text-align: center; font-family: var(--font-mono); font-weight: 700;
+      font-size: 28px; letter-spacing: 0.3em; color: rgba(233,231,226,0.78); white-space: nowrap; }
+    #hk-cnt { position: absolute; left: 0; top: 262px; width: 1080px; height: 230px; }
+    .hk-n { position: absolute; left: 0; top: 0; width: 1080px; text-align: center; font-family: var(--font-display); font-size: 200px;
+      line-height: 1; color: #f4f2ee; opacity: 0; text-shadow: 0 6px 30px rgba(0,0,0,0.5); }
+    .hk-n.hot { color: var(--acc-light); } .hk-n.max { color: var(--acc); text-shadow: 0 0 40px rgba({{ACC_RGB}},0.6); }
+    #pv-svg { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; overflow: visible; }
+    #pv-spark { position: absolute; left: 0; top: 0; width: 0; height: 0; opacity: 0; }
+    #pv-glow { position: absolute; left: -70px; top: -70px; width: 140px; height: 140px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(255,255,255,0.95) 0%, rgba(255,236,200,0.8) 14%, rgba({{ACC_RGB}},0.55) 34%, rgba({{ACC_RGB}},0) 70%); }
+    .pv-ray { position: absolute; left: -38px; top: -2px; width: 76px; height: 4px; border-radius: 4px;
+      background: linear-gradient(90deg, rgba(255,255,255,0) 0%, #ffffff 50%, rgba(255,255,255,0) 100%); }
+    #pv-rays { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .pv-p { position: absolute; left: 0; top: 0; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%; opacity: 0;
+      background: #fff1cf; box-shadow: 0 0 8px {{ACC}}; }
+    .pv-smoke { position: absolute; left: 0; top: 0; width: 46px; height: 46px; margin: -23px 0 0 -23px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(circle, rgba(190,190,190,0.35) 0%, rgba(190,190,190,0) 70%); }
+    #pv-rocket { position: absolute; left: 0; top: 0; width: 1080px; height: 1920px; }
+    #pv-flame { position: absolute; left: 512px; top: 1420px; width: 56px; height: 120px; opacity: 0; transform-origin: 28px 0; }
+    #pv-trail { position: absolute; left: 518px; top: 1430px; width: 44px; height: 700px; opacity: 0; transform-origin: 22px 0;
+      background: linear-gradient(180deg, rgba(255,240,210,0.95) 0%, rgba({{ACC_RGB}},0.75) 18%, rgba({{ACC_RGB}},0.2) 60%, rgba({{ACC_RGB}},0) 100%); border-radius: 22px; }
+    #pv-fw { position: absolute; left: 540px; top: 720px; width: 0; height: 0; }
+    .fw-arm { position: absolute; left: 0; top: 0; width: 0; height: 0; }
+    .fw-p { position: absolute; left: -4px; top: -40px; width: 8px; height: 40px; border-radius: 6px; opacity: 0; transform-origin: 4px 40px; }
+    .fw-tw { position: absolute; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; background: #ffffff; opacity: 0; box-shadow: 0 0 10px {{ACC_LIGHT}}; }
+    #pv-flash { position: absolute; inset: 0; background: {{ACC}}; opacity: 0; }
+    #hk-flood { position: absolute; left: -760px; top: -580px; width: 2600px; height: 2600px; border-radius: 50%; background: var(--acc); opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
+    <div id="hk-stage">
+      <svg id="pv-svg" viewBox="0 0 1080 1920" data-layout-ignore>
+        <rect x="0" y="1600" width="1080" height="2" fill="rgba(255,255,255,0.10)" />
+        <path id="pv-path" d="M140,590 C 420,540 880,560 900,680 C 915,790 230,730 190,860 C 150,990 860,900 900,1050 C 930,1170 760,1300 700,1380 C 670,1420 620,1420 586,1405"
+          fill="none" stroke="#d9c39a" stroke-width="10" stroke-linecap="round" />
+        <path d="M140,590 C 420,540 880,560 900,680 C 915,790 230,730 190,860 C 150,990 860,900 900,1050 C 930,1170 760,1300 700,1380 C 670,1420 620,1420 586,1405"
+          fill="none" stroke="#9a7d52" stroke-width="10" stroke-dasharray="3 9" />
+        <g id="pv-ash"></g>
+      </svg>
+      <div id="pv-rocket" data-layout-ignore>
+        <div id="pv-trail"></div>
+        <svg id="pv-flame" viewBox="0 0 56 120"><defs><linearGradient id="pv-fg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#ffffff" /><stop offset="25%" stop-color="#ffe2a8" /><stop offset="60%" stop-color="{{ACC}}" /><stop offset="100%" stop-color="{{ACC}}" stop-opacity="0" />
+        </linearGradient></defs><path d="M6,0 L50,0 C 52,40 38,80 28,120 C 18,80 4,40 6,0 Z" fill="url(#pv-fg)" /></svg>
+        <svg viewBox="0 0 1080 1920" width="1080" height="1920" style="position:absolute;left:0;top:0">
+          <defs><linearGradient id="pv-body" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0%" stop-color="{{ACC_DEEP}}" /><stop offset="38%" stop-color="{{ACC_LIGHT}}" /><stop offset="62%" stop-color="{{ACC}}" /><stop offset="100%" stop-color="{{ACC_DEEP}}" />
+          </linearGradient></defs>
+          <rect x="536" y="1420" width="8" height="300" rx="3" fill="#8a6a45" />
+          <path d="M492,1150 L540,1052 L588,1150 Z" fill="#f4f2ee" />
+          <path d="M492,1150 L540,1052 L540,1150 Z" fill="rgba(0,0,0,0.12)" />
+          <rect x="500" y="1150" width="80" height="270" fill="url(#pv-body)" />
+          <path d="M500,1200 L580,1180 L580,1200 L500,1220 Z M500,1270 L580,1250 L580,1270 L500,1290 Z M500,1340 L580,1320 L580,1340 L500,1360 Z" fill="rgba(255,255,255,0.85)" />
+          <rect x="496" y="1408" width="88" height="16" rx="4" fill="#2b2b30" />
+        </svg>
+      </div>
+      <div id="pv-fx" data-layout-ignore></div>
+      <div id="pv-spark" data-layout-ignore><div id="pv-glow"></div><div id="pv-rays"><div class="pv-ray"></div><div class="pv-ray" style="transform:rotate(60deg)"></div><div class="pv-ray" style="transform:rotate(120deg)"></div></div></div>
+      <div id="pv-fw" data-layout-ignore></div>
+    </div>
+    <div id="hk-label">CM DE PAVIO ATÉ OS FOGOS</div>
+    <div id="hk-cnt"></div>
+    <div id="pv-flash" data-layout-ignore></div>
+    <div id="hk-flood" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      function rng(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      var R = rng(2024), tl = gsap.timeline({ paused: true }), NS = "http://www.w3.org/2000/svg";
+      var T = {}; for (var v = 28; v >= 0; v--) T[v] = v === 28 ? 0 : 1.6 + 5.4 * (1 - Math.pow(v / 28, 0.55));
+      var T0 = T[0];
+      var cnt = document.getElementById("hk-cnt");
+      for (var n = 28; n >= 0; n--) {
+        var e = document.createElement("div"); e.className = "hk-n" + (n === 2 ? " hot" : n <= 1 ? " max" : ""); e.id = "hk-n" + n;
+        e.textContent = n; if (n === 28) e.style.opacity = "1"; cnt.appendChild(e);
+      }
+      for (n = 27; n >= 0; n--) {
+        tl.fromTo("#hk-n" + (n + 1), { opacity: 1 }, { opacity: 0, duration: 0.001, immediateRender: false }, T[n]);
+        tl.fromTo("#hk-n" + n, { opacity: 0 }, { opacity: 1, duration: 0.001, immediateRender: false }, T[n]);
+        tl.fromTo("#hk-n" + n, { scale: n <= 2 ? 1.35 : 1.16 }, { scale: 1, duration: n <= 2 ? 0.24 : 0.14, ease: "power2.out", immediateRender: false }, T[n]);
+      }
+      function shake(sel, pts, t, step) {
+        var px = 0, py = 0;
+        pts.forEach(function (d, i) {
+          tl.fromTo(sel, { x: px, y: py }, { x: d[0], y: d[1], duration: step, ease: "none", immediateRender: false }, t + i * step);
+          px = d[0]; py = d[1];
+        });
+      }
+      tl.fromTo("#hk-stage", { scale: 1.15 }, { scale: 1, duration: 1.5, ease: "power2.out" }, 0);
+      tl.fromTo("#hk-stage", { scale: 1 }, { scale: 1.05, duration: T0 - 1.5, ease: "sine.in", immediateRender: false }, 1.5);
+
+      // burn schedule: the spark covers 1/28 of the fuse per centimetre on the counter
+      var TS = {}; for (v = 0; v <= 28; v++) TS[v] = T[v]; TS[28] = 0.55;
+      function tAt(f) { var x = 28 * (1 - f), a = Math.floor(x), b = Math.min(28, a + 1); return a === b ? TS[a] : TS[b] + (TS[a] - TS[b]) * (b - x); }
+      var path = document.getElementById("pv-path"), L = path.getTotalLength(), N = 170, P = [];
+      for (var i = 0; i <= N; i++) { var q = path.getPointAtLength(L * i / N); P.push([q.x, q.y]); }
+      var ash = document.getElementById("pv-ash");
+      for (i = 0; i < N; i++) {
+        var ln = document.createElementNS(NS, "line");
+        ln.setAttribute("x1", P[i][0]); ln.setAttribute("y1", P[i][1]); ln.setAttribute("x2", P[i + 1][0]); ln.setAttribute("y2", P[i + 1][1]);
+        ln.setAttribute("stroke", "#ffd9a0"); ln.setAttribute("stroke-width", 12); ln.setAttribute("stroke-linecap", "round"); ln.setAttribute("opacity", 0);
+        ash.appendChild(ln);
+        var tb = tAt((i + 0.5) / N);
+        tl.fromTo(ln, { opacity: 0 }, { opacity: 1, duration: 0.02, immediateRender: false }, tb);
+        tl.fromTo(ln, { attr: { stroke: "#ffd9a0" } }, { attr: { stroke: "#2b2522" }, duration: 0.55, ease: "power1.out", immediateRender: false }, tb + 0.02);
+      }
+      // spark: ignition, travel, rays spin
+      tl.fromTo("#pv-spark", { x: P[0][0], y: P[0][1], opacity: 0, scale: 2.5 }, { x: P[0][0], y: P[0][1], opacity: 1, scale: 1, duration: 0.4, ease: "power3.out" }, 0.1);
+      for (i = 0; i < N; i++) {
+        var t1 = tAt(i / N), t2 = tAt((i + 1) / N);
+        tl.fromTo("#pv-spark", { x: P[i][0], y: P[i][1] }, { x: P[i + 1][0], y: P[i + 1][1], duration: Math.max(0.005, t2 - t1), ease: "none", immediateRender: false }, t1);
+      }
+      tl.fromTo("#pv-rays", { rotation: 0 }, { rotation: 1440, duration: T0, ease: "none" }, 0);
+      tl.fromTo("#pv-glow", { scale: 0.85 }, { scale: 1.2, duration: 0.07, ease: "sine.inOut", yoyo: true, repeat: 97 }, 0.1);
+      tl.fromTo("#pv-spark", { opacity: 1 }, { opacity: 0, duration: 0.08, immediateRender: false }, T0 + 0.02);
+      // sparks and smoke shed by the burning point
+      var fx = document.getElementById("pv-fx");
+      function posAt(t) { // spark position at time t
+        var lo = 0, hi = 1; for (var it = 0; it < 18; it++) { var mid = (lo + hi) / 2; if (tAt(mid) < t) lo = mid; else hi = mid; }
+        var k = Math.min(N - 1, Math.floor(lo * N)), f = lo * N - k; return [P[k][0] + (P[k + 1][0] - P[k][0]) * f, P[k][1] + (P[k + 1][1] - P[k][1]) * f];
+      }
+      for (var t = 0.55; t < T0; t += 0.045) {
+        var pp = posAt(t);
+        for (var m = 0; m < 2; m++) {
+          var p = document.createElement("div"); p.className = "pv-p"; fx.appendChild(p);
+          var a = R() * Math.PI * 2, d = 26 + R() * 70, dur = 0.28 + R() * 0.25;
+          tl.fromTo(p, { x: pp[0], y: pp[1], opacity: 1 }, { x: pp[0] + Math.cos(a) * d, y: pp[1] + Math.sin(a) * d * 0.7 + 34, opacity: 0, duration: dur, ease: "power2.out", immediateRender: false }, t);
+        }
+      }
+      for (t = 0.6; t < T0; t += 0.24) {
+        var ps = posAt(t), sm = document.createElement("div"); sm.className = "pv-smoke"; fx.appendChild(sm);
+        tl.fromTo(sm, { x: ps[0], y: ps[1], opacity: 0.7, scale: 0.6 }, { x: ps[0] + (R() - 0.5) * 60, y: ps[1] - 150, opacity: 0, scale: 2.4, duration: 1.3, ease: "power1.out", immediateRender: false }, t);
+      }
+      // ignition and launch
+      tl.fromTo("#pv-flame", { opacity: 0, scaleY: 0.2 }, { opacity: 1, scaleY: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, T0);
+      tl.fromTo("#pv-flame", { scaleX: 1 }, { scaleX: 0.8, duration: 0.05, ease: "none", yoyo: true, repeat: 9, immediateRender: false }, T0 + 0.12);
+      shake("#pv-rocket", [[4, 0], [-4, 2], [3, -1], [-3, 1], [0, 0]], T0, 0.035);
+      var LT = T0 + 0.2, BT = LT + 0.48;
+      tl.fromTo("#pv-rocket", { y: 0 }, { y: -340, duration: BT - LT, ease: "power2.in", immediateRender: false }, LT);
+      tl.fromTo("#pv-trail", { opacity: 1, scaleY: 0 }, { opacity: 1, scaleY: 1, duration: BT - LT, ease: "power2.in", immediateRender: false }, LT);
+      tl.fromTo("#pv-rocket", { opacity: 1 }, { opacity: 0, duration: 0.03, immediateRender: false }, BT);
+      for (m = 0; m < 9; m++) {
+        var sb = document.createElement("div"); sb.className = "pv-smoke"; fx.appendChild(sb);
+        tl.fromTo(sb, { x: 540, y: 1430, opacity: 0.9, scale: 1 }, { x: 540 + (m - 4) * 60, y: 1430 - 40 - R() * 60, opacity: 0, scale: 3.4, duration: 1.2, ease: "power2.out", immediateRender: false }, LT);
+      }
+      // firework burst at the top
+      var fw = document.getElementById("pv-fw"), cols = ["#ffffff", "{{ACC_LIGHT}}", "{{ACC}}"];
+      [[40, 340, 0], [26, 200, 2]].forEach(function (ring, ri) {
+        for (var k = 0; k < ring[0]; k++) {
+          var arm = document.createElement("div"); arm.className = "fw-arm"; arm.style.transform = "rotate(" + (k * 360 / ring[0] + ri * 7) + "deg)";
+          var fp = document.createElement("div"); fp.className = "fw-p"; fp.style.background = "linear-gradient(0deg, " + cols[(k + ri) % 3] + ", rgba(255,255,255,0))";
+          arm.appendChild(fp); fw.appendChild(arm);
+          var rr = ring[1] * (0.85 + R() * 0.3);
+          tl.fromTo(fp, { y: 0, opacity: 1, scaleY: 2.2 }, { y: -rr, opacity: 1, scaleY: 0.8, duration: 0.55, ease: "power3.out", immediateRender: false }, BT + ri * 0.06);
+          tl.fromTo(fp, { opacity: 1 }, { opacity: 0, duration: 0.5, ease: "power1.in", immediateRender: false }, BT + 0.55 + ri * 0.06);
+        }
+      });
+      tl.fromTo("#pv-fw", { y: 0 }, { y: 90, duration: 1.2, ease: "power1.in", immediateRender: false }, BT + 0.2);
+      for (var k2 = 0; k2 < 26; k2++) {
+        var tw = document.createElement("div"); tw.className = "fw-tw"; var ra = R() * Math.PI * 2, rd = 80 + R() * 300;
+        tw.style.left = (Math.cos(ra) * rd) + "px"; tw.style.top = (Math.sin(ra) * rd) + "px"; fw.appendChild(tw);
+        tl.fromTo(tw, { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "steps(1)", yoyo: true, repeat: 3, immediateRender: false }, BT + 0.45 + R() * 0.4);
+      }
+      tl.fromTo("#pv-flash", { opacity: 0.45 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, BT);
+      shake("#hk-stage", [[12, -9], [-10, 7], [7, 5], [-4, -3], [0, 0]], BT, 0.045);
+      tl.fromTo("#hk-flood", { scale: 0, opacity: 1 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power3.in", immediateRender: false }, 8.3);
+      window.__timelines["hook"] = tl;
+    })();
+  </script>
+</template>

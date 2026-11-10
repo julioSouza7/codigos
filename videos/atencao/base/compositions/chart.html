@@ -1,0 +1,118 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    #ch-flash { position: absolute; inset: 0; background: #f1efe9; }
+    #ch-card { position: absolute; left: 90px; top: 560px; width: 900px; height: 800px; border-radius: 24px; opacity: 0;
+      background: linear-gradient(180deg, #f5f3ee 0%, #ecebe5 100%); box-shadow: 0 34px 90px rgba(0,0,0,0.65), 0 0 0 2px rgba(255,255,255,0.12);
+      transform-origin: 797px 160px; }
+    #ch-head { position: absolute; left: 54px; top: 44px; display: flex; align-items: center; gap: 14px;
+      font-family: var(--font-display); font-size: 62px; line-height: 1; color: #121214; }
+    #ch-tri { width: 46px; height: 40px; }
+    #ch-tag { position: absolute; right: 52px; top: 70px; font-family: var(--font-mono); font-weight: 700; font-size: 17px; letter-spacing: 0.18em; color: #5f5c56; }
+    .ch-grid { position: absolute; left: 110px; width: 740px; height: 2px; background: #dedcd5; }
+    #ch-base { position: absolute; left: 110px; top: 650px; width: 740px; height: 5px; border-radius: 3px; background: #1b1b1f; }
+    #ch-ylab { position: absolute; left: 34px; top: 400px; font-family: var(--font-mono); font-weight: 700; font-size: 16px; letter-spacing: 0.3em;
+      color: #6f6c66; transform: rotate(-90deg); transform-origin: 50% 50%; }
+    .ch-bar { position: absolute; width: 70px; border-radius: 7px 7px 0 0; background: #26262e; transform-origin: 50% 100%; overflow: hidden; }
+    .ch-bar.last { background: linear-gradient(180deg, {{ACC_LIGHT}} 0%, {{ACC}} 22%, {{ACC_DEEP}} 100%); box-shadow: 0 0 30px rgba({{ACC_RGB}},0.45); }
+    #ch-line { position: absolute; left: 0; top: 0; width: 900px; height: 800px; overflow: visible; clip-path: inset(0% 100% 0% 0%); }
+    #ch-tip { position: absolute; left: 786px; top: 149px; width: 22px; height: 22px; border-radius: 50%; background: var(--acc);
+      box-shadow: 0 0 0 5px #f5f3ee, 0 0 24px rgba({{ACC_RGB}},0.9); opacity: 0; }
+    #ch-tipring { position: absolute; left: 767px; top: 130px; width: 60px; height: 60px; border-radius: 50%; border: 4px solid var(--acc); opacity: 0; }
+    #ch-track { position: absolute; left: 54px; top: 704px; width: 792px; height: 9px; border-radius: 5px; background: #dcdad3; }
+    #ch-fill { position: absolute; left: 54px; top: 704px; width: 792px; height: 9px; border-radius: 5px; background: var(--acc); transform-origin: 0 50%; }
+    #ch-att { position: absolute; left: 54px; top: 730px; font-family: var(--font-mono); font-weight: 700; font-size: 18px; letter-spacing: 0.32em; color: #3a3935; }
+    /* theme extras */
+    #ch-x { position: absolute; left: 0; top: 0; width: 900px; height: 800px; }
+    .ch-spk { position: absolute; left: 0; top: 0; width: 6px; height: 6px; border-radius: 50%; background: #fff3d6; opacity: 0;
+      box-shadow: 0 0 8px {{ACC}}; }
+    #ch-head-spark { position: absolute; left: -20px; top: -20px; width: 40px; height: 40px; border-radius: 50%; opacity: 0;
+      background: radial-gradient(circle, #ffffff 0%, #fff1cf 25%, {{ACC_LIGHT}} 45%, rgba({{ACC_RGB}},0.5) 62%, rgba({{ACC_RGB}},0) 75%); }
+    #ch-wave { position: absolute; left: -70px; top: -2px; width: 210px; height: 22px; }
+    #ch-mini { position: absolute; left: 767px; top: 40px; width: 60px; height: 130px; opacity: 0; transform-origin: 30px 130px; }
+  </style>
+  <div id="root" data-composition-id="chart" data-width="1080" data-height="1920">
+    <div id="ch-card">
+      <div id="ch-head">VENDAS<svg id="ch-tri" viewBox="0 0 46 40"><path d="M23,2 L44,38 L2,38 Z" fill="{{ACC}}" /></svg></div>
+      <div id="ch-tag">ATENÇÃO × VENDAS</div>
+      <div class="ch-grid" style="top:170px"></div><div class="ch-grid" style="top:290px"></div>
+      <div class="ch-grid" style="top:410px"></div><div class="ch-grid" style="top:530px"></div>
+      <div id="ch-ylab">VENDAS</div>
+      <div id="ch-bars"></div>
+      <div id="ch-base"></div>
+      <svg id="ch-line" viewBox="0 0 900 800">
+        <path id="ch-path" d="M140,612 C 330,598 500,540 620,430 S 760,236 797,160" fill="none" stroke="{{ACC}}" stroke-width="9" stroke-linecap="round" />
+      </svg>
+      <div id="ch-x"></div>
+      <div id="ch-tipring"></div><div id="ch-tip"></div>
+      <div id="ch-track"></div><div id="ch-fill"></div>
+      <div id="ch-att">ATENÇÃO →</div>
+    </div>
+    <div id="ch-flash" data-layout-ignore></div>
+  </div>
+  <script>
+    (function () {
+      var THEME = "{{THEME}}";
+      function rng(a) { return function () { a |= 0; a = (a + 0x6d2b79f5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a);
+        t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+      var R = rng(99), tl = gsap.timeline({ paused: true });
+      var H = [0.1, 0.15, 0.22, 0.32, 0.47, 0.66, 0.95], bars = document.getElementById("ch-bars");
+      H.forEach(function (h, i) {
+        var b = document.createElement("div"); b.className = "ch-bar" + (i === 6 ? " last" : ""); b.id = "ch-b" + i;
+        var ht = Math.round(h * 480); b.style.cssText = "left:" + (128 + i * 105.7).toFixed(1) + "px;top:" + (650 - ht) + "px;height:" + ht + "px";
+        if (i === 6 && THEME === "copo") b.innerHTML = '<svg id="ch-wave" viewBox="0 0 210 22"><path d="M0,11 Q17.5,0 35,11 T70,11 T105,11 T140,11 T175,11 T210,11 L210,22 L0,22 Z" fill="rgba(255,255,255,0.55)"/></svg>';
+        bars.appendChild(b);
+      });
+      tl.fromTo("#ch-flash", { opacity: 1 }, { opacity: 0, duration: 0.22, ease: "power2.out" }, 0);
+      tl.fromTo("#ch-card", { opacity: 0, scale: 0.86, y: 70 }, { opacity: 1, scale: 1, y: 0, duration: 0.34, ease: "power3.out" }, 0.02);
+      H.forEach(function (h, i) {
+        tl.fromTo("#ch-b" + i, { scaleY: 0 }, { scaleY: 1, duration: 0.36, ease: "back.out(1.5)", immediateRender: false }, 0.28 + i * 0.12);
+      });
+      tl.fromTo("#ch-fill", { scaleX: 0 }, { scaleX: 0.93, duration: 2.0, ease: "power1.inOut" }, 0.25);
+      var D0 = 1.0, D1 = 2.15;  // line draw window
+      tl.fromTo("#ch-line", { clipPath: "inset(0% 100% 0% 0%)" }, { clipPath: "inset(0% 0% 0% 0%)", duration: D1 - D0, ease: "power1.inOut", immediateRender: false }, D0);
+      tl.fromTo("#ch-tip", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(3)", immediateRender: false }, D1);
+      tl.fromTo("#ch-tipring", { opacity: 0.9, scale: 0.4 }, { opacity: 0, scale: 1.8, duration: 0.6, ease: "power2.out", immediateRender: false }, D1);
+      // head of the line follows the reveal edge (x) on the curve
+      var path = document.getElementById("ch-path"), L = path.getTotalLength(), pts = [];
+      for (var i = 0; i <= 200; i++) { var p = path.getPointAtLength(L * i / 200); pts.push([p.x, p.y]); }
+      function atX(x) { for (var j = 1; j < pts.length; j++) if (pts[j][0] >= x) return pts[j]; return pts[pts.length - 1]; }
+      var ease = gsap.parseEase("power1.inOut"), x0 = 131, steps = 24;
+      if (THEME === "pavio") {
+        var x = document.getElementById("ch-x"), hs = document.createElement("div"); hs.id = "ch-head-spark"; x.appendChild(hs);
+        var prev = atX(x0 + 9);
+        tl.fromTo(hs, { opacity: 0 }, { opacity: 1, duration: 0.05, immediateRender: false }, D0);
+        for (var k = 1; k <= steps; k++) {
+          var q = atX(x0 + 9 + (806 - x0 - 9) * ease(k / steps)), t = D0 + (D1 - D0) * (k - 1) / steps;
+          tl.fromTo(hs, { x: prev[0], y: prev[1] }, { x: q[0], y: q[1], duration: (D1 - D0) / steps, ease: "none", immediateRender: false }, t);
+          for (var m = 0; m < 3; m++) {
+            var sp = document.createElement("div"); sp.className = "ch-spk"; x.appendChild(sp);
+            var a = R() * Math.PI * 2, dd = 30 + R() * 60;
+            tl.fromTo(sp, { x: q[0], y: q[1], opacity: 1 }, { x: q[0] + Math.cos(a) * dd, y: q[1] + Math.sin(a) * dd + 30, opacity: 0, duration: 0.35, ease: "power2.out", immediateRender: false }, t + 0.02);
+          }
+          prev = q;
+        }
+        tl.fromTo(hs, { opacity: 1, scale: 1 }, { opacity: 0, scale: 2.2, duration: 0.3, ease: "power2.out", immediateRender: false }, D1);
+        for (k = 0; k < 16; k++) {
+          var sp2 = document.createElement("div"); sp2.className = "ch-spk"; sp2.style.width = "8px"; sp2.style.height = "8px"; x.appendChild(sp2);
+          var a2 = (k / 16) * Math.PI * 2;
+          tl.fromTo(sp2, { x: 797, y: 160, opacity: 1 }, { x: 797 + Math.cos(a2) * 110, y: 160 + Math.sin(a2) * 110 + 20, opacity: 0, duration: 0.55, ease: "power3.out", immediateRender: false }, D1);
+        }
+      }
+      if (THEME === "copo") {
+        tl.fromTo("#ch-wave", { x: 0 }, { x: 70, duration: 0.45, ease: "none", repeat: 5, immediateRender: false }, 0.3);
+      }
+      if (THEME === "balao") {
+        var mb = document.createElement("div"); mb.id = "ch-mini"; document.getElementById("ch-x").appendChild(mb);
+        mb.innerHTML = '<svg viewBox="0 0 60 130" width="60" height="130"><path d="M30,74 C22,72 3,56 3,32 C3,14 15,2 30,2 C45,2 57,14 57,32 C57,56 38,72 30,74 Z" fill="{{ACC}}"/>' +
+          '<ellipse cx="20" cy="22" rx="5" ry="10" transform="rotate(-25 20 22)" fill="#fff" opacity="0.55"/><path d="M26,80 L30,73 L34,80 Z" fill="{{ACC_DEEP}}"/>' +
+          '<path d="M30,80 C 24,96 36,110 30,130" fill="none" stroke="#3a3935" stroke-width="2"/></svg>';
+        tl.fromTo(mb, { opacity: 0, scale: 0.2, y: 0 }, { opacity: 1, scale: 1, y: -10, duration: 0.3, ease: "back.out(2.5)", immediateRender: false }, D1 + 0.05);
+        tl.fromTo(mb, { rotation: -6 }, { rotation: 6, duration: 0.3, ease: "sine.inOut", yoyo: true, repeat: 1, immediateRender: false }, D1 + 0.2);
+      }
+      // zoom through the tip into the closing line
+      tl.fromTo("#ch-card", { scale: 1, filter: "blur(0px)", opacity: 1 }, { scale: 6, filter: "blur(10px)", opacity: 0, duration: 0.32, ease: "power3.in", immediateRender: false }, 2.62);
+      window.__timelines["chart"] = tl;
+    })();
+  </script>
+</template>

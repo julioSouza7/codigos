@@ -1,0 +1,52 @@
+<template>
+  <style>
+    #root { position: absolute; inset: 0; overflow: hidden; }
+    .wd { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+    .bg-acc { background: radial-gradient(ellipse 78% 58% at 50% 46%, {{ACC_BRIGHT}} 0%, {{ACC}} 58%, {{ACC_DEEP}} 135%); }
+    .bg-cream { background: radial-gradient(ellipse 72% 56% at 50% 46%, #f8f7f2 0%, #ecebe5 55%, #c9c7c0 125%); }
+    .bg-none { background: transparent; }
+    .wt { font-family: var(--font-display); line-height: 1; white-space: nowrap; text-align: center; letter-spacing: -0.01em;
+      transform-origin: 50% 55%; padding: 0 20px; }
+    .c-ink { color: #0b0b0c; } .c-acc { color: var(--acc-text); } .c-white { color: #f4f2ee; }
+    .glow { text-shadow: 0 0 24px rgba(255,255,255,0.35), 0 0 70px rgba({{ACC_RGB}},0.55); }
+    .dot { color: var(--acc); }
+    .c-acc .dot { color: var(--acc-text); }
+    .wd-num { position: relative; width: 1080px; height: 560px; transform-origin: 50% 50%; }
+    .wn { position: absolute; left: 0; top: 0; width: 1080px; text-align: center; font-family: var(--font-display); font-size: 560px;
+      line-height: 1; color: #f7f6f2; opacity: 0; text-shadow: 0 0 30px rgba({{ACC_RGB}},0.9), 0 0 90px rgba({{ACC_RGB}},0.55); }
+    .wd-sec { margin-top: 10px; font-family: var(--font-mono); font-weight: 700; font-size: 36px; letter-spacing: 0.5em; padding-left: 0.5em;
+      color: #8f8d88; opacity: 0; }
+    .wd-tl { font-family: var(--font-mono); font-weight: 700; font-size: 26px; letter-spacing: 0.3em; color: #bdbab4; opacity: 0;
+      display: flex; align-items: center; gap: 14px; margin-bottom: 10px; }
+    .wd-tdot { width: 13px; height: 13px; border-radius: 50%; background: var(--acc); display: inline-block; }
+    .wd-tbox { position: relative; width: 1080px; height: 230px; }
+    .wd-tn { position: absolute; left: 0; top: 0; width: 1080px; text-align: center; font-family: var(--font-mono); font-weight: 700;
+      font-size: 196px; line-height: 230px; color: #f7f6f2; opacity: 0; text-shadow: 0 0 22px rgba(255,255,255,0.45), 0 0 60px rgba(255,255,255,0.18); }
+    .wd-att { display: flex; flex-direction: column; align-items: center; }
+    #wd-ul { height: 13px; margin-top: 10px; border-radius: 3px; background: var(--acc); transform-origin: 0 50%;
+      box-shadow: 0 0 22px rgba({{ACC_RGB}},0.7); }
+    .wd-upbox { display: flex; flex-direction: column; align-items: center; }
+    #wd-arrow { width: 120px; height: 130px; margin-bottom: 26px; opacity: 0; }
+  </style>
+  <div id="root" data-composition-id="words" data-width="1080" data-height="1920">
+{{DIVS}}
+  </div>
+  <script>
+    (function () {
+      var tl = gsap.timeline({ paused: true });
+      function pop(sel, s, d) {
+        tl.fromTo(sel, { opacity: 0, scale: 1.24, filter: "blur(12px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.12, ease: "power3.out", immediateRender: false }, s);
+        tl.fromTo(sel, { scale: 1 }, { scale: 1.045, duration: Math.max(0.1, d - 0.12), ease: "sine.out", immediateRender: false }, s + 0.12);
+      }
+      function whip(sel, s, d) {
+        tl.fromTo(sel, { opacity: 0, x: -320, filter: "blur(22px)" }, { opacity: 1, x: 0, filter: "blur(0px)", duration: 0.14, ease: "power4.out", immediateRender: false }, s);
+        tl.fromTo(sel, { scale: 1 }, { scale: 1.04, duration: Math.max(0.1, d - 0.14), ease: "sine.out", immediateRender: false }, s + 0.14);
+      }
+      function numIn(sel, s, d) {
+        tl.fromTo(sel, { opacity: 0, y: 60, scale: 0.82, filter: "blur(8px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: d || 0.3, ease: "back.out(1.8)", immediateRender: false }, s);
+      }
+      {{JS}}
+      window.__timelines["words"] = tl;
+    })();
+  </script>
+</template>

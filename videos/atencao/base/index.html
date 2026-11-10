@@ -1,0 +1,56 @@
+<!doctype html>
+<html
+  lang="pt-BR"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"color-ground","type":"color","label":"Fundo","default":"#0A0A0B"},
+    {"id":"color-ink","type":"color","label":"Texto","default":"#F4F2EE"},
+    {"id":"color-accent","type":"color","label":"Destaque","default":"{{ACC}}"},
+    {"id":"font-display","type":"string","label":"Fonte de título","default":"Archivo Black"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* LOOK: ground #0A0A0B, ink #F4F2EE, cream #F1EFE9, one accent {{ACC}} ({{THEME_NAME}}).
+         Archivo Black for every word, Space Mono for labels/timers. One word per beat, hard colour floods
+         (accent / cream / black). Hook: {{THEME_NAME}} countdown 28 -> 0 instead of dominoes. */
+      :root {
+        --color-ground: #0a0a0b; --color-ink: #f4f2ee; --color-accent: {{ACC}};
+        --acc: {{ACC}}; --acc-deep: {{ACC_DEEP}}; --acc-light: {{ACC_LIGHT}}; --acc-text: {{ACC_TEXT}};
+        --cream: #f1efe9; --font-display: "Archivo Black", sans-serif; --font-mono: "Space Mono", monospace;
+        --fg: var(--color-ink); --brand: var(--color-accent); --font-body: Inter, sans-serif;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--color-ground); }
+      #root { position: relative; width: 100%; height: 100%; background: var(--color-ground); overflow: hidden; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="24" data-fps="60" data-width="1080" data-height="1920">
+      <div id="ambient" style="z-index:1" data-composition-id="ambient" data-composition-src="compositions/ambient.html"
+        data-start="0" data-duration="24" data-track-index="0" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+
+      <div id="hook" style="z-index:2" data-composition-id="hook" data-composition-src="compositions/hook.html"
+        data-start="0" data-duration="8.6" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="words" style="z-index:2" data-composition-id="words" data-composition-src="compositions/words.html"
+        data-start="8.6" data-duration="8.3" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="chart" style="z-index:2" data-composition-id="chart" data-composition-src="compositions/chart.html"
+        data-start="16.9" data-duration="2.95" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="cta" style="z-index:2" data-composition-id="cta" data-composition-src="compositions/cta.html"
+        data-start="19.85" data-duration="4.15" data-track-index="1" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+
+      <div id="rec" style="z-index:10" data-composition-id="rec" data-composition-src="compositions/rec.html"
+        data-start="0" data-duration="19.85" data-track-index="2" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+      <div id="grain" style="z-index:50" data-composition-id="grain" data-composition-src="compositions/grain.html"
+        data-start="0" data-duration="24" data-track-index="3" data-track-kind="graphics" data-width="1080" data-height="1920"></div>
+    </div>
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+  </body>
+</html>
