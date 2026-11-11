@@ -2,7 +2,7 @@
 
 Três versões do vídeo "dominós até o gigante", cada uma com outro objeto na abertura e outra cor.
 O resto segue a estrutura do original: palavras na tela, cronômetro, gráfico de vendas e frase final.
-Formato 1080×1920, 60 fps, 24 s, HyperFrames (HTML + GSAP → MP4), sem áudio.
+Formato 1080×1920, 60 fps, 24 s, HyperFrames (HTML + GSAP → MP4), com trilha e efeitos sonoros gerados por código (`sound.py`).
 
 | Versão | Cor | Abertura (0–8,6 s) | Frase |
 | --- | --- | --- | --- |
@@ -13,11 +13,20 @@ Formato 1080×1920, 60 fps, 24 s, HyperFrames (HTML + GSAP → MP4), sem áudio.
 Depois: AINDA AQUI. → "VOCÊ ESTÁ AQUI HÁ 00:13" → ISSO É ATENÇÃO. → ISSO QUE IMPULSIONA ↑VENDAS → gráfico
 (com um detalhe do tema: balãozinho, barra com água, linha que pega fogo) → PRENDA A ATENÇÃO. VENDA MAIS ↑.
 
+## Som
+
+`sound.py` gera `assets/mix.wav` (48 kHz, −14 LUFS) a cada build, com os mesmos tempos das cenas:
+trilha a 150 BPM com as palavras caindo na batida (pausa no cronômetro, virada antes de VENDAS),
+um som por contagem (tique que sobe de tom), sopro e rangido do balão / gota que fica mais aguda conforme o copo enche /
+chiado do pavio que acompanha a faísca da esquerda para a direita, e o estouro, o transbordamento ou os fogos no tempo 7,0 s.
+Precisa de `numpy` e `scipy`.
+
 ## Estrutura
 
 - `base/`: cenas comuns (`ambient`, `rec`, `chart`, `cta`, `grain`), `index.html` e o molde das palavras (`words.tpl.html`).
 - `hooks/`: a abertura de cada versão.
-- `build.py`: monta os 3 projetos com a cor e as palavras de cada um.
+- `build.py`: monta os 3 projetos com a cor, as palavras e o áudio de cada um.
+- `sound.py`: trilha e efeitos sincronizados.
 
 ## Gerar e renderizar
 

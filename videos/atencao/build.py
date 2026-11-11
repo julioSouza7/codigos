@@ -1,6 +1,7 @@
 """Build the three attention videos (balloon, glass of water, fuse) from the shared base.
 Usage: python3 build.py <out_dir> [theme ...]"""
 import json, os, shutil, sys
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 # Archivo Black advance widths at 100 px (measured in Chromium)
@@ -22,30 +23,34 @@ def mix(h, to, t):
     a = [int(h.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4)]; b = [int(to.lstrip("#")[i:i + 2], 16) for i in (0, 2, 4)]
     return "#%02x%02x%02x" % tuple(round(a[i] + (b[i] - a[i]) * t) for i in range(3))
 
+# words on a 150 BPM grid (beat 0.4 s) starting at 8.6 s, so every cut lands on the music
+def BEATS(th):
+    return [  # (abs start, abs end, bg, colour class, text, anim, cap)
+        (8.6, 9.0, "acc", "ink", "VOCÊ", "pop", 210),
+        (9.0, 9.4, "cream", "acc", "FICOU", "whip", 210),
+        (9.4, 10.2, "none", "white", "#SEC", "num", 0),
+        (10.2, 10.6, "acc", "ink", th["verb"], "pop", 200),
+        (10.6, 11.0, "cream", "acc", th["obj"], "whip", 200),
+        (11.0, 11.6, "none", "white", th["act"], "pop", 200),
+        (11.6, 12.0, "acc", "ink", "AINDA", "pop", 210),
+        (12.0, 12.6, "cream", "acc", "AQUI.", "aqui", 230),
+        (12.6, 13.2, "none", "white", "#TIMER", "timer", 0),
+        (13.2, 13.4, "acc", "ink", "ISSO", "pop", 220),
+        (13.4, 13.8, "cream", "acc", "É", "pop", 420),
+        (13.8, 14.6, "none", "white", "ATENÇÃO.", "att", 200),
+        (14.6, 15.0, "acc", "ink", "ISSO", "pop", 220),
+        (15.0, 15.4, "cream", "acc", "QUE", "whip", 230),
+        (15.4, 16.0, "none", "white", "IMPULSIONA", "imp", 200),
+        (16.0, 16.8, "acc", "ink", "VENDAS", "up", 210),
+    ]
+
 def size(word, cap=200, box=930):
     return min(cap, int(box * 100 / W100[word]))
 
 def words_html(th):
     """one beat per clip; times are local to the words scene (starts at 8.6 s)"""
     B = 8.6
-    beats = [  # (abs start, abs end, bg, colour class, text, anim, cap)
-        (8.60, 8.95, "acc", "ink", "VOCÊ", "pop", 210),
-        (8.95, 9.35, "cream", "acc", "FICOU", "whip", 210),
-        (9.35, 10.15, "none", "white", "#SEC", "num", 0),
-        (10.15, 10.55, "acc", "ink", th["verb"], "pop", 200),
-        (10.55, 10.95, "cream", "acc", th["obj"], "whip", 200),
-        (10.95, 11.55, "none", "white", th["act"], "pop", 200),
-        (11.55, 11.95, "acc", "ink", "AINDA", "pop", 210),
-        (11.95, 12.65, "cream", "acc", "AQUI.", "aqui", 230),
-        (12.65, 13.20, "none", "white", "#TIMER", "timer", 0),
-        (13.20, 13.50, "acc", "ink", "ISSO", "pop", 220),
-        (13.50, 13.75, "cream", "acc", "É", "pop", 420),
-        (13.75, 14.55, "none", "white", "ATENÇÃO.", "att", 200),
-        (14.55, 15.00, "acc", "ink", "ISSO", "pop", 220),
-        (15.00, 15.30, "cream", "acc", "QUE", "whip", 230),
-        (15.30, 16.05, "none", "white", "IMPULSIONA", "imp", 200),
-        (16.05, 16.95, "acc", "ink", "VENDAS", "up", 210),
-    ]
+    beats = BEATS(th)
     divs, js = [], []
     for i, (a, b, bg, col, text, anim, cap) in enumerate(beats):
         s, d, wid = round(a - B, 3), round(b - a, 3), "wd-%d" % i
@@ -86,7 +91,7 @@ def words_html(th):
             js.append('numIn("#wd-n7", %s, 0.18); tl.fromTo("#wd-n7", { opacity: 1 }, { opacity: 0, duration: 0.001, immediateRender: false }, %s);'
                       ' numIn("#wd-n8", %s); tl.fromTo(".wd-sec", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.25, ease: "power2.out", immediateRender: false }, %s);'
                       ' tl.fromTo(".wd-num", { scale: 1 }, { scale: 1.06, duration: 0.6, ease: "sine.out", immediateRender: false }, %s);'
-                      % (s, round(s + 0.22, 3), round(s + 0.22, 3), round(s + 0.25, 3), round(s + 0.22, 3)))
+                      % (s, round(s + 0.2, 3), round(s + 0.2, 3), round(s + 0.23, 3), round(s + 0.2, 3)))
         if anim == "timer":
             js.append('tl.fromTo(".wd-tl", { opacity: 0, y: 14 }, { opacity: 1, y: 0, duration: 0.2, ease: "power2.out", immediateRender: false }, %s);' % s)
             js.append('tl.fromTo("#wd-t12", { opacity: 0, scale: 0.6, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.16, ease: "power3.out", immediateRender: false }, %s);' % s)
@@ -102,8 +107,9 @@ def build(out, key):
     rep = {"{{ACC}}": th["acc"], "{{ACC_DEEP}}": th["deep"], "{{ACC_LIGHT}}": th["light"], "{{ACC_TEXT}}": th["text"],
            "{{ACC_RGB}}": rgb(th["acc"]), "{{ACC_BRIGHT}}": mix(th["acc"], "#ffffff", 0.14), "{{THEME}}": key,
            "{{THEME_NAME}}": th["name"],
+           "{{CREAM}}": json.dumps([[b[0], b[1]] for b in BEATS(th) if b[2] == "cream"]),
            "{{REC_SPANS}}": "\n".join('      <span id="rc-%d" class="rc-t clip" data-start="%d" data-duration="%s">00:%02d</span>'
-                                      % (s, s, "0.85" if s == 19 else "1", s) for s in range(20))}
+                                      % (s, s, "0.8" if s == 19 else "1", s) for s in range(20))}
     d = os.path.join(out, key)
     shutil.rmtree(d, ignore_errors=True)
     os.makedirs(os.path.join(d, "compositions"))
@@ -123,6 +129,8 @@ def build(out, key):
             s = s.replace(a, b)
         assert "{{" not in s, (key, k, s[s.index("{{"):s.index("{{") + 40])
         open(os.path.join(d, k), "w", encoding="utf-8").write(s)
+    import sound
+    sound.render(key, os.path.join(d, "assets", "mix.wav"))
     print("built", d)
 
 if __name__ == "__main__":

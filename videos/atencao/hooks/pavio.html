@@ -1,6 +1,7 @@
 <template>
   <style>
     #root { position: absolute; inset: 0; overflow: hidden; }
+    #hk-cam { position: absolute; inset: 0; transform-origin: 540px 1000px; }
     #hk-stage { position: absolute; inset: 0; transform-origin: 540px 1000px; }
     #hk-label { position: absolute; left: 0; width: 1080px; top: 214px; text-align: center; font-family: var(--font-mono); font-weight: 700;
       font-size: 28px; letter-spacing: 0.3em; color: rgba(233,231,226,0.78); white-space: nowrap; }
@@ -31,7 +32,7 @@
     #hk-flood { position: absolute; left: -760px; top: -580px; width: 2600px; height: 2600px; border-radius: 50%; background: var(--acc); opacity: 0; }
   </style>
   <div id="root" data-composition-id="hook" data-width="1080" data-height="1920">
-    <div id="hk-stage">
+    <div id="hk-cam"><div id="hk-stage">
       <svg id="pv-svg" viewBox="0 0 1080 1920" data-layout-ignore>
         <rect x="0" y="1600" width="1080" height="2" fill="rgba(255,255,255,0.10)" />
         <path id="pv-path" d="M140,590 C 420,540 880,560 900,680 C 915,790 230,730 190,860 C 150,990 860,900 900,1050 C 930,1170 760,1300 700,1380 C 670,1420 620,1420 586,1405"
@@ -60,7 +61,7 @@
       <div id="pv-fx" data-layout-ignore></div>
       <div id="pv-spark" data-layout-ignore><div id="pv-glow"></div><div id="pv-rays"><div class="pv-ray"></div><div class="pv-ray" style="transform:rotate(60deg)"></div><div class="pv-ray" style="transform:rotate(120deg)"></div></div></div>
       <div id="pv-fw" data-layout-ignore></div>
-    </div>
+    </div></div>
     <div id="hk-label">CM DE PAVIO ATÉ OS FOGOS</div>
     <div id="hk-cnt"></div>
     <div id="pv-flash" data-layout-ignore></div>
@@ -78,11 +79,14 @@
         var e = document.createElement("div"); e.className = "hk-n" + (n === 2 ? " hot" : n <= 1 ? " max" : ""); e.id = "hk-n" + n;
         e.textContent = n; if (n === 28) e.style.opacity = "1"; cnt.appendChild(e);
       }
+      // rolling counter: the old number slides up and out, the new one rises in
       for (n = 27; n >= 0; n--) {
-        tl.fromTo("#hk-n" + (n + 1), { opacity: 1 }, { opacity: 0, duration: 0.001, immediateRender: false }, T[n]);
-        tl.fromTo("#hk-n" + n, { opacity: 0 }, { opacity: 1, duration: 0.001, immediateRender: false }, T[n]);
-        tl.fromTo("#hk-n" + n, { scale: n <= 2 ? 1.35 : 1.16 }, { scale: 1, duration: n <= 2 ? 0.24 : 0.14, ease: "power2.out", immediateRender: false }, T[n]);
+        var rd = Math.min(0.17, Math.max(0.05, (T[n] - T[n + 1]) * 0.7));
+        tl.fromTo("#hk-n" + (n + 1), { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -50, filter: "blur(6px)", duration: rd * 0.9, ease: "power2.in", immediateRender: false }, T[n]);
+        tl.fromTo("#hk-n" + n, { opacity: 0, y: 60, scale: n <= 2 ? 1.3 : 1.06, filter: "blur(6px)" },
+          { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: n <= 2 ? 0.3 : rd, ease: n <= 2 ? "back.out(2.2)" : "power3.out", immediateRender: false }, T[n]);
       }
+      tl.fromTo("#hk-cnt", { y: 0 }, { y: -8, duration: 1.1, ease: "sine.inOut", yoyo: true, repeat: 5 }, 0);
       function shake(sel, pts, t, step) {
         var px = 0, py = 0;
         pts.forEach(function (d, i) {
@@ -139,7 +143,7 @@
       tl.fromTo("#pv-flame", { opacity: 0, scaleY: 0.2 }, { opacity: 1, scaleY: 1, duration: 0.12, ease: "power2.out", immediateRender: false }, T0);
       tl.fromTo("#pv-flame", { scaleX: 1 }, { scaleX: 0.8, duration: 0.05, ease: "none", yoyo: true, repeat: 9, immediateRender: false }, T0 + 0.12);
       shake("#pv-rocket", [[4, 0], [-4, 2], [3, -1], [-3, 1], [0, 0]], T0, 0.035);
-      var LT = T0 + 0.2, BT = LT + 0.48;
+      var LT = T0 + 0.2, BT = LT + 0.6;  // boom on the beat at 7.8 s
       tl.fromTo("#pv-rocket", { y: 0 }, { y: -340, duration: BT - LT, ease: "power2.in", immediateRender: false }, LT);
       tl.fromTo("#pv-trail", { opacity: 1, scaleY: 0 }, { opacity: 1, scaleY: 1, duration: BT - LT, ease: "power2.in", immediateRender: false }, LT);
       tl.fromTo("#pv-rocket", { opacity: 1 }, { opacity: 0, duration: 0.03, immediateRender: false }, BT);
@@ -168,6 +172,7 @@
       tl.fromTo("#pv-flash", { opacity: 0.45 }, { opacity: 0, duration: 0.3, ease: "power2.out", immediateRender: false }, BT);
       shake("#hk-stage", [[12, -9], [-10, 7], [7, 5], [-4, -3], [0, 0]], BT, 0.045);
       tl.fromTo("#hk-flood", { scale: 0, opacity: 1 }, { scale: 1, opacity: 1, duration: 0.3, ease: "power3.in", immediateRender: false }, 8.3);
+      tl.fromTo("#hk-cam", { x: -9, y: 5, rotation: -0.5 }, { x: 9, y: -5, rotation: 0.5, duration: 1.75, ease: "sine.inOut", yoyo: true, repeat: 3 }, 0);
       window.__timelines["hook"] = tl;
     })();
   </script>

@@ -5,11 +5,13 @@
       background: radial-gradient(ellipse 50% 48% at 50% 100%, rgba({{ACC_RGB}},0.40) 0%, rgba({{ACC_RGB}},0.13) 45%, rgba({{ACC_RGB}},0) 76%); }
     #am-stars { position: absolute; left: 0; top: 0; width: 1080px; height: 2000px; }
     .am-star { position: absolute; border-radius: 50%; background: #ffffff; }
+    .am-bok { position: absolute; left: 0; top: 0; border-radius: 50%; }
     #am-vig { position: absolute; inset: 0; background: radial-gradient(ellipse 85% 70% at 50% 45%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.6) 100%); }
   </style>
   <div id="root" data-composition-id="ambient" data-width="1080" data-height="1920">
     <div id="am-stars" data-layout-ignore></div>
     <div id="am-glow" data-layout-ignore></div>
+    <div id="am-boks" data-layout-ignore></div>
     <div id="am-vig" data-layout-ignore></div>
   </div>
   <script>
@@ -23,7 +25,17 @@
           "px;height:" + d.toFixed(1) + "px;opacity:" + (0.08 + r() * 0.32).toFixed(2);
         box.appendChild(s);
       }
-      var tl = gsap.timeline({ paused: true });
+      var tl = gsap.timeline({ paused: true }), bx = document.getElementById("am-boks");
+      for (i = 0; i < 22; i++) {
+        var b = document.createElement("div"), sz = 26 + r() * 110, warm = i % 3 === 0;
+        b.className = "am-bok";
+        b.style.cssText = "width:" + sz.toFixed(0) + "px;height:" + sz.toFixed(0) + "px;opacity:" + (0.06 + r() * 0.14).toFixed(2) +
+          ";background:radial-gradient(circle, " + (warm ? "rgba(255,255,255,0.9)" : "rgba({{ACC_RGB}},0.95)") + " 0%, rgba({{ACC_RGB}},0) 68%)";
+        bx.appendChild(b);
+        var x0 = r() * 1080, y0 = 300 + r() * 1700, rise = 260 + r() * 520, sway = 20 + r() * 50, per = 2.2 + r() * 2.4;
+        tl.fromTo(b, { x: x0, y: y0 }, { x: x0, y: y0 - rise, duration: 24, ease: "none" }, 0);
+        tl.fromTo(b, { xPercent: -sway }, { xPercent: sway, duration: per, ease: "sine.inOut", yoyo: true, repeat: Math.ceil(24 / per) }, 0);
+      }
       tl.fromTo("#am-stars", { y: 0 }, { y: -80, duration: 24, ease: "none" }, 0);
       tl.fromTo("#am-glow", { opacity: 0.75, scaleY: 1 }, { opacity: 1, scaleY: 1.08, duration: 3, ease: "sine.inOut", yoyo: true, repeat: 7 }, 0);
       window.__timelines["ambient"] = tl;

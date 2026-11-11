@@ -52,11 +52,13 @@
       B.forEach(function (s, i) {
         tl.fromTo(s, { opacity: 0, y: 50, scale: 1.2, filter: "blur(12px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.24, ease: "power3.out" }, 0.38 + i * 0.04);
       });
-      tl.fromTo("#ct-dot", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(3)" }, 0.72);
-      tl.fromTo("#ct-ul", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 0.75);
-      tl.fromTo("#ct-tag", { opacity: 0, scale: 1.5, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.05);
-      tl.fromTo("#ct-grp", { x: 0, y: 0 }, { x: 6, y: -4, duration: 0.05, ease: "none", yoyo: true, repeat: 3, immediateRender: false }, 1.22);
-      tl.fromTo("#ct-grp", { scale: 1 }, { scale: 1.03, duration: 2.6, ease: "sine.inOut", immediateRender: false }, 1.3);
+      tl.fromTo("#ct-dot", { opacity: 0, scale: 0 }, { opacity: 1, scale: 1, duration: 0.25, ease: "back.out(3)" }, 0.8);
+      tl.fromTo("#ct-ul", { scaleX: 0 }, { scaleX: 1, duration: 0.35, ease: "power3.out" }, 0.8);
+      tl.fromTo("#ct-tag", { opacity: 0, scale: 1.5, filter: "blur(10px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.2);
+      tl.fromTo("#ct-grp", { x: 0, y: 0 }, { x: 6, y: -4, duration: 0.05, ease: "none", yoyo: true, repeat: 3, immediateRender: false }, 1.37);
+      tl.fromTo("#ct-grp", { scale: 1 }, { scale: 1.04, duration: 2.2, ease: "sine.inOut", immediateRender: false }, 1.4);
+      tl.fromTo("#ct-grp", { y: 0 }, { y: -12, duration: 0.65, ease: "sine.inOut", yoyo: true, repeat: 2, immediateRender: false }, 1.6);
+      tl.fromTo("#ct-tag", { rotation: 0 }, { rotation: 1.6, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 1.45);
 
       // theme flourish on the accent dot of "ATENÇÃO." (dot sits around x 860, y 1040)
       var X = document.getElementById("ct-x"), dx = 876, dy = 1030;
@@ -64,14 +66,14 @@
         var drop = document.createElement("div"); drop.className = "ct-p";
         drop.style.cssText = "width:22px;height:30px;border-radius:50% 50% 50% 50% / 60% 60% 40% 40%;background:{{ACC_LIGHT}};left:" + (dx - 11) + "px;top:300px";
         X.appendChild(drop);
-        tl.fromTo(drop, { opacity: 1, y: 0 }, { opacity: 1, y: dy - 300 - 20, duration: 0.42, ease: "power2.in", immediateRender: false }, 1.6);
-        tl.fromTo(drop, { opacity: 1 }, { opacity: 0, duration: 0.02, immediateRender: false }, 2.02);
+        tl.fromTo(drop, { opacity: 1, y: 0 }, { opacity: 1, y: dy - 300 - 20, duration: 0.42, ease: "power2.in", immediateRender: false }, 1.78);
+        tl.fromTo(drop, { opacity: 1 }, { opacity: 0, duration: 0.02, immediateRender: false }, 2.2);
         for (var k = 0; k < 3; k++) {
           var rg = document.createElement("div"); rg.className = "ct-ring"; rg.style.cssText = "left:" + (dx - 40) + "px;top:" + (dy - 18) + "px;width:80px;height:36px";
           X.appendChild(rg);
-          tl.fromTo(rg, { opacity: 0.9, scale: 0.3 }, { opacity: 0, scale: 2.4 + k * 0.6, duration: 0.8, ease: "power2.out", immediateRender: false }, 2.02 + k * 0.12);
+          tl.fromTo(rg, { opacity: 0.9, scale: 0.3 }, { opacity: 0, scale: 2.4 + k * 0.6, duration: 0.8, ease: "power2.out", immediateRender: false }, 2.2 + k * 0.12);
         }
-        tl.fromTo("#ct-dot", { scale: 1 }, { scale: 1.6, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 2.02);
+        tl.fromTo("#ct-dot", { scale: 1 }, { scale: 1.6, duration: 0.12, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 2.2);
       }
       if (THEME === "pavio") {
         for (var j = 0; j < 22; j++) {
@@ -79,9 +81,9 @@
           p.style.cssText = "width:" + sz + "px;height:" + sz + "px;background:" + (j % 3 ? "#fff1cf" : "{{ACC_LIGHT}}") + ";box-shadow:0 0 10px {{ACC}};left:" + dx + "px;top:" + dy + "px";
           X.appendChild(p);
           var a = R() * Math.PI * 2, r = 70 + R() * 120;
-          tl.fromTo(p, { x: 0, y: 0, opacity: 1 }, { x: Math.cos(a) * r, y: Math.sin(a) * r + 40, opacity: 0, duration: 0.7, ease: "power3.out", immediateRender: false }, 1.7 + (j % 4) * 0.05);
+          tl.fromTo(p, { x: 0, y: 0, opacity: 1 }, { x: Math.cos(a) * r, y: Math.sin(a) * r + 40, opacity: 0, duration: 0.7, ease: "power3.out", immediateRender: false }, 1.8 + (j % 4) * 0.05);
         }
-        tl.fromTo("#ct-dot", { scale: 1 }, { scale: 1.5, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 1.7);
+        tl.fromTo("#ct-dot", { scale: 1 }, { scale: 1.5, duration: 0.1, ease: "power2.out", yoyo: true, repeat: 1, immediateRender: false }, 1.8);
       }
       if (THEME === "balao") {
         var bl = document.createElement("div"); bl.className = "ct-p"; bl.style.cssText = "left:" + (dx - 14) + "px;top:" + (dy - 70) + "px;width:60px;height:130px;border-radius:0";
@@ -89,14 +91,14 @@
           '<ellipse cx="20" cy="22" rx="5" ry="10" transform="rotate(-25 20 22)" fill="#fff" opacity="0.55"/><path d="M26,80 L30,73 L34,80 Z" fill="{{ACC_DEEP}}"/>' +
           '<path d="M30,80 C 24,96 36,110 30,130" fill="none" stroke="rgba(244,242,238,0.6)" stroke-width="2"/></svg>';
         X.appendChild(bl);
-        tl.fromTo("#ct-dot", { opacity: 1 }, { opacity: 0, duration: 0.05, immediateRender: false }, 1.65);
-        tl.fromTo(bl, { opacity: 1, scale: 0.3, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: "back.out(2.2)", immediateRender: false }, 1.65);
-        tl.fromTo(bl, { y: 0 }, { y: -420, duration: 2.0, ease: "sine.in", immediateRender: false }, 2.0);
-        tl.fromTo(bl, { rotation: -8 }, { rotation: 8, duration: 0.5, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 2.0);
+        tl.fromTo("#ct-dot", { opacity: 1 }, { opacity: 0, duration: 0.05, immediateRender: false }, 1.8);
+        tl.fromTo(bl, { opacity: 1, scale: 0.3, y: 40 }, { opacity: 1, scale: 1, y: 0, duration: 0.35, ease: "back.out(2.2)", immediateRender: false }, 1.8);
+        tl.fromTo(bl, { y: 0 }, { y: -420, duration: 1.9, ease: "sine.in", immediateRender: false }, 2.15);
+        tl.fromTo(bl, { rotation: -8 }, { rotation: 8, duration: 0.45, ease: "sine.inOut", yoyo: true, repeat: 3, immediateRender: false }, 2.15);
       }
       // end: fade to black, one accent dot remains
-      tl.fromTo("#ct-end", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in" }, 3.72);
-      tl.fromTo("#ct-enddot", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(3)" }, 3.9);
+      tl.fromTo("#ct-end", { opacity: 0 }, { opacity: 1, duration: 0.3, ease: "power2.in" }, 3.6);
+      tl.fromTo("#ct-enddot", { opacity: 0, scale: 0.4 }, { opacity: 1, scale: 1, duration: 0.2, ease: "back.out(3)" }, 3.78);
       window.__timelines["cta"] = tl;
     })();
   </script>
