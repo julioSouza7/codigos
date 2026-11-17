@@ -1,0 +1,140 @@
+<!doctype html>
+<html
+  lang="pt-BR"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"color-ground","type":"color","label":"Fundo","default":"#040405"},
+    {"id":"color-ink","type":"color","label":"Texto","default":"#F4F2EE"},
+    {"id":"color-accent","type":"color","label":"Disciplina","default":"#FFC25A"},
+    {"id":"font-display","type":"string","label":"Fonte de título","default":"Montserrat"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Space+Mono:wght@700&display=block" rel="stylesheet" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <script>
+      // a cena 3D é um módulo: registra a promessa antes do runtime pedir o primeiro quadro
+      window.__hf = window.__hf || {};
+      window.__hf.buildReady = window.__hf.buildReady || {};
+      window.__hf.buildReady.scene = new Promise(function (resolve, reject) {
+        window.__sceneResolve = resolve;
+        window.__sceneReject = reject;
+      });
+    </script>
+    <style>
+      /* LOOK: palco escuro com 3 holofotes; branco quente no texto; cor só na palavra-chave
+         (ouro = disciplina, vermelho = obsessão, violeta = ego). Montserrat 800 minúscula, Space Mono nos rótulos. */
+      :root {
+        --color-ground: #040405;
+        --color-ink: #f4f2ee;
+        --color-accent: #ffc25a;
+        --color-obs: #ff5a4e;
+        --color-ego: #c08bff;
+        --font-display: "Montserrat", sans-serif;
+        --font-mono: "Space Mono", monospace;
+        --fg: var(--color-ink);
+        --brand: var(--color-accent);
+        --font-body: var(--font-display);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--color-ground); }
+      #root { position: relative; width: 100%; height: 100%; background: var(--color-ground); overflow: hidden; }
+      #gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #vignette {
+        position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(120% 75% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+      }
+      #counter {
+        position: absolute; left: 0; right: 0; top: 182px; text-align: center;
+        font-family: var(--font-mono); font-weight: 700; font-size: 40px; letter-spacing: 0.32em;
+        color: var(--color-ink); opacity: 0.88;
+      }
+      .cap {
+        position: absolute; left: 70px; right: 70px; top: 268px; text-align: center;
+        font-family: var(--font-display); font-weight: 800; font-size: 78px; line-height: 1.06;
+        letter-spacing: -0.02em; color: var(--color-ink); opacity: 0;
+        text-shadow: 0 4px 30px rgba(0,0,0,0.85);
+      }
+      #c0 { opacity: 1; }
+      .cap .obs { color: var(--color-obs); }
+      .cap .ego { color: var(--color-ego); }
+      .cap .disc { color: var(--color-accent); }
+      #c7 { top: 250px; font-size: 92px; }
+      #c8 { top: 366px; font-size: 64px; font-weight: 700; }
+      #bar {
+        position: absolute; left: 390px; width: 300px; top: 456px; height: 8px; border-radius: 4px;
+        background: var(--color-accent); transform-origin: 0 50%; transform: scaleX(0);
+      }
+      .lab {
+        position: absolute; left: 0; top: 0; white-space: nowrap;
+        font-family: var(--font-mono); font-weight: 700; font-size: 30px; letter-spacing: 0.2em;
+        padding: 6px 14px; color: var(--color-ink);
+      }
+      #lab-obs { color: #ff8a80; }
+      #lab-disc { color: #ffd690; }
+      #lab-ego { color: #d6b4ff; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="26" data-width="1080" data-height="1920">
+      <canvas id="gl" class="clip" width="1080" height="1920" data-start="0" data-duration="26" data-track-index="0"></canvas>
+      <div id="vignette"></div>
+
+      <div id="lab-obs" class="lab">OBSESSÃO</div>
+      <div id="lab-disc" class="lab">DISCIPLINA</div>
+      <div id="lab-ego" class="lab">EGO</div>
+
+      <div id="counter">DIA <span id="cnum">1</span></div>
+
+      <div id="c0" class="cap">qual dos três<br />chega lá?</div>
+      <div id="c1" class="cap">o <span class="ego">ego</span> quer<br />ser visto.</div>
+      <div id="c2" class="cap">a <span class="obs">obsessão</span><br />não para.</div>
+      <div id="c3" class="cap">a <span class="disc">disciplina</span><br />aparece todo dia.</div>
+      <div id="c4" class="cap">sem aplauso,<br />o <span class="ego">ego</span> desiste.</div>
+      <div id="c5" class="cap">a <span class="obs">obsessão</span><br />se queima.</div>
+      <div id="c6" class="cap">a <span class="disc">disciplina</span><br />continua.</div>
+      <div id="c7" class="cap"><span class="disc">constância</span> vence.</div>
+      <div id="c8" class="cap">comece hoje.</div>
+      <div id="bar"></div>
+
+      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="26" data-track-index="4" data-volume="1"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const IN = { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" };
+      const beats = [
+        ["#c1", 3.0, 5.85], ["#c2", 6.0, 8.85], ["#c3", 9.0, 11.85], ["#c4", 12.0, 15.35],
+        ["#c5", 15.5, 18.85], ["#c6", 19.0, 21.85],
+      ];
+      tl.fromTo("#c0", { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, 2.7);
+      for (const [sel, a, b] of beats) {
+        tl.fromTo(sel, { opacity: 0, y: 30, filter: "blur(10px)" }, IN, a);
+        tl.to(sel, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, b - 0.25);
+      }
+      tl.fromTo("#c7", { opacity: 0, y: 30, scale: 0.94, filter: "blur(10px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 22.0);
+      tl.fromTo("#c8", { opacity: 0, y: 24, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 23.4);
+      tl.fromTo("#bar", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, 23.75);
+
+      // contador de dias (time-lapse acelerando)
+      const cnum = document.getElementById("cnum");
+      const day = { d: 1 };
+      tl.fromTo(day, { d: 1 }, {
+        d: 1825, duration: 19, ease: "power2.in",
+        onUpdate: () => { cnum.textContent = Math.round(day.d).toLocaleString("pt-BR"); },
+      }, 3.0);
+      tl.fromTo("#counter", { color: "#f4f2ee" }, { color: "#ffc25a", duration: 0.5, ease: "power2.out" }, 22.0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+    <script type="module">
+      import { build } from "./assets/scene.js";
+      build().then(window.__sceneResolve, window.__sceneReject);
+    </script>
+  </body>
+</html>
