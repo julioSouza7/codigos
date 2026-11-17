@@ -456,7 +456,7 @@ const camPos = new THREE.Vector3(), camLook = new THREE.Vector3();
 function setCamera(t) {
   const u = easeInOut(seg(t, 19.0, 24.6));
   camPos.set(lerp(0.15, 0.25, u), lerp(3.0, 3.3, u), lerp(19.2 - 0.45 * seg(t, 0, 19), 16.6, u));
-  camLook.set(lerp(0.15, 0.3, u), lerp(1.74, 2.2, u), 0);
+  camLook.set(lerp(0.15, 0.3, u), lerp(1.74, 2.0, u), 0);
   camera.position.copy(camPos); camera.lookAt(camLook);
   camera.updateMatrixWorld(true);
 }
