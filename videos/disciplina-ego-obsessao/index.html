@@ -16,17 +16,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Space+Mono:wght@700&display=block" rel="stylesheet" />
     <script src="assets/vendor/gsap.min.js"></script>
-    <script>
-      // a cena 3D é um módulo: registra a promessa antes do runtime pedir o primeiro quadro
-      window.__hf = window.__hf || {};
-      window.__hf.buildReady = window.__hf.buildReady || {};
-      window.__hf.buildReady.scene = new Promise(function (resolve, reject) {
-        window.__sceneResolve = resolve;
-        window.__sceneReject = reject;
-      });
-    </script>
     <style>
-      /* LOOK: palco escuro com 3 holofotes; branco quente no texto; cor só na palavra-chave
+      /* LOOK: animação 2D vetorial — bonecos brancos de perfil com contorno preto, palco cinza-escuro com feixes de luz e chão espelhado; branco no texto; cor só na palavra-chave
          (ouro = disciplina, vermelho = obsessão, violeta = ego). Montserrat 800 minúscula, Space Mono nos rótulos. */
       :root {
         --color-ground: #040405;
@@ -46,7 +37,7 @@
       #gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
       #vignette {
         position: absolute; inset: 0; pointer-events: none;
-        background: radial-gradient(120% 75% at 50% 48%, rgba(0,0,0,0) 55%, rgba(0,0,0,0.55) 100%);
+        background: radial-gradient(120% 75% at 50% 48%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.45) 100%);
       }
       #counter {
         position: absolute; left: 0; right: 0; top: 182px; text-align: center;
@@ -132,9 +123,6 @@
       window.__timelines["main"] = tl;
       tl.seek(0);
     </script>
-    <script type="module">
-      import { build } from "./assets/scene.js";
-      build().then(window.__sceneResolve, window.__sceneReject);
-    </script>
+    <script src="assets/scene2d.js"></script>
   </body>
 </html>

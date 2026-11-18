@@ -77,8 +77,8 @@ for k, m in enumerate([84, 88, 91, 96, 100]):
 t = tt(0.8); f = 380 * np.exp(-t * 3.2) + 50
 add(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 3) * np.minimum(1, t / 0.02), 12.62, 0.16, 0.45)
 # coroa batendo no chão
-add(metal(1150), sched['crownOff'] + 0.68, 0.17, 0.4)
-add(metal(1150, 0.5), sched['crownOff'] + 0.92, 0.07, 0.4)
+add(metal(1150), sched.get('crownLand', sched['crownOff'] + 0.68), 0.17, 0.4)
+add(metal(1150, 0.5), sched.get('crownLand', sched['crownOff'] + 0.68) + 0.16, 0.07, 0.4)
 # blocos do ego caindo
 for t0 in sched['egoFall']:
     add(mx(thump(95, 40, 0.5, 8), 0.4 * noise(0.2, 25, 4)), t0, 0.4, 0.4)
