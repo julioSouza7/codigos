@@ -288,18 +288,28 @@
 
   // ---------- luz das raias ----------
   const level = {
-    disc: track([[0, 0.85], [3.0, 0.85], [3.3, 0.6], [5.8, 0.6], [6.1, 1.0], [8.8, 1.0], [9.1, 0.6], [15.3, 0.6], [15.6, 1.0], [17.6, 1.0], [18.6, 0.42]]),
-    obs: track([[0, 0.85], [3.0, 0.85], [3.3, 0.6], [8.8, 0.6], [9.1, 1.0], [11.8, 1.0], [12.1, 0.6], [18.8, 0.6], [19.3, 1.15], [22.0, 1.15], [22.6, 1.4]]),
-    ego: track([[0, 0.85], [3.0, 0.85], [3.3, 1.1], [5.8, 1.1], [6.1, 0.6], [11.9, 0.6], [12.15, 1.0], [12.4, 1.0], [12.85, 0.08]]),
+    disc: track([[0, 1.05], [1.5, 1.05], [1.75, 0.85], [3.0, 0.85], [3.3, 0.6], [5.8, 0.6], [6.1, 1.0], [8.8, 1.0], [9.1, 0.6], [15.3, 0.6], [15.6, 1.0], [17.6, 1.0], [18.6, 0.42]]),
+    obs: track([[0, 0.05], [1.48, 0.05], [1.53, 1.45], [2.2, 0.85], [3.0, 0.85], [3.3, 0.6], [8.8, 0.6], [9.1, 1.0], [11.8, 1.0], [12.1, 0.6], [18.8, 0.6], [19.3, 1.15], [22.0, 1.15], [22.6, 1.4]]),
+    ego: track([[0, 0.05], [1.62, 0.05], [1.78, 0.85], [3.0, 0.85], [3.3, 1.1], [5.8, 1.1], [6.1, 0.6], [11.9, 0.6], [12.15, 1.0], [12.4, 1.0], [12.85, 0.08]]),
   };
 
   const sparks = [];
   for (let i = 0; i < 44; i++) sparks.push({ x: LANES.obs.x + rr(-170, 170), y0: BAR_Y + rr(-40, 420), v: rr(30, 80), t0: 21.9 + rr(0, 1.8), r: rr(2, 4.5), ph: rr(0, 6.28) });
 
   // ---------- câmera ----------
-  const PIV = [540, 820];
-  const camScale = (t) => 1 + 0.012 * seg(t, 0, 19) + 0.11 * easeInOut(seg(t, 19.0, 24.6));
-  const toScreen = (p, s) => [PIV[0] + (p[0] - PIV[0]) * s, PIV[1] + (p[1] - PIV[1]) * s];
+  // gancho: começa fechado na disciplina; no "errado." a câmera abre de uma vez, com tremor
+  const PIV = [540, 820], F0 = [200, 880], SF0 = [430, 965], SLAM = 1.5;
+  function camAt(t) {
+    const base = 1 + 0.012 * seg(t, 0, 19) + 0.11 * easeInOut(seg(t, 19.0, 24.6));
+    const u = easeOut(seg(t, SLAM, SLAM + 0.38));
+    const s = lerp(1.42 + 0.06 * seg(t, 0, SLAM), base, u);
+    const f = P2(F0, PIV, u), sf = P2(SF0, PIV, u);
+    const k = t >= SLAM ? Math.exp(-(t - SLAM) * 9) : 0;
+    const shx = 16 * k * Math.sin((t - SLAM) * 70), shy = 11 * k * Math.cos((t - SLAM) * 83);
+    return { s, ox: sf[0] - f[0] * s + shx, oy: sf[1] - f[1] * s + shy };
+  }
+  const toScreen = (p, C) => [p[0] * C.s + C.ox, p[1] * C.s + C.oy];
+  const slamTint = (t, tint) => (t >= SLAM ? mixC(tint, [255, 110, 90], 0.85 * Math.exp(-(t - SLAM) * 2.5)) : tint);
 
   const labels = {};
   for (const k of ['disc', 'obs', 'ego']) labels[k] = { el: document.getElementById('lab-' + k), n: document.getElementById('n-' + k) };
@@ -357,10 +367,10 @@
   }
 
   function renderAt(t) {
-    const s = camScale(t);
+    const C = camAt(t);
     const lv = { disc: level.disc(t), obs: level.obs(t), ego: level.ego(t) };
-    const floorS = toScreen([0, FLOOR], s)[1];
-    const cam = (c) => c.setTransform(s, 0, 0, s, PIV[0] - PIV[0] * s, PIV[1] - PIV[1] * s);
+    const floorS = toScreen([0, FLOOR], C)[1];
+    const cam = (c) => c.setTransform(C.s, 0, 0, C.s, C.ox, C.oy);
 
     lc.setTransform(1, 0, 0, 1, 0, 0); lc.clearRect(0, 0, W, H); cam(lc);
     drawObjects(lc, t, lv);
@@ -379,7 +389,7 @@
     beamPoly(c, 1340, -120, 160, 820, 0.05, [255, 250, 240], 18);
     for (const k of ['disc', 'obs', 'ego']) {
       const L = LANES[k], a = 0.13 * Math.min(1.25, lv[k]);
-      if (a > 0.003) beamPoly(c, L.x, LAMP_Y + 2, L.x - 175, L.x + 175, a, L.tint, 10);
+      if (a > 0.003) beamPoly(c, L.x, LAMP_Y + 2, L.x - 175, L.x + 175, a, k === 'obs' ? slamTint(t, L.tint) : L.tint, 10);
     }
     c.save(); c.setTransform(1, 0, 0, 1, 0, 0);
     c.beginPath(); c.rect(0, floorS, W, H - floorS); c.clip();
@@ -392,7 +402,7 @@
     cam(c);
     c.fillStyle = 'rgba(255,255,255,0.07)'; c.fillRect(-300, FLOOR - 1, W + 600, 3);
     c.save(); c.globalCompositeOperation = 'lighter';
-    for (const k of ['disc', 'obs', 'ego']) pool(c, LANES[k].x, 230, 0.2 * Math.min(1.25, lv[k]), LANES[k].tint);
+    for (const k of ['disc', 'obs', 'ego']) pool(c, LANES[k].x, 230, 0.2 * Math.min(1.25, lv[k]), k === 'obs' ? slamTint(t, LANES[k].tint) : LANES[k].tint);
     c.restore();
     for (const k of ['disc', 'obs', 'ego']) lamp(c, LANES[k].x, Math.min(1, lv[k]));
     c.setTransform(1, 0, 0, 1, 0, 0);
@@ -400,11 +410,12 @@
 
     // rótulos + contadores de repetição
     const lostEgo = 1 - 0.55 * smooth(seg(t, 13.0, 13.6));
-    const op = { disc: 1 - 0.35 * smooth(seg(t, 18.8, 19.4)), obs: 1, ego: lostEgo * (1 - 0.6 * smooth(seg(t, 18.8, 19.4))) };
+    const rv = smooth(seg(t, SLAM + 0.3, SLAM + 0.55));
+    const op = { disc: rv * (1 - 0.35 * smooth(seg(t, 18.8, 19.4))), obs: rv, ego: rv * lostEgo * (1 - 0.6 * smooth(seg(t, 18.8, 19.4))) };
     const cnt = { disc: countAt(t, DISC_R), obs: obsDisplay(t), ego: countAt(t, EGO_R) };
     for (const k in labels) {
       const L = labels[k]; if (!L.el) continue;
-      const p = toScreen([LANES[k].x, FLOOR + 20], s);
+      const p = toScreen([LANES[k].x, FLOOR + 20], C);
       L.el.style.transform = `translate(${p[0].toFixed(1)}px, ${p[1].toFixed(1)}px) translate(-50%, 0)`;
       L.el.style.opacity = op[k].toFixed(3);
       if (L.n) L.n.textContent = k === 'disc' && t >= DISC_GOAL ? `${cnt[k]} ✓` : String(cnt[k]);
@@ -416,7 +427,7 @@
     egoReps: EGO_R.map((r) => +(r.s + r.up).toFixed(3)),
     discReps: DISC_R.map((r) => +(r.s + r.up).toFixed(3)),
     obsReps: OBS_R.filter((r) => r.s + r.up < 26).map((r) => +(r.s + r.up).toFixed(3)),
-    egoWave: 5.95, egoDim: 12.4, egoLand: +(EGO_DROP + 0.22).toFixed(3), egoSit: 15.2,
+    slam: SLAM, egoWave: 5.95, egoDim: 12.4, egoLand: +(EGO_DROP + 0.22).toFixed(3), egoSit: 15.2,
     discGoal: +DISC_GOAL.toFixed(3), discLand: +(DISC_DROP + 0.22).toFixed(3),
   };
   window.__renderAt = renderAt;

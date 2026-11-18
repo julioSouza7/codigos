@@ -44,6 +44,9 @@
         font-family: var(--font-display); font-weight: 800; font-size: 78px; line-height: 1.06; letter-spacing: -0.02em;
         color: var(--color-ink); opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.85); }
       #c0 { opacity: 1; }
+      .cap.slam { top: 250px; font-size: 168px; line-height: 1; letter-spacing: -0.04em; }
+      #flash { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+        background: radial-gradient(90% 60% at 50% 45%, rgba(255,70,50,0.65) 0%, rgba(255,40,30,0.25) 55%, rgba(0,0,0,0) 100%); }
       .cap .obs { color: var(--color-accent); }
       .cap .ego { color: var(--color-ego); }
       .cap .disc { color: var(--color-disc); }
@@ -71,7 +74,9 @@
 
       <div id="counter">TEMPO <span id="clock">00:00</span></div>
 
-      <div id="c0" class="cap">quem aguenta<br />mais na barra?</div>
+      <div id="flash"></div>
+      <div id="c0" class="cap">todo mundo aposta<br />na <span class="disc">disciplina</span>.</div>
+      <div id="c0b" class="cap slam"><span class="obs">errado.</span></div>
       <div id="c1" class="cap">o <span class="ego">ego</span> começa<br />com tudo.</div>
       <div id="c2" class="cap">a <span class="disc">disciplina</span><br />mantém o ritmo.</div>
       <div id="c3" class="cap">a <span class="obs">obsessão</span><br />não para.</div>
@@ -92,7 +97,12 @@
         ["#c1", 3.0, 5.85], ["#c2", 6.0, 8.85], ["#c3", 9.0, 11.85], ["#c4", 12.0, 15.35],
         ["#c5", 15.5, 18.85], ["#c6", 19.0, 21.85],
       ];
-      tl.fromTo("#c0", { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, 2.7);
+      // gancho: afirmação → "errado." com impacto
+      tl.fromTo("#c0", { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -14, filter: "blur(8px)", duration: 0.14, ease: "power2.in" }, 1.36);
+      tl.fromTo("#c0b", { opacity: 0, scale: 1.6, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.5);
+      tl.to("#c0b", { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, 2.7);
+      tl.fromTo("#flash", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none" }, 1.5);
+      tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, 1.56);
       for (const [sel, a, b] of beats) {
         tl.fromTo(sel, { opacity: 0, y: 30, filter: "blur(10px)" }, IN, a);
         tl.to(sel, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, b - 0.25);

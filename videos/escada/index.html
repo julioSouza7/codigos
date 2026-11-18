@@ -1,0 +1,127 @@
+<!doctype html>
+<html
+  lang="pt-BR"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"color-ground","type":"color","label":"Fundo","default":"#050506"},
+    {"id":"color-ink","type":"color","label":"Texto","default":"#F4F2EE"},
+    {"id":"color-accent","type":"color","label":"Obsessão","default":"#FF5A4E"},
+    {"id":"font-display","type":"string","label":"Fonte de título","default":"Montserrat"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800&family=Space+Mono:wght@700&display=block" rel="stylesheet" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* LOOK: animação 2D vetorial — bonecos brancos com contorno preto, palco cinza-escuro com feixes de luz,
+         chão espelhado e três escadas subindo no escuro. Cor só na palavra-chave (vermelho = obsessão, ouro = disciplina,
+         violeta = ego). Montserrat 800 minúscula; Space Mono nos rótulos e no cronômetro. Regra: a obsessão vence. */
+      :root {
+        --color-ground: #050506;
+        --color-ink: #f4f2ee;
+        --color-accent: #ff5a4e;
+        --color-disc: #ffc25a;
+        --color-ego: #c08bff;
+        --font-display: "Montserrat", sans-serif;
+        --font-mono: "Space Mono", monospace;
+        --fg: var(--color-ink);
+        --brand: var(--color-accent);
+        --font-body: var(--font-display);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--color-ground); }
+      #root { position: relative; width: 100%; height: 100%; background: var(--color-ground); overflow: hidden; }
+      #gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(120% 75% at 50% 48%, rgba(0,0,0,0) 60%, rgba(0,0,0,0.45) 100%); }
+      #counter { position: absolute; left: 0; right: 0; top: 182px; text-align: center;
+        font-family: var(--font-mono); font-weight: 700; font-size: 40px; letter-spacing: 0.3em; color: var(--color-ink); opacity: 0.9; }
+      .cap { position: absolute; left: 60px; right: 60px; top: 268px; text-align: center;
+        font-family: var(--font-display); font-weight: 800; font-size: 78px; line-height: 1.06; letter-spacing: -0.02em;
+        color: var(--color-ink); opacity: 0; text-shadow: 0 4px 30px rgba(0,0,0,0.85); }
+      #c0 { opacity: 1; }
+      .cap.slam { top: 250px; font-size: 168px; line-height: 1; letter-spacing: -0.04em; }
+      #flash { position: absolute; inset: 0; pointer-events: none; opacity: 0;
+        background: radial-gradient(90% 60% at 50% 45%, rgba(255,70,50,0.65) 0%, rgba(255,40,30,0.25) 55%, rgba(0,0,0,0) 100%); }
+      .cap .obs { color: var(--color-accent); }
+      .cap .ego { color: var(--color-ego); }
+      .cap .disc { color: var(--color-disc); }
+      #c7 { top: 250px; font-size: 86px; }
+      #c8 { top: 366px; font-size: 62px; font-weight: 700; }
+      #bar { position: absolute; left: 380px; width: 320px; top: 452px; height: 8px; border-radius: 4px;
+        background: var(--color-accent); transform-origin: 0 50%; transform: scaleX(0); }
+      .lab { position: absolute; left: 0; top: 0; white-space: nowrap; text-align: center; }
+      .lab .nm { display: block; font-family: var(--font-mono); font-weight: 700; font-size: 28px; letter-spacing: 0.2em; padding-left: 0.2em; }
+      .lab .n { display: block; font-family: var(--font-display); font-weight: 800; font-size: 50px; line-height: 1.1; color: var(--color-ink); }
+      #lab-obs .nm { color: #ff8a80; }
+      #lab-obs .n { color: #ff6b5f; }
+      #lab-disc .nm { color: #ffd690; }
+      #lab-ego .nm { color: #d6b4ff; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="26" data-width="1080" data-height="1920">
+      <canvas id="gl" class="clip" width="1080" height="1920" data-start="0" data-duration="26" data-track-index="0"></canvas>
+      <div id="vignette"></div>
+
+      <div id="lab-disc" class="lab"><span class="nm">DISCIPLINA</span><span id="n-disc" class="n">0</span></div>
+      <div id="lab-obs" class="lab"><span class="nm">OBSESSÃO</span><span id="n-obs" class="n">0</span></div>
+      <div id="lab-ego" class="lab"><span class="nm">EGO</span><span id="n-ego" class="n">0</span></div>
+
+      <div id="counter">TEMPO <span id="clock">00:00</span></div>
+
+      <div id="flash"></div>
+      <div id="c0" class="cap">a <span class="disc">disciplina</span><br />chega no topo?</div>
+      <div id="c0b" class="cap slam"><span class="obs">não.</span></div>
+      <div id="c1" class="cap">o <span class="ego">ego</span> sobe<br />com pressa.</div>
+      <div id="c2" class="cap">a <span class="disc">disciplina</span><br />sobe no ritmo.</div>
+      <div id="c3" class="cap">a <span class="obs">obsessão</span><br />não olha pra baixo.</div>
+      <div id="c4" class="cap">sem plateia,<br />o <span class="ego">ego</span> trava.</div>
+      <div id="c5" class="cap">a <span class="disc">disciplina</span> chega<br />na meta e para.</div>
+      <div id="c6" class="cap">a <span class="obs">obsessão</span><br />continua subindo.</div>
+      <div id="c7" class="cap">a <span class="obs">obsessão</span> vence.</div>
+      <div id="c8" class="cap">não existe topo.</div>
+      <div id="bar"></div>
+
+      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="26" data-track-index="4" data-volume="1"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      const IN = { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" };
+      const beats = [
+        ["#c1", 3.0, 5.85], ["#c2", 6.0, 8.85], ["#c3", 9.0, 11.85], ["#c4", 12.0, 15.35],
+        ["#c5", 15.5, 18.85], ["#c6", 19.0, 21.85],
+      ];
+      // gancho: afirmação → "errado." com impacto
+      tl.fromTo("#c0", { opacity: 1, y: 0, filter: "blur(0px)" }, { opacity: 0, y: -14, filter: "blur(8px)", duration: 0.14, ease: "power2.in" }, 1.36);
+      tl.fromTo("#c0b", { opacity: 0, scale: 1.6, filter: "blur(14px)" }, { opacity: 1, scale: 1, filter: "blur(0px)", duration: 0.2, ease: "power4.out" }, 1.5);
+      tl.to("#c0b", { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, 2.7);
+      tl.fromTo("#flash", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none" }, 1.5);
+      tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, 1.56);
+      for (const [sel, a, b] of beats) {
+        tl.fromTo(sel, { opacity: 0, y: 30, filter: "blur(10px)" }, IN, a);
+        tl.to(sel, { opacity: 0, y: -18, filter: "blur(8px)", duration: 0.25, ease: "power2.in" }, b - 0.25);
+      }
+      tl.fromTo("#c7", { opacity: 0, y: 30, scale: 0.94, filter: "blur(10px)" }, { opacity: 1, y: 0, scale: 1, filter: "blur(0px)", duration: 0.55, ease: "power3.out" }, 22.0);
+      tl.fromTo("#c8", { opacity: 0, y: 24, filter: "blur(8px)" }, { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.45, ease: "power3.out" }, 23.4);
+      tl.fromTo("#bar", { scaleX: 0 }, { scaleX: 1, duration: 0.5, ease: "power3.inOut" }, 23.75);
+
+      // cronômetro em time-lapse (segue correndo no final: a obsessão não para)
+      const clock = document.getElementById("clock");
+      const tm = { s: 0 };
+      const fmt = (v) => { const m = Math.floor(v / 60), s = Math.floor(v % 60); return String(m).padStart(2, "0") + ":" + String(s).padStart(2, "0"); };
+      tl.fromTo(tm, { s: 0 }, { s: 720, duration: 19, ease: "power2.in", onUpdate: () => { clock.textContent = fmt(tm.s); } }, 3.0);
+      tl.fromTo(tm, { s: 720 }, { s: 744, duration: 4, ease: "none", immediateRender: false, onUpdate: () => { clock.textContent = fmt(tm.s); } }, 22.0);
+      tl.fromTo("#counter", { color: "#f4f2ee" }, { color: "#ff6b5f", duration: 0.5, ease: "power2.out" }, 22.0);
+
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+    <script src="assets/escada.js"></script>
+  </body>
+</html>

@@ -8,3 +8,7 @@
 - Cores fixas: obsessão = vermelho, disciplina = dourado, ego = violeta.
 - Roteiro novo a cada vídeo (cenário diferente), sem copiar o vídeo de referência.
 - Vertical 1080×1920, 30 fps, PT-BR, texto entre y=168 e y=1330 e fora da coluna de botões.
+- **Gancho nos 3 primeiros segundos:** abre com uma frase que todo mundo acredita sobre a disciplina (câmera fechada
+  nela) e corta para a negação em vermelho ("errado." / "não.") com impacto, flash e tremor; a câmera abre no cenário.
+- **Trilha de suspense** gerada por `trilha/suspense.py` (drone grave, relógio, coração acelerando, ostinato,
+  riser, impacto no gancho e no final) + efeitos sincronizados de cada vídeo.
