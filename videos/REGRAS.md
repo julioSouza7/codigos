@@ -33,3 +33,9 @@
 - Degrau Mental (GPS): metáfora contada só com ícones de linha branca e pílulas pequenas.
 - Jotaa.ino (salário): feixes de luz do alto, números grandes, texto digitando, mito "a maioria acha" desmontado.
 - Itski (chefe): silhuetas, um único brilho de destaque, plateia em ícones, "3 semanas depois".
+
+## Aprendizado com os números (dia 1)
+- "Quebrar a parede" foi o melhor: ~3 mil views, mas só ~2,3% de curtidas. Priorizar temas de **impacto** (bater,
+  quebrar, martelar) com um clímax de "uau" bem visível.
+- Chamada final nova: "QUAL DOS 3 É VOCÊ? COMENTA 1, 2 OU 3", com os nomes numerados no HUD
+  (1 · DISCIPLINA, 2 · OBSESSÃO, 3 · EGO). Na hora da chamada, os números do HUD somem e a chamada entra embaixo.
