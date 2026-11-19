@@ -48,3 +48,8 @@
   golpe de quem está em foco; tremor forte no clímax.
 - **Trilha:** `trilha/energia.py` (124 BPM, batida 4/4, baixo pulsante, respiro quando o ego desiste, drop no clímax).
 - **Duração:** 25 s.
+
+## Fixo a partir de agora
+- **Motivação sempre:** todo vídeo tem frase de superação no meio (a obsessão cansada/doendo e continuando) e
+  fecha com 2 frases motivacionais próprias do tema (ex.: "PAROU DE REMAR, A CORRENTE LEVA." / "REMA MAIS UM POUCO.").
+- **Variar o tema:** não repetir o mesmo tipo de ação seguida (ex.: depois de machado, nada de bater/cortar).
