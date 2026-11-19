@@ -14,9 +14,10 @@
 
 ## Decisões da entrevista (vale para todos os vídeos daqui pra frente)
 
+- **Final:** NÃO usar "a obsessão vence". Cada vídeo fecha com uma frase própria, ligada ao tema (ex.: "A META ERA SÓ O COMEÇO.").
 - **Canal:** @stick.obsessao. Todo vídeo termina com a pílula "COMENTE OBSESSÃO" + o @, e vem com legenda do post
   (punchline + "Comente OBSESSÃO" + 5–6 hashtags) (sem capa).
-- **Formato:** 9:16 pronto para TikTok (1080×1920, 30 fps, MP4 H.264 + AAC), 15–20 s, PT-BR, sem narração.
+- **Formato:** 9:16 pronto para TikTok (1080×1920, 30 fps, MP4 H.264 + AAC), **23 s por padrão** (era 18 s; +5 s pedido), PT-BR, sem narração.
 - **Núcleo:** disciplina × ego × obsessão, com a obsessão no centro e sempre vencendo.
 - **Séries:** A = bonecos em palco (comparativos dos três); B = ícones e diagramas minimalistas (metáforas e mitos,
   como os vídeos de GPS/salário/chefe) — a série B ainda será definida antes do primeiro vídeo dela.
