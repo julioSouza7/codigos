@@ -17,7 +17,7 @@
 - **Final:** NÃO usar "a obsessão vence". Cada vídeo fecha com uma frase própria, ligada ao tema (ex.: "A META ERA SÓ O COMEÇO.").
 - **Canal:** @stick.obsessao. Todo vídeo termina com a pílula "COMENTE OBSESSÃO" + o @, e vem com legenda do post
   (punchline + "Comente OBSESSÃO" + 5–6 hashtags) (sem capa).
-- **Formato:** 9:16 pronto para TikTok (1080×1920, 30 fps, MP4 H.264 + AAC), **23 s por padrão** (era 18 s; +5 s pedido), PT-BR, sem narração.
+- **Formato:** 9:16 pronto para TikTok (1080×1920, 30 fps, MP4 H.264 + AAC), **25 s por padrão**, PT-BR, sem narração.
 - **Núcleo:** disciplina × ego × obsessão, com a obsessão no centro e sempre vencendo.
 - **Séries:** A = bonecos em palco (comparativos dos três); B = ícones e diagramas minimalistas (metáforas e mitos,
   como os vídeos de GPS/salário/chefe) — a série B ainda será definida antes do primeiro vídeo dela.
@@ -39,3 +39,12 @@
   quebrar, martelar) com um clímax de "uau" bem visível.
 - Chamada final nova: "QUAL DOS 3 É VOCÊ? COMENTA 1, 2 OU 3", com os nomes numerados no HUD
   (1 · DISCIPLINA, 2 · OBSESSÃO, 3 · EGO). Na hora da chamada, os números do HUD somem e a chamada entra embaixo.
+
+## Atualização: mais chamativo, motivação e energia (a partir de "Derrubar a árvore")
+- **Uma cor viva para cada um:** disciplina = azul #2F9BFF, obsessão = vermelho #FF3B30, ego = roxo #B85CFF.
+  Cor no contorno de luz do boneco, na ferramenta, no feixe de luz, no rótulo/contador e na palavra-chave da legenda.
+- **Motivação:** frases de impacto no meio ("CANSADA, BATE DE NOVO.") e no final ("NÃO PARA NA META.").
+- **Mais animado:** palavras pulando na tela (pop + leve quique) em vez de texto digitando; câmera dá um soco a cada
+  golpe de quem está em foco; tremor forte no clímax.
+- **Trilha:** `trilha/energia.py` (124 BPM, batida 4/4, baixo pulsante, respiro quando o ego desiste, drop no clímax).
+- **Duração:** 25 s.
