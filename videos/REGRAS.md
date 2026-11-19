@@ -15,7 +15,7 @@
 ## Decisões da entrevista (vale para todos os vídeos daqui pra frente)
 
 - **Canal:** @stick.obsessao. Todo vídeo termina com a pílula "COMENTE OBSESSÃO" + o @, e vem com legenda do post
-  (punchline + "Comente OBSESSÃO" + 5–6 hashtags) e uma capa em PNG tirada do gancho.
+  (punchline + "Comente OBSESSÃO" + 5–6 hashtags) (sem capa).
 - **Formato:** 9:16 pronto para TikTok (1080×1920, 30 fps, MP4 H.264 + AAC), 15–20 s, PT-BR, sem narração.
 - **Núcleo:** disciplina × ego × obsessão, com a obsessão no centro e sempre vencendo.
 - **Séries:** A = bonecos em palco (comparativos dos três); B = ícones e diagramas minimalistas (metáforas e mitos,
