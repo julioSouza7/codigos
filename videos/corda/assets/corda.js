@@ -41,7 +41,7 @@
   const D = { headR: 31, limb: 26, torsoW: 42, ol: 5, torso: 100, uArm: 58, fArm: 56, thigh: 82, shin: 78, foot: 15, shW: 21, hipW: 11, handR: 13 };
   const OUT = '#0e0e10';
   const WHITE = [247, 247, 245], DARK = [92, 92, 98];
-  const LANES = { disc: { x: 140 }, obs: { x: 405 }, motiv: { x: 675 }, ego: { x: 945 } };
+  const LANES = { disc: { x: 125 }, obs: { x: 370 }, motiv: { x: 615 }, ego: { x: 860 } };
   const COL = { disc: [47, 155, 255], obs: [255, 59, 48], motiv: [255, 204, 0], ego: [184, 92, 255] };
   const add = (a, b) => [a[0] + b[0], a[1] + b[1]];
   const rungY = (r) => R0Y - r * RUNG;
@@ -285,10 +285,10 @@
   }
   function heightMarks(c, x, y0, y1) {
     c.font = '700 20px "Space Mono", monospace'; c.textAlign = 'left'; c.fillStyle = 'rgba(255,255,255,0.3)';
-    for (let m = 2; m < 40; m += 2) { const y = R0Y - m * 2 * RUNG; if (y < y0 - 40 || y > y1 + 40) continue; c.fillRect(18, y - 1, 20, 3); c.fillText(`${m} M`, 44, y + 7); }
+    for (let m = 2; m < 40; m += 2) { const y = R0Y - m * 2 * RUNG; if (y < y0 - 40 || y > y1 + 40) continue; c.fillRect(W - 120, y - 1, 20, 3); c.fillText(`${m} M`, W - 94, y + 7); }
   }
   // plateia do ego no chão
-  const crowdX = [860, 900, 1000, 1040];
+  const crowdX = [700, 740, 960, 1000];
   function drawCrowd(c, t) {
     for (let i = 0; i < crowdX.length; i++) {
       const show = smooth(seg(t, 7.8 + i * 0.07, 8.1 + i * 0.07)) * (1 - smooth(seg(t, 9.7 + i * 0.06, 9.95 + i * 0.06)));
