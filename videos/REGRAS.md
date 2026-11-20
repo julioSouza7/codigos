@@ -59,3 +59,7 @@
 - Ordem da história: a **motivação sai na frente e apaga primeiro** (cansa e desiste cedo), o ego desiste quando a
   plateia vai embora, a disciplina bate a meta e para, a **obsessão vence**.
 - Chamada: "QUAL DOS 4 É VOCÊ? COMENTA 1, 2, 3 OU 4".
+
+## Ritmo de postagem
+- 1 a 3 vídeos por dia (ideal 2: ~12h e ~19h), com 3–4 h de intervalo. Constância > volume.
+- Estoque: `videos/ESTOQUE.md` lista os vídeos prontos e a ordem sugerida.
