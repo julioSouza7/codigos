@@ -53,3 +53,9 @@
 - **Motivação sempre:** todo vídeo tem frase de superação no meio (a obsessão cansada/doendo e continuando) e
   fecha com 2 frases motivacionais próprias do tema (ex.: "PAROU DE REMAR, A CORRENTE LEVA." / "REMA MAIS UM POUCO.").
 - **Variar o tema:** não repetir o mesmo tipo de ação seguida (ex.: depois de machado, nada de bater/cortar).
+
+## 4 personagens (a partir de "A corda")
+- Elenco fixo: **1 · DISCIPLINA (azul #2F9BFF), 2 · OBSESSÃO (vermelho #FF3B30), 3 · MOTIVAÇÃO (amarelo #FFCC00), 4 · EGO (roxo #B85CFF)**.
+- Ordem da história: a **motivação sai na frente e apaga primeiro** (cansa e desiste cedo), o ego desiste quando a
+  plateia vai embora, a disciplina bate a meta e para, a **obsessão vence**.
+- Chamada: "QUAL DOS 4 É VOCÊ? COMENTA 1, 2, 3 OU 4".
