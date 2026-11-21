@@ -12,7 +12,7 @@
 - Dois painéis empilhados: **1 · PENSA DEMAIS** (em cima) e **2 · FAZ** (embaixo), mesmo cenário nos dois.
 - **Índice de dor**: monitor vermelho no pé de cada painel, com curva de dor e **DOR TOTAL** somando ao vivo.
   O "faz" tem um pico único e curto; o "pensa demais" tem vários picos e dor de fundo por muito mais tempo.
-- Final: cartão "ÍNDICE DE DOR · RESULTADO" com as duas curvas e os totais; frase de impacto.
+- Final: sem gráfico — uma frase só comparando os dois (ver "Final do vídeo").
 - Falas curtas em balão ("AI!", "VOU CONTAR ATÉ 3...") e chamada "QUAL DOS 2 É VOCÊ? COMENTA 1 OU 2".
 - Cenário original a cada vídeo (não copiar vacina/curativo das referências).
 - O índice muda conforme o tema: **dor**, **ansiedade**, **cansaço**… (sempre vermelho, com total somando ao vivo).
@@ -27,8 +27,7 @@
 - **Câmera com foco** (`SCENE.cam`): aproxima (1,4–1,75×) em quem está fazendo algo importante e abre quando muda de ação.
 - Pode trocar de cenário (casa → rua) com corte e flash rápido.
 - Relógio fixo no canto do painel quando o tempo importa.
-- Duração: pode passar de 25 s quando a história pede (o despertador detalhado tem **40 s**). Cartão final 2 com a
-  lista do que cada um fez (✓ × ✗).
+- Duração: pode passar de 25 s quando a história pede (o despertador detalhado tem **40 s**).
 
 ## Animação (nada de boneco robótico)
 - Motor do tipo B em `trilha/tipo-b/` (`head.js` + roteiro `body_*.js` + `tail.js`, montado com `build.sh`).
@@ -49,12 +48,23 @@
   dourado #E8C547 (ego), azul #2F9BFF (disciplina). Gráficos de crescimento em dourado/laranja; dor sempre em vermelho.
 - Texto em **português**, palavras **pulando** na tela (pop), palavra-chave na cor do personagem.
 
+## Final do vídeo (tipo B)
+- **Sem gráfico no final.** Os painéis escurecem e aparece **uma frase só**, no centro, comparando os dois
+  (ex.: "QUEM FAZ: 1 SEGUNDO DE DOR. / PENSA DEMAIS: 11 SEGUNDOS."), calculada do índice. Depois a chamada.
+- O índice continua ao vivo no pé de cada painel durante a história.
+
+## Áudio (tipo B)
+- **Só gemidos pequenos** ("ai", "uh", "hm", respiração), nada de grito.
+- **Os áudios dos dois nunca se sobrepõem**: um age e geme, termina, e só então o outro começa.
+  Conferir com a checagem de sobreposição antes de renderizar.
+- Sem "pop" nas palavras da legenda quando houver voz.
+
 ## Formato e som
 - 9:16 (1080×1920), 30 fps, **25 s** (até ~40 s se a história tiver mais ações), sem narração, texto entre y=168 e y=1330 e **fora da coluna de botões** (x>950).
 - Gancho nos 3 primeiros segundos com impacto (flash + tremor). Motivação sempre: frase de superação no meio e 2 frases finais próprias.
 - Nunca usar "a obsessão vence" como frase final.
 - **Sons realistas (tipo B)**: vozes e ruídos são **gravações reais CC0** em `trilha/sons/` (ver `LICENCAS.md`):
-  gemidos/gritos de dor (`voz_pensa/`, `voz_faz/`, uma voz por personagem), velcro/papel para coisas arrancando,
+  gemidos de dor (`voz_pensa/`, `voz_faz/`, uma voz por personagem; usar só os curtos), velcro/papel para coisas arrancando,
   tecido nos movimentos, coração gravado acelerando. Sintetizado só o que é eletrônico (bipe do monitor) e respiração.
   Sem "bips" de desenho animado nas falas quando houver voz real. Trilha mais baixa (~0,42) para os efeitos aparecerem.
 - Trilha por código: `trilha/energia.py` (tipo A, enérgica) ou `trilha/grave.py` (tipo B, tensão) + efeitos sincronizados.

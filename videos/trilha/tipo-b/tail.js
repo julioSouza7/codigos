@@ -106,6 +106,7 @@
     c.lineWidth = 5; c.strokeStyle = OUT; c.strokeRect(0, P.top, W, P.h);
   }
   function drawReport(c, t) {
+    if (SCENE.noReport) return;
     const out = SCENE.report2T ? smooth(seg(t, SCENE.report2T - 0.3, SCENE.report2T)) : 0;
     if (SCENE.drawReport2 && t >= SCENE.report2T - 0.3) SCENE.drawReport2(c, t, out);
     if (out >= 1) return;
@@ -137,7 +138,9 @@
   }
 
   // ---------- legendas: palavras pulando ----------
-  const CAPS = SCENE.caps;
+  // frase final com os segundos de dor de cada um ({faz} / {pensa})
+  const SW = SCENE.secsWord || ((n) => `${n} SEGUNDO${n > 1 ? 'S' : ''}`);
+  const CAPS = SCENE.caps.map((cp) => Object.assign({}, cp, { lines: cp.lines.map(([ls, segs]) => [ls, segs.map(([txt, col]) => [txt.replace('{faz}', SW(Math.max(1, Math.round(SECS.faz)))).replace('{pensa}', SW(Math.max(1, Math.round(SECS.pensa)))), col])]) }));
   const capEl = document.getElementById('cap');
   const capLines = capEl ? [capEl.querySelector('.l1'), capEl.querySelector('.l2')] : [];
   const WSTEP = 0.11;
@@ -147,7 +150,7 @@
     const cap = CAPS.find((cc) => t >= cc.s && t < cc.e) || null;
     if (!cap) { capEl.style.opacity = '0'; return; }
     capEl.style.opacity = String(1 - smooth(seg(t, cap.e - 0.15, cap.e)));
-    capEl.className = cap.big ? 'cap big' : 'cap';
+    capEl.className = cap.big ? 'cap big' : cap.center ? 'cap center' : 'cap';
     cap.lines.forEach(([ls, segs], i) => {
       capLines[i].innerHTML = wordsOf(segs).map(([w, col], j) => {
         const age = t - (ls + j * WSTEP);

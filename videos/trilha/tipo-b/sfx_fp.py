@@ -139,7 +139,7 @@ if S.get('heart'):
 W0 = S['report']
 add(thump(70, 30, 1.2, 3), W0, 0.35)
 for i, m in enumerate([86, 89, 93, 98]): add(bell(note(m), 1.4, 3.5), W0 + 0.4 + 0.08 * i, 0.06, -0.3 + 0.2 * i)
-for t0 in S['words']: add(pop(), t0, 0.04)
+for t0 in ([] if S.get('noPops') else S['words']): add(pop(), t0, 0.04)
 fx = np.stack([L, R], 1); mix = raw * S.get('music', 0.6) + fx
 fade = np.ones(N); fn = int(0.6 * SR); fade[-fn:] = np.linspace(1, 0, fn); mix *= fade[:, None]
 mix = np.tanh(mix * 1.1); mix /= np.max(np.abs(mix)) / 0.89
