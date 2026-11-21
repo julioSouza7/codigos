@@ -49,7 +49,7 @@ def ring(d=1.3):
         k += int(0.5 * SR)
     return lp(out, 5000)
 def slap():
-    return lp(rng.standard_normal(int(SR * 0.12)), 4000) * np.exp(-tt(0.12) * 45) + thump(200, 90, 0.1, 30) * 0.5
+    s = lp(rng.standard_normal(int(SR * 0.12)), 4000) * np.exp(-tt(0.12) * 45); th = thump(200, 90, 0.1, 30); s[:len(th)] += th * 0.5; return s
 def rain(d=2.0):
     t = tt(d); return lp(rng.standard_normal(len(t)), 2500) * 0.4 * np.minimum(1, t / 0.3) * np.minimum(1, (d - t) / 0.4)
 def chime():
