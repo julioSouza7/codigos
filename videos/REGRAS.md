@@ -42,6 +42,10 @@
 - 9:16 (1080×1920), 30 fps, **25 s**, sem narração, texto entre y=168 e y=1330 e **fora da coluna de botões** (x>950).
 - Gancho nos 3 primeiros segundos com impacto (flash + tremor). Motivação sempre: frase de superação no meio e 2 frases finais próprias.
 - Nunca usar "a obsessão vence" como frase final.
+- **Sons realistas (tipo B)**: vozes e ruídos são **gravações reais CC0** em `trilha/sons/` (ver `LICENCAS.md`):
+  gemidos/gritos de dor (`voz_pensa/`, `voz_faz/`, uma voz por personagem), velcro/papel para coisas arrancando,
+  tecido nos movimentos, coração gravado acelerando. Sintetizado só o que é eletrônico (bipe do monitor) e respiração.
+  Sem "bips" de desenho animado nas falas quando houver voz real. Trilha mais baixa (~0,42) para os efeitos aparecerem.
 - Trilha por código: `trilha/energia.py` (tipo A, enérgica) ou `trilha/grave.py` (tipo B, tensão) + efeitos sincronizados.
 - Sem capa. Legenda do post em `LEGENDA.txt` de cada pasta. Postar 1–3 por dia (ideal 2, ~12h e ~19h).
 
