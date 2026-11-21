@@ -301,7 +301,7 @@
   }
   // monitor do índice de dor no pé do painel
   function drawMonitor(c, k, t, P) {
-    const y0 = P.h - 66, hh = 56, x0 = 30, x1 = W - 30;
+    const y0 = P.h - 66, hh = 56, x0 = 30, x1 = 925;
     c.fillStyle = 'rgba(10,7,5,0.82)'; c.fillRect(0, y0 - 8, W, hh + 16);
     c.strokeStyle = 'rgba(255,255,255,0.08)'; c.lineWidth = 1;
     for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(x0, y0 + hh * i / 4); c.lineTo(x1, y0 + hh * i / 4); c.stroke(); }
@@ -354,10 +354,10 @@
   // relatório final: as duas curvas lado a lado + dor total contando
   function drawReport(c, t) {
     const u = easeOut(seg(t, GT1 + 0.2, GT1 + 0.8)); if (u <= 0) return;
-    const x0 = 70, x1 = W - 70, top = 520, h = 680;
+    const x0 = 40, x1 = 935, top = 520, h = 680;
     c.save(); c.globalAlpha = u; c.translate(0, 40 * (1 - u));
     c.beginPath(); c.roundRect(x0, top, x1 - x0, h, 26); c.fillStyle = 'rgba(22,15,10,0.96)'; c.fill(); c.lineWidth = 4; c.strokeStyle = rgb(PAL.luz, 0.8); c.stroke();
-    c.font = '700 26px "Space Mono", monospace'; c.fillStyle = rgb(PAL.dor); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('ÍNDICE DE DOR · RESULTADO', W / 2, top + 50);
+    c.font = '700 26px "Space Mono", monospace'; c.fillStyle = rgb(PAL.dor); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('ÍNDICE DE DOR · RESULTADO', (x0 + x1) / 2, top + 50);
     const rows = [['pensa', '1 · PENSA DEMAIS'], ['faz', '2 · FAZ']];
     rows.forEach(([k, nm], r) => {
       const ry = top + 110 + r * 290, gx0 = x0 + 40, gx1 = x1 - 40, gh = 130;
