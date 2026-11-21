@@ -126,7 +126,8 @@
     if (st.raw) return st;
     const pa = fn(t - 0.05), pb = fn(t - 0.11);
     const face = Math.sign(st.face || 1) || 1;
-    const vx = ((st.x - pa.x) / 0.05) * face;
+    const rd = st.runDist !== undefined;   // correndo no lugar (cenário rolando)
+    const vx = rd ? (st.runDist - pa.runDist) / 0.05 : ((st.x - pa.x) / 0.05) * face;
     const sp = Math.abs(vx);
     // atraso (follow-through): mãos e cabeça chegam um pouco depois do corpo
     st.hands = [P2(st.hands[0], pb.hands[0], 0.38), P2(st.hands[1], pb.hands[1], 0.45)];
@@ -135,7 +136,7 @@
     if (moving > 0.001) {
       const run = st.run ?? clamp((sp - 260) / 260);
       const stride = lerp(150, 270, run);
-      const ph = ((st.x * face) / stride) * Math.PI * 2 + (st.phase0 || 0);
+      const ph = (((rd ? st.runDist : st.x * face)) / stride) * Math.PI * 2 + (st.phase0 || 0);
       st.legs = mixL(st.legs, walkL(ph, run), moving); st._ph = ph; st._mv = moving; st._run = run;
       const s1 = Math.sin(ph), hy = st.hipY;
       const swF = run > 0.3 ? [st.x + 34 - 46 * s1, hy - 58 + 10 * s1] : [st.x + 12 - 40 * s1, hy + 36 - 8 * Math.abs(s1)];
@@ -182,7 +183,7 @@
   const RIP_F = 3.25, RIP_P = 16.6;           // puxões de uma vez
   // fração já descolada da fita (0 = colada, 1 = arrancada)
   const peelFaz = (t) => (t < RIP_F ? 0 : clamp((t - RIP_F) / 0.1));
-  const PEELS = [[4.35, 4.75, 0, 0.08], [7.2, 9.4, 0.08, 0.3], [10.8, 12.8, 0.3, 0.5], [RIP_P, RIP_P + 0.1, 0.5, 1]];
+  const PEELS = [[5.4, 5.8, 0, 0.08], [7.2, 9.4, 0.08, 0.3], [10.8, 12.8, 0.3, 0.5], [RIP_P, RIP_P + 0.1, 0.5, 1]];
   const peelPensa = (t) => { let p = 0; for (const [a, b, p0, p1] of PEELS) if (t >= a) p = lerp(p0, p1, t < b ? (b - a > 0.3 ? smooth(seg(t, a, b)) : seg(t, a, b)) : 1); return p; };
 
   // geometria da canela a partir do boneco (referencial do boneco)
@@ -257,18 +258,18 @@
     [2.45, sit({ base: { lean: 0.42, head: 0.3 }, f: (st) => { st.hands = [handAt(0, -10), [X + 60, SIT_HY - 20]]; } }), 0.35],    // pega a ponta
     [3.0, sit({ base: { lean: 0.46, head: 0.25 }, f: (st, t) => { st.hands = [handAt(0, -2), [X + 60, SIT_HY - 20]]; st.hipY += 2 * Math.sin(t * 30); } }), 0.15],  // respira e trava
     [RIP_F, sit({ base: { lean: -0.32, head: -0.35, legs: KICK, prefF: 'up' }, f: (st) => { st.hands = [[X - 20, SIT_HY - 250], [X - 60, SIT_HY - 120]]; } }), 0.09],   // ARRANCA
-    [RIP_F + 0.45, sit({ base: { lean: -0.22, head: -0.45, prefF: 'up' }, f: (st, t) => { st.hands = [[X + 10 + 8 * Math.sin(t * 25), SIT_HY - 240], [X - 30, SIT_HY - 150]]; } }), 0.25],  // grita
-    [4.8, sit({ base: { lean: 0.6, head: 0.4 }, f: (st, t) => { st.hands = [add(stripPt(sh0, 0.6), [0, -22 + 8 * Math.sin(t * 10)]), add(stripPt(sh0, 0.45), [0, -14])]; } }), 0.35],  // assopra
-    [6.4, sit({ base: { lean: 0.05, head: 0.0, prefF: 'up' }, f: (st) => { st.hands = [[X + 60, SIT_HY - 200], [X + 40, SIT_HY - 22]]; } }), 0.35],   // mostra a fita
-    [8.2, sit({ base: { lean: -0.2, head: -0.05, prefF: 'back', prefB: 'back' }, f: (st) => { st.hands = [[X - 30, SIT_HY - 150], [X - 44, SIT_HY - 140]]; } }), 0.5],   // relaxa
+    [RIP_F + 0.4, sit({ base: { lean: 0.12, head: 0.3, prefF: 'up' }, f: (st, t) => { st.hands = [[X + 34, SIT_HY - 190], [X + 40, SIT_HY - 40]]; } }), 0.3],  // careta, segura a fita
+    [3.95, sit({ base: { lean: 0.6, head: 0.4 }, f: (st, t) => { st.hands = [add(stripPt(sh0, 0.6), [0, -22 + 8 * Math.sin(t * 10)]), add(stripPt(sh0, 0.45), [0, -14])]; } }), 0.35],  // assopra
+    [5.3, sit({ base: { lean: 0.05, head: 0.0, prefF: 'up' }, f: (st) => { st.hands = [[X + 60, SIT_HY - 200], [X + 40, SIT_HY - 22]]; } }), 0.35],   // mostra a fita
+    [7.0, sit({ base: { lean: -0.2, head: -0.05, prefF: 'back', prefB: 'back' }, f: (st) => { st.hands = [[X - 30, SIT_HY - 150], [X - 44, SIT_HY - 140]]; } }), 0.5],   // relaxa
     [12.0, sit({ base: { lean: 0.0, head: 0.05, prefF: 'up' }, f: (st) => { st.hands = [[X + 70, SIT_HY - 130], [X + 50, SIT_HY - 22]]; } }), 0.35],  // joinha
     [13.2, sit({ base: { lean: -0.2, head: -0.05, prefF: 'back', prefB: 'back' }, f: (st) => { st.hands = [[X - 30, SIT_HY - 150], [X - 44, SIT_HY - 140]]; } }), 0.5],
   ];
   const fazState = (t) => {
     const st = seq(fazKeys, t);
-    const p = peelFaz(t), held = t >= RIP_F && t < 8.2;
+    const p = peelFaz(t), held = t >= RIP_F && t < 7.0;
     st.prop = legProp(p, held, t >= RIP_F ? t - RIP_F : null);
-    if (t > 8.2) st.legs = Object.assign({}, st.legs, { bT: 1.38 + 0.12 * Math.sin(t * 2.4) });   // balança o pé, de boa
+    if (t > 7.0) st.legs = Object.assign({}, st.legs, { bT: 1.38 + 0.12 * Math.sin(t * 2.4) });   // balança o pé, de boa
     if (t >= RIP_F && t < RIP_F + 0.25) st.sq = -0.06 * Math.sin(Math.PI * seg(t, RIP_F, RIP_F + 0.25));
     return st;
   };
@@ -279,10 +280,10 @@
   const pensaKeys = [
     [0, sit({ f: (st, t) => { st.hands = [add(handAt(0, -60), [0, 6 * Math.sin(t * 2)]), [X + 50, SIT_HY - 22]]; } })],   // mão no ar, hesita
     [2.4, sit({ base: { lean: 0.2, head: 0.3 }, f: (st, t) => { st.hands = [[X + 36, SIT_HY - 128], [X + 22, SIT_HY - 60]]; } }), 0.4],   // mão no queixo
-    [4.0, sit({ base: { lean: 0.42, head: 0.35 }, f: (st, t) => { st.hands = [handAt(0, -6), [X + 50, SIT_HY - 30]]; tremble(st, t); } }), 0.3],
-    [4.35, pull(), 0.1],
-    [4.75, sit({ base: { lean: -0.18, head: -0.2 }, f: (st) => { st.hands = [[X + 30, SIT_HY - 120], [X + 10, SIT_HY - 100]]; } }), 0.12],   // solta e recua
-    [5.6, sit({ base: { lean: 0.1, head: 0.2 } }), 0.4],
+    [4.9, sit({ base: { lean: 0.42, head: 0.35 }, f: (st, t) => { st.hands = [handAt(0, -6), [X + 50, SIT_HY - 30]]; tremble(st, t); } }), 0.3],
+    [5.4, pull(), 0.1],
+    [5.8, sit({ base: { lean: -0.18, head: -0.2 }, f: (st) => { st.hands = [[X + 30, SIT_HY - 120], [X + 10, SIT_HY - 100]]; } }), 0.12],   // solta e recua
+    [6.4, sit({ base: { lean: 0.1, head: 0.2 } }), 0.4],
     [6.8, sit({ base: { lean: 0.42, head: 0.35 }, f: (st, t) => { st.hands = [handAt(0.08, -6), [X + 50, SIT_HY - 30]]; tremble(st, t); } }), 0.35],
     [7.2, pull({ lean: 0.55, head: 0.5 }), 0.2],
     [9.4, sit({ base: { lean: -0.1, head: -0.1 }, f: (st, t) => { st.hands = [add(stripPt(sh0, 0.7), [10, -50 + 14 * Math.sin(t * 16)]), [X + 10, SIT_HY - 20]]; } }), 0.25],  // abana a perna
@@ -298,7 +299,7 @@
   const pensaState = (t) => {
     const st = seq(pensaKeys, t);
     const p = peelPensa(t);
-    const held = (t >= 4.35 && t < 4.75) || (t >= 7.2 && t < 9.4) || (t >= 10.8 && t < 12.8) || (t >= RIP_P && t < 17.6);
+    const held = (t >= 5.4 && t < 5.8) || (t >= 7.2 && t < 9.4) || (t >= 10.8 && t < 12.8) || (t >= RIP_P && t < 17.6);
     st.prop = legProp(p, held, t >= RIP_P ? t - RIP_P : null);
     if (t >= RIP_P && t < RIP_P + 0.25) st.sq = -0.06 * Math.sin(Math.PI * seg(t, RIP_P, RIP_P + 0.25));
     return st;
@@ -363,7 +364,7 @@
   const painFaz = (t) => 4 + spike(t, RIP_F, 100, 1.9) + (t > RIP_F ? 8 * Math.exp(-(t - RIP_F) * 0.5) : 0);
   const painPensa = (t) => {
     let p = 6 + 12 * smooth(seg(t, 2, 4));           // medo antes de começar
-    p += spike(t, 4.35, 38, 2.2);
+    p += spike(t, 5.4, 38, 2.2);
     p += 46 * smooth(seg(t, 7.2, 7.6)) * (1 - smooth(seg(t, 9.4, 10.2))) + 6 * Math.sin(t * 9) * (t > 7.2 && t < 9.4);
     p += 52 * smooth(seg(t, 10.8, 11.2)) * (1 - smooth(seg(t, 12.8, 13.8))) + 6 * Math.sin(t * 9) * (t > 10.8 && t < 12.8);
     p += 14 * smooth(seg(t, 9.4, 10.0)) + 10 * smooth(seg(t, 12.8, 13.6));   // ardência que fica
@@ -372,7 +373,8 @@
   };
 
   const SCENE = {
-    metricLabel: 'ÍNDICE DE DOR', totalLabel: 'DOR TOTAL', reportT: 19.0,
+    metricLabel: 'ÍNDICE DE DOR', totalLabel: 'DOR TOTAL', reportT: 19.0, noReport: true,
+    secsWord: (n) => `${n} SEGUNDO${n > 1 ? 'S' : ''}`,
     secsText: (n) => `${n} SEGUNDO${n > 1 ? 'S' : ''} NO VERMELHO`,
     state: { faz: fazState, pensa: pensaState },
     drawBack, drawFront,
@@ -380,62 +382,58 @@
     bubbles: {
       faz: [
         { t0: 2.5, t1: 3.15, text: 'BORA.', col: PAL.faz, y: 50 },
-        { t0: RIP_F + 0.02, t1: RIP_F + 1.5, text: 'AAAAAAH!', col: PAL.dor, y: 50 },
-        { t0: 5.0, t1: 6.2, text: 'UFA...', y: 50 },
-        { t0: 6.5, t1: 7.9, text: 'PRONTO.', col: PAL.faz, y: 50 },
+        { t0: RIP_F + 0.05, t1: RIP_F + 0.75, text: 'AI!', col: PAL.dor, y: 50 },
+        { t0: 4.0, t1: 5.0, text: 'UFA...', y: 50 },
+        { t0: 5.4, t1: 6.6, text: 'PRONTO.', col: PAL.faz, y: 50 },
         { t0: 12.0, t1: 13.2, text: 'LISINHA.', col: PAL.faz, y: 50 },
       ],
       pensa: [
         { t0: 2.5, t1: 3.9, text: 'E SE DOER MUITO?', y: 50 },
-        { t0: 4.38, t1: 5.4, text: 'AI!', col: PAL.dor, y: 50 },
-        { t0: 5.7, t1: 6.8, text: 'VOU DEVAGARINHO...', y: 50 },
+        { t0: 5.45, t1: 6.3, text: 'AI!', col: PAL.dor, y: 50 },
+        { t0: 6.4, t1: 7.15, text: 'VOU DEVAGARINHO...', y: 50 },
         { t0: 7.3, t1: 9.3, text: 'AI AI AI AI AI', col: PAL.dor, y: 50 },
         { t0: 10.9, t1: 12.7, text: 'UM PELO POR VEZ...', col: PAL.dor, y: 50 },
         { t0: 13.0, t1: 14.7, text: 'NÃO AGUENTO...', y: 50 },
         { t0: 14.95, t1: RIP_P - 0.05, text: 'VAI DE UMA VEZ.', col: PAL.pensa, y: 50 },
-        { t0: RIP_P + 0.02, t1: RIP_P + 1.5, text: 'AAAAAAH!', col: PAL.dor, y: 50 },
+        { t0: RIP_P + 0.05, t1: RIP_P + 1.2, text: 'AI... AI...', col: PAL.dor, y: 50 },
         { t0: 18.0, t1: 18.95, text: 'DOEU EM DOBRO.', col: PAL.dor, y: 50, dx: 200 },
       ],
     },
     shake: (k, t) => { const r = k === 'faz' ? RIP_F : RIP_P; return 9 * (t >= r ? Math.exp(-(t - r) * 7) : 0) + (k === 'pensa' && ((t > 7.2 && t < 9.4) || (t > 10.8 && t < 12.8)) ? 1.2 : 0); },
-    energy: (k, t) => (k === 'pensa' && t > 4 && t < 16.6 ? 1.6 : 1),
+    energy: (k, t) => (k === 'pensa' && t > 4.9 && t < 16.6 ? 1.6 : 1),
     caps: [
       { s: -1, e: 2.85, lines: [[-1, [['CERA QUENTE NA PERNA.']]], [0.3, [['DOIS JEITOS DE '], ['PUXAR.', 'dor']]]] },
       { s: 3.0, e: 5.5, lines: [[3.0, [['QUEM '], ['FAZ', 'faz']]], [3.3, [['PUXA DE UMA VEZ.']]]] },
-      { s: 5.6, e: 8.0, lines: [[5.6, [['DÓI MUITO.']]], [5.95, [['POR '], ['1 SEGUNDO.', 'faz']]]] },
+      { s: 5.6, e: 8.0, lines: [[5.6, [['DÓI.']]], [5.95, [['MAS SÓ POR '], ['1 SEGUNDO.', 'faz']]]] },
       { s: 8.1, e: 10.5, lines: [[8.1, [['QUEM '], ['PENSA DEMAIS', 'pensa']]], [8.5, [['PUXA DEVAGARINHO.']]]] },
       { s: 10.6, e: 13.2, lines: [[10.6, [['UM PELO']]], [10.95, [['DE CADA '], ['VEZ.', 'dor']]]] },
       { s: 13.3, e: 15.8, lines: [[13.3, [['E A DOR']]], [13.7, [['NÃO ACABA '], ['NUNCA.', 'dor']]]] },
       { s: 15.9, e: 18.9, lines: [[15.9, [['NO FIM, PUXOU']]], [16.3, [['DE UMA VEZ '], ['IGUAL.', 'dor']]]] },
-      { s: 19.1, e: 21.7, big: true, lines: [[19.2, [['A DOR É']]], [19.6, [['A '], ['MESMA.', 'dor']]]] },
-      { s: 21.8, e: 99, big: true, lines: [[21.8, [['SÓ MUDA']]], [22.15, [['QUANTO '], ['DURA.', 'faz']]]] },
+      { s: 19.1, e: 99, center: true, lines: [[19.3, [['QUEM FAZ: '], ['{faz} DE DOR.', 'faz']]], [19.9, [['PENSA DEMAIS: '], ['{pensa}.', 'dor']]]] },
     ],
     sched: {
       noBips: true, music: 0.42,
       fx: [
-        // FAZ (direita)
-        [2.45, 'foley/cloth_04', 0.5, 0.35], [3.0, 'breath_in', 0.22, 0.35],
-        [RIP_F - 0.02, 'foley/velcro_03', 0.95, 0.35, 1.25], [RIP_F, 'foley/papel_rasgando', 0.45, 0.35, 1.3], [RIP_F, 'thud', 0.18, 0.35],
-        [RIP_F + 0.04, 'voz_faz/yell1', 0.95, 0.35],
-        [5.0, 'blow', 0.25, 0.35], [5.25, 'voz_faz/grunt5', 0.45, 0.35],
-        [6.4, 'foley/cloth_05', 0.4, 0.35], [8.2, 'foley/cloth_06', 0.35, 0.35], [8.5, 'exhale', 0.25, 0.35],
-        // PENSA DEMAIS (esquerda)
-        [2.4, 'foley/cloth_07', 0.3, -0.35], [4.05, 'breath_in', 0.22, -0.35],
-        [4.35, 'slowrip', 0.5, -0.35, 0.4], [4.4, 'voz_pensa/dor_11', 0.8, -0.35], [4.75, 'foley/cloth_04', 0.35, -0.35],
-        [6.85, 'breath_in', 0.25, -0.35],
-        [7.2, 'slowrip', 0.55, -0.35, 2.2], [7.25, 'voz_pensa/dor_00', 0.75, -0.35], [8.0, 'voz_pensa/dor_08', 0.8, -0.35],
-        [9.5, 'voz_pensa/dor_14', 0.6, -0.35], [9.95, 'voz_pensa/dor_15', 0.55, -0.35], [9.4, 'fan', 0.25, -0.35],
-        [10.55, 'breath_in', 0.25, -0.35],
-        [10.8, 'slowrip', 0.6, -0.35, 2.0], [10.85, 'voz_pensa/dor_04', 0.8, -0.35], [12.2, 'voz_pensa/dor_09', 0.6, -0.35],
-        [13.05, 'voz_pensa/dor_18', 0.75, -0.35],
-        [16.1, 'breath_in', 0.28, -0.35],
-        [RIP_P - 0.02, 'foley/velcro_03', 0.95, -0.35, 1.25], [RIP_P, 'foley/papel_rasgando', 0.45, -0.35, 1.3], [RIP_P, 'thud', 0.18, -0.35],
-        [RIP_P + 0.04, 'voz_pensa/dor_07', 0.95, -0.35],
-        [17.65, 'foley/cloth_02', 0.35, -0.35], [17.9, 'voz_pensa/dor_13', 0.55, -0.35],
-        // monitor
-        [RIP_F + 0.05, 'beep', 0.08, 0.35], [4.4, 'beep', 0.06, -0.35], [RIP_P + 0.05, 'beep', 0.08, -0.35],
+        // 2 · FAZ (direita): tudo entre 2,4 s e 4,9 s
+        [2.45, 'foley/cloth_04', 0.45, 0.35], [2.95, 'breath_in', 0.2, 0.35],
+        [RIP_F - 0.02, 'foley/velcro_03', 0.8, 0.35, 1.25], [RIP_F, 'foley/papel_rasgando', 0.35, 0.35, 1.3],
+        [RIP_F + 0.12, 'voz_faz/grunt5', 0.55, 0.35], [RIP_F + 0.08, 'beep', 0.05, 0.35],
+        [3.95, 'exhale', 0.28, 0.35],
+        // 1 · PENSA DEMAIS (esquerda): só começa depois do gemido do faz
+        [5.0, 'breath_in', 0.2, -0.35],
+        [5.4, 'slowrip', 0.45, -0.35, 0.4], [5.47, 'voz_pensa/dor_10', 0.5, -0.35], [5.85, 'foley/cloth_04', 0.3, -0.35],
+        [6.8, 'breath_in', 0.22, -0.35],
+        [7.2, 'slowrip', 0.5, -0.35, 2.2], [7.35, 'voz_pensa/dor_02', 0.45, -0.35], [8.1, 'voz_pensa/dor_14', 0.45, -0.35], [8.9, 'voz_pensa/dor_10', 0.45, -0.35, 1.05],
+        [9.5, 'fan', 0.22, -0.35], [9.75, 'voz_pensa/dor_15', 0.4, -0.35],
+        [10.55, 'breath_in', 0.22, -0.35],
+        [10.8, 'slowrip', 0.55, -0.35, 2.0], [11.0, 'voz_pensa/dor_02', 0.45, -0.35, 0.95], [11.8, 'voz_pensa/dor_14', 0.45, -0.35, 1.04], [12.45, 'voz_pensa/dor_10', 0.45, -0.35],
+        [13.3, 'voz_pensa/dor_15', 0.35, -0.35, 1.08], [14.05, 'voz_pensa/dor_02', 0.32, -0.35, 1.12],
+        [16.1, 'breath_in', 0.25, -0.35],
+        [RIP_P - 0.02, 'foley/velcro_03', 0.8, -0.35, 1.25], [RIP_P, 'foley/papel_rasgando', 0.35, -0.35, 1.3],
+        [RIP_P + 0.12, 'voz_pensa/dor_10', 0.55, -0.35], [RIP_P + 0.75, 'voz_pensa/dor_02', 0.45, -0.35, 1.05],
+        [17.65, 'foley/cloth_02', 0.3, -0.35], [17.95, 'exhale', 0.28, -0.35],
       ],
-      heartReal: [[6.6, 16.5, -0.35]],
+      heartReal: [[6.6, 16.5, -0.35]], noPops: true, noOverlap: true,
     },
   };
 
@@ -512,9 +510,11 @@
     c.save(); c.translate(0, P.top); c.beginPath(); c.rect(0, 0, W, P.h); c.clip();
     const sh = SCENE.shake ? SCENE.shake(k, t) : 0;
     c.translate(sh * Math.sin(t * 70), sh * Math.cos(t * 83));
-    // câmera de mão: deriva lenta e leve zoom
-    const cz = 1.03 + 0.012 * Math.sin(t * 0.37 + (k === 'faz' ? 1 : 0));
-    const cx = 540 + 10 * noise(t * 0.25, k === 'faz' ? 2 : 5), cy = 200 + 6 * noise(t * 0.3, k === 'faz' ? 8 : 1);
+    // câmera: foco definido pelo roteiro (SCENE.cam) + leve câmera de mão
+    const cam = SCENE.cam ? SCENE.cam(k, t) : { x: 540, y: 200, z: 1 };
+    const cz = cam.z * (1.03 + 0.012 * Math.sin(t * 0.37 + (k === 'faz' ? 1 : 0)));
+    const cx = cam.x + 10 * noise(t * 0.25, k === 'faz' ? 2 : 5), cy = cam.y + 6 * noise(t * 0.3, k === 'faz' ? 8 : 1);
+    const toS = (p) => [540 + (p[0] - cx) * cz, 200 + (p[1] - cy) * cz];
     c.save(); c.translate(540, 200); c.scale(cz, cz); c.translate(-cx, -cy);
     SCENE.drawBack(c, k, t, P);
     const others = (SCENE.others && SCENE.others[k]) || [];
@@ -524,13 +524,15 @@
     drawn.main = main;
     for (const o of others) if (o.front) drawn[o.id] = drawActor(c, alive(o.fn, t, { seed: o.seed, talk: TALK[k].other }), o.col, o.glow ?? 0.4, o.tint);
     if (SCENE.drawFront) SCENE.drawFront(c, k, t, P, drawn);
+    c.restore();
     for (const b of SCENE.bubbles[k]) {
       const sp = drawn[(b.who || 'main') === 'main' ? 'main' : (b.whoId || 'other')] || main;
+      const hs = toS(sp.head);
       c.font = '800 28px "Space Mono", monospace'; const bw = c.measureText(b.text).width / 2 + 22;
-      const bx = clamp(b.x ?? sp.head[0] + (b.dx ?? 60), 300 + bw, 1000 - bw);
-      bubble(c, bx, b.y ?? clamp(sp.head[1] - 70, 60, 300), b.text, b.col, b.t0, b.t1, t, sp.head[0]);
+      const bx = clamp(b.x ?? hs[0] + (b.dx ?? 60), 300 + bw, (SCENE.bubbleMaxX || 1000) - bw);
+      bubble(c, bx, b.y ?? 50, b.text, b.col, b.t0, b.t1, t, hs[0]);
     }
-    c.restore();
+    if (SCENE.drawOverlay) SCENE.drawOverlay(c, k, t, P, drawn, toS);
     drawMonitor(c, k, t, P);
     const nm = k === 'faz' ? '2 · FAZ' : '1 · PENSA DEMAIS';
     c.font = '700 22px "Space Mono", monospace'; const tw = c.measureText(nm).width;
@@ -542,7 +544,11 @@
     c.lineWidth = 5; c.strokeStyle = OUT; c.strokeRect(0, P.top, W, P.h);
   }
   function drawReport(c, t) {
-    const u = easeOut(seg(t, GT1 + 0.2, GT1 + 0.8)); if (u <= 0) return;
+    if (SCENE.noReport) return;
+    const out = SCENE.report2T ? smooth(seg(t, SCENE.report2T - 0.3, SCENE.report2T)) : 0;
+    if (SCENE.drawReport2 && t >= SCENE.report2T - 0.3) SCENE.drawReport2(c, t, out);
+    if (out >= 1) return;
+    const u = easeOut(seg(t, GT1 + 0.2, GT1 + 0.8)) * (1 - out); if (u <= 0) return;
     const x0 = 40, x1 = 935, top = 520, h = 680;
     const sc = lerp(0.9, 1, backE(seg(t, GT1 + 0.2, GT1 + 0.75)));
     c.save(); c.globalAlpha = u; c.translate((x0 + x1) / 2, top + h / 2); c.scale(sc, sc); c.translate(-(x0 + x1) / 2, -(top + h / 2));
@@ -570,7 +576,9 @@
   }
 
   // ---------- legendas: palavras pulando ----------
-  const CAPS = SCENE.caps;
+  // frase final com os segundos de dor de cada um ({faz} / {pensa})
+  const SW = SCENE.secsWord || ((n) => `${n} SEGUNDO${n > 1 ? 'S' : ''}`);
+  const CAPS = SCENE.caps.map((cp) => Object.assign({}, cp, { lines: cp.lines.map(([ls, segs]) => [ls, segs.map(([txt, col]) => [txt.replace('{faz}', SW(Math.max(1, Math.round(SECS.faz)))).replace('{pensa}', SW(Math.max(1, Math.round(SECS.pensa)))), col])]) }));
   const capEl = document.getElementById('cap');
   const capLines = capEl ? [capEl.querySelector('.l1'), capEl.querySelector('.l2')] : [];
   const WSTEP = 0.11;
@@ -580,7 +588,7 @@
     const cap = CAPS.find((cc) => t >= cc.s && t < cc.e) || null;
     if (!cap) { capEl.style.opacity = '0'; return; }
     capEl.style.opacity = String(1 - smooth(seg(t, cap.e - 0.15, cap.e)));
-    capEl.className = cap.big ? 'cap big' : 'cap';
+    capEl.className = cap.big ? 'cap big' : cap.center ? 'cap center' : 'cap';
     cap.lines.forEach(([ls, segs], i) => {
       capLines[i].innerHTML = wordsOf(segs).map(([w, col], j) => {
         const age = t - (ls + j * WSTEP);
