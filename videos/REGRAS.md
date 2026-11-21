@@ -19,6 +19,17 @@
   O cartão final mostra "N SEGUNDOS NO VERMELHO" para cada um.
 - Pode ter um 3º personagem neutro (azul) só como figurante, para dar contexto (ex.: a pessoa do café).
 
+## Mostrar, não contar (o público precisa VER cada ação)
+- Toda conquista aparece na tela: beber água (copo esvaziando), correr (rua rolando + contador de KM),
+  flexões (contador a cada repetição), café da manhã (comida sumindo do prato), leitura (página virando + contador).
+- Cada ação concluída vira uma **pílula com ✓** no canto do painel; os erros do "pensa demais" viram contadores
+  (SONECAS: 3, NO CELULAR: 41 MIN). Nada de "5 KM. FEITO." só em balão.
+- **Câmera com foco** (`SCENE.cam`): aproxima (1,4–1,75×) em quem está fazendo algo importante e abre quando muda de ação.
+- Pode trocar de cenário (casa → rua) com corte e flash rápido.
+- Relógio fixo no canto do painel quando o tempo importa.
+- Duração: pode passar de 25 s quando a história pede (o despertador detalhado tem **40 s**). Cartão final 2 com a
+  lista do que cada um fez (✓ × ✗).
+
 ## Animação (nada de boneco robótico)
 - Motor do tipo B em `trilha/tipo-b/` (`head.js` + roteiro `body_*.js` + `tail.js`, montado com `build.sh`).
 - Todo boneco passa pela camada `alive()`:
@@ -39,7 +50,7 @@
 - Texto em **português**, palavras **pulando** na tela (pop), palavra-chave na cor do personagem.
 
 ## Formato e som
-- 9:16 (1080×1920), 30 fps, **25 s**, sem narração, texto entre y=168 e y=1330 e **fora da coluna de botões** (x>950).
+- 9:16 (1080×1920), 30 fps, **25 s** (até ~40 s se a história tiver mais ações), sem narração, texto entre y=168 e y=1330 e **fora da coluna de botões** (x>950).
 - Gancho nos 3 primeiros segundos com impacto (flash + tremor). Motivação sempre: frase de superação no meio e 2 frases finais próprias.
 - Nunca usar "a obsessão vence" como frase final.
 - **Sons realistas (tipo B)**: vozes e ruídos são **gravações reais CC0** em `trilha/sons/` (ver `LICENCAS.md`):

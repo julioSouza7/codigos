@@ -97,7 +97,17 @@ def fan():
     for i in range(4):
         s = whoosh(0.14); k = int(i * 0.26 * SR); out[k:k + len(s)] += s[: len(out) - k]
     return out
-FX = {'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
+def scrollsw():
+    t = tt(0.09); n = rng.standard_normal(len(t)); return band(n, 3000, 9000) * np.sin(np.pi * t / 0.09) ** 2 * 0.6
+def birds(d=10.0):
+    out = np.zeros(int(SR * d)); x = 0.3
+    while x < d - 0.5:
+        for j in range(rng.integers(2, 5)):
+            t = tt(0.07); f0 = rng.uniform(2800, 4200); f = f0 + 1600 * np.sin(np.pi * t / 0.07); s = np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * t / 0.07) ** 2
+            i = int((x + j * 0.09) * SR); out[i:i + len(s)] += s[: len(out) - i]
+        x += rng.uniform(0.6, 1.6)
+    return out
+FX = {'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
       'ring': lambda: ring(1.3), 'slap': slap, 'swish': lambda: whoosh(0.25), 'tick': lambda: tone(2600, 0.03, 80), 'bigring': lambda: ring(2.0), 'breath_in': lambda: breath_in(), 'exhale': lambda: exhale(), 'blow': lambda: blow(), 'fan': fan}
 
 add(thump(120, 50, 0.6, 7), S['slam'], 0.3)

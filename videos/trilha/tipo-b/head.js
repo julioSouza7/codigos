@@ -126,7 +126,8 @@
     if (st.raw) return st;
     const pa = fn(t - 0.05), pb = fn(t - 0.11);
     const face = Math.sign(st.face || 1) || 1;
-    const vx = ((st.x - pa.x) / 0.05) * face;
+    const rd = st.runDist !== undefined;   // correndo no lugar (cenário rolando)
+    const vx = rd ? (st.runDist - pa.runDist) / 0.05 : ((st.x - pa.x) / 0.05) * face;
     const sp = Math.abs(vx);
     // atraso (follow-through): mãos e cabeça chegam um pouco depois do corpo
     st.hands = [P2(st.hands[0], pb.hands[0], 0.38), P2(st.hands[1], pb.hands[1], 0.45)];
@@ -135,7 +136,7 @@
     if (moving > 0.001) {
       const run = st.run ?? clamp((sp - 260) / 260);
       const stride = lerp(150, 270, run);
-      const ph = ((st.x * face) / stride) * Math.PI * 2 + (st.phase0 || 0);
+      const ph = (((rd ? st.runDist : st.x * face)) / stride) * Math.PI * 2 + (st.phase0 || 0);
       st.legs = mixL(st.legs, walkL(ph, run), moving); st._ph = ph; st._mv = moving; st._run = run;
       const s1 = Math.sin(ph), hy = st.hipY;
       const swF = run > 0.3 ? [st.x + 34 - 46 * s1, hy - 58 + 10 * s1] : [st.x + 12 - 40 * s1, hy + 36 - 8 * Math.abs(s1)];

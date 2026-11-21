@@ -72,9 +72,11 @@
     c.save(); c.translate(0, P.top); c.beginPath(); c.rect(0, 0, W, P.h); c.clip();
     const sh = SCENE.shake ? SCENE.shake(k, t) : 0;
     c.translate(sh * Math.sin(t * 70), sh * Math.cos(t * 83));
-    // câmera de mão: deriva lenta e leve zoom
-    const cz = 1.03 + 0.012 * Math.sin(t * 0.37 + (k === 'faz' ? 1 : 0));
-    const cx = 540 + 10 * noise(t * 0.25, k === 'faz' ? 2 : 5), cy = 200 + 6 * noise(t * 0.3, k === 'faz' ? 8 : 1);
+    // câmera: foco definido pelo roteiro (SCENE.cam) + leve câmera de mão
+    const cam = SCENE.cam ? SCENE.cam(k, t) : { x: 540, y: 200, z: 1 };
+    const cz = cam.z * (1.03 + 0.012 * Math.sin(t * 0.37 + (k === 'faz' ? 1 : 0)));
+    const cx = cam.x + 10 * noise(t * 0.25, k === 'faz' ? 2 : 5), cy = cam.y + 6 * noise(t * 0.3, k === 'faz' ? 8 : 1);
+    const toS = (p) => [540 + (p[0] - cx) * cz, 200 + (p[1] - cy) * cz];
     c.save(); c.translate(540, 200); c.scale(cz, cz); c.translate(-cx, -cy);
     SCENE.drawBack(c, k, t, P);
     const others = (SCENE.others && SCENE.others[k]) || [];
@@ -84,13 +86,15 @@
     drawn.main = main;
     for (const o of others) if (o.front) drawn[o.id] = drawActor(c, alive(o.fn, t, { seed: o.seed, talk: TALK[k].other }), o.col, o.glow ?? 0.4, o.tint);
     if (SCENE.drawFront) SCENE.drawFront(c, k, t, P, drawn);
+    c.restore();
     for (const b of SCENE.bubbles[k]) {
       const sp = drawn[(b.who || 'main') === 'main' ? 'main' : (b.whoId || 'other')] || main;
+      const hs = toS(sp.head);
       c.font = '800 28px "Space Mono", monospace'; const bw = c.measureText(b.text).width / 2 + 22;
-      const bx = clamp(b.x ?? sp.head[0] + (b.dx ?? 60), 300 + bw, 1000 - bw);
-      bubble(c, bx, b.y ?? clamp(sp.head[1] - 70, 60, 300), b.text, b.col, b.t0, b.t1, t, sp.head[0]);
+      const bx = clamp(b.x ?? hs[0] + (b.dx ?? 60), 300 + bw, (SCENE.bubbleMaxX || 1000) - bw);
+      bubble(c, bx, b.y ?? 50, b.text, b.col, b.t0, b.t1, t, hs[0]);
     }
-    c.restore();
+    if (SCENE.drawOverlay) SCENE.drawOverlay(c, k, t, P, drawn, toS);
     drawMonitor(c, k, t, P);
     const nm = k === 'faz' ? '2 · FAZ' : '1 · PENSA DEMAIS';
     c.font = '700 22px "Space Mono", monospace'; const tw = c.measureText(nm).width;
@@ -102,7 +106,10 @@
     c.lineWidth = 5; c.strokeStyle = OUT; c.strokeRect(0, P.top, W, P.h);
   }
   function drawReport(c, t) {
-    const u = easeOut(seg(t, GT1 + 0.2, GT1 + 0.8)); if (u <= 0) return;
+    const out = SCENE.report2T ? smooth(seg(t, SCENE.report2T - 0.3, SCENE.report2T)) : 0;
+    if (SCENE.drawReport2 && t >= SCENE.report2T - 0.3) SCENE.drawReport2(c, t, out);
+    if (out >= 1) return;
+    const u = easeOut(seg(t, GT1 + 0.2, GT1 + 0.8)) * (1 - out); if (u <= 0) return;
     const x0 = 40, x1 = 935, top = 520, h = 680;
     const sc = lerp(0.9, 1, backE(seg(t, GT1 + 0.2, GT1 + 0.75)));
     c.save(); c.globalAlpha = u; c.translate((x0 + x1) / 2, top + h / 2); c.scale(sc, sc); c.translate(-(x0 + x1) / 2, -(top + h / 2));
