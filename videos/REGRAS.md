@@ -15,6 +15,21 @@
 - Final: cartão "ÍNDICE DE DOR · RESULTADO" com as duas curvas e os totais; frase de impacto.
 - Falas curtas em balão ("AI!", "VOU CONTAR ATÉ 3...") e chamada "QUAL DOS 2 É VOCÊ? COMENTA 1 OU 2".
 - Cenário original a cada vídeo (não copiar vacina/curativo das referências).
+- O índice muda conforme o tema: **dor**, **ansiedade**, **cansaço**… (sempre vermelho, com total somando ao vivo).
+  O cartão final mostra "N SEGUNDOS NO VERMELHO" para cada um.
+- Pode ter um 3º personagem neutro (azul) só como figurante, para dar contexto (ex.: a pessoa do café).
+
+## Animação (nada de boneco robótico)
+- Motor do tipo B em `trilha/tipo-b/` (`head.js` + roteiro `body_*.js` + `tail.js`, montado com `build.sh`).
+- Todo boneco passa pela camada `alive()`:
+  - **caminhada e corrida de verdade**: pernas, braços e quadril calculados pela distância andada, sem deslizar;
+  - **respiração** e micro-movimentos o tempo todo, mesmo parado;
+  - **atraso** das mãos e da cabeça em relação ao corpo, para dar sensação de peso;
+  - **gesto ao falar**: a cabeça acompanha o ritmo e a mão da frente gesticula.
+- Transições entre poses passam um pouco do ponto e assentam (`backE`).
+- Antecipação antes de cada ação grande (agachar antes de correr), virar de lado ao mudar de direção.
+- Câmera de mão leve em cada painel.
+- Efeitos sonoros automáticos (`sfx_fp.py`): passos sincronizados com a caminhada, "bips" de fala, toques, impacto no resultado.
 
 ## Visual (paleta das referências MindSet / Stick to It)
 - Palco **sépia quente**: fundo marrom-escuro (#1a120c → #33251b), parede de madeira, **holofote âmbar** (#FFD6A0).
