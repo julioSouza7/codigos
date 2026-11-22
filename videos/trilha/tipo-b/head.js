@@ -173,3 +173,11 @@
   const toRig = (st, Q) => { const f = st.face || 1, ax = st.ax ?? st.x; return [ax + (Q[0] - ax) / (SC * f), st.ay + (Q[1] - st.ay) / SC]; };
   const spike = (t, t0, a, k) => (t >= t0 ? a * Math.exp(-(t - t0) * k) : 0);
   const bump = (t, a, b, h) => h * smooth(seg(t, a, a + 0.4)) * (1 - smooth(seg(t, b - 0.2, b + 0.6)));
+
+  // foco alternado: o painel de quem está agindo fica aceso e o outro escurece (e só ele tem som)
+  const focusTrack = (keys, tr = 0.3) => (k, t) => {
+    let cur = keys[0][1], prev = null, ts = -9;
+    for (const [kt, who] of keys) if (t >= kt) { prev = cur; cur = who; ts = kt; }
+    const dimOf = (w) => (w && w !== k ? 1 : 0);
+    return lerp(dimOf(prev), dimOf(cur), smooth(seg(t, ts, ts + tr)));
+  };

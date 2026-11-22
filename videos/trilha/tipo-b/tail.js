@@ -96,6 +96,7 @@
     }
     if (SCENE.drawOverlay) SCENE.drawOverlay(c, k, t, P, drawn, toS);
     drawMonitor(c, k, t, P);
+    { const fd = SCENE.dimOf && t < GT1 ? SCENE.dimOf(k, t) : 0; if (fd > 0) { c.fillStyle = `rgba(8,5,3,${0.5 * fd})`; c.fillRect(0, 0, W, P.h); } }
     const nm = k === 'faz' ? '2 · FAZ' : '1 · PENSA DEMAIS';
     c.font = '700 22px "Space Mono", monospace'; const tw = c.measureText(nm).width;
     c.beginPath(); c.roundRect(18, 16, tw + 32, 38, 19); c.fillStyle = 'rgba(15,10,7,0.85)'; c.fill(); c.lineWidth = 3; c.strokeStyle = rgb(PAL[k]); c.stroke();

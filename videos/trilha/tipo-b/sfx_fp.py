@@ -107,11 +107,59 @@ def birds(d=10.0):
             i = int((x + j * 0.09) * SR); out[i:i + len(s)] += s[: len(out) - i]
         x += rng.uniform(0.6, 1.6)
     return out
-FX = {'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
+
+def water(d):
+    # torneira aberta: chiado com gorgolejo
+    t = tt(d); n = rng.standard_normal(len(t)); base = band(n, 700, 6000) * 0.6
+    gur = np.zeros(len(t)); x = 0.0
+    while x < d:
+        f = rng.uniform(300, 900); g = tone(f, 0.04, 60, 0.002) * rng.uniform(0.1, 0.35); i = int(x * SR); gur[i:i + len(g)] += g[: len(gur) - i]; x += rng.uniform(0.01, 0.05)
+    env = np.minimum(1, t / 0.08) * np.minimum(1, (d - t) / 0.15); return (base + gur) * env
+def scrub(d):
+    # esponja esfregando: rajadas ritmadas
+    t = tt(d); n = rng.standard_normal(len(t)); s = band(n, 1500, 7000); m = (0.5 + 0.5 * np.sin(2 * np.pi * 5.5 * t)) ** 2
+    return s * m * np.minimum(1, t / 0.05) * np.minimum(1, (d - t) / 0.1) * 0.8
+def buzz(d):
+    t = tt(d); f = 210 + 25 * np.sin(2 * np.pi * 0.7 * t) + 12 * np.sin(2 * np.pi * 3.1 * t); ph = np.cumsum(f) / SR
+    s = np.sign(np.sin(2 * np.pi * ph)) * 0.3 + np.sin(4 * np.pi * ph) * 0.2; s = lp(s, 2500)
+    return s * (0.6 + 0.4 * np.sin(2 * np.pi * 0.45 * t) ** 2) * np.minimum(1, t / 0.2) * np.minimum(1, (d - t) / 0.3)
+def scribble(d):
+    out = np.zeros(int(SR * d) + SR // 5); x = 0.0
+    while x < d:
+        g = rng.uniform(0.05, 0.16); t = tt(g); s = band(rng.standard_normal(len(t)), 2500, 9000) * np.sin(np.pi * t / g) * rng.uniform(0.4, 1.0)
+        i = int(x * SR); out[i:i + len(s)] += s[: len(out) - i]; x += g + rng.uniform(0.0, 0.06)
+    return out * 0.7
+def typing(d):
+    out = np.zeros(int(SR * d) + SR // 5); x = 0.0; k = clip('foley/toque_tela')
+    while x < d:
+        i = int(x * SR); out[i:i + len(k)] += k[: len(out) - i] * rng.uniform(0.4, 0.9); x += rng.uniform(0.07, 0.2)
+    return out
+def drill(d):
+    # broca de dentista: apito agudo com variação de carga
+    t = tt(d); load = 0.5 + 0.5 * np.sin(2 * np.pi * 1.3 * t) ** 2; f = 2600 - 500 * load + 30 * np.sin(2 * np.pi * 40 * t); ph = np.cumsum(f) / SR
+    s = np.sin(2 * np.pi * ph) * 0.5 + 0.25 * np.sin(4 * np.pi * ph) + 0.15 * band(rng.standard_normal(len(t)), 3000, 8000) * load
+    return s * np.minimum(1, t / 0.1) * np.minimum(1, (d - t) / 0.15) * 0.6
+def ding():
+    out = np.zeros(int(SR * 0.9))
+    for i, f in enumerate([1318.5, 1760.0]):
+        s = bell(f, 0.8, 6); k = int(i * 0.11 * SR); out[k:k + len(s)] += s[: len(out) - k]
+    return out * 0.6
+def crunch():
+    t = tt(0.25); n = rng.standard_normal(len(t)); m = (rng.random(len(t)) < 0.02) * 3
+    return (band(n, 800, 6000) * 0.5 + lp(m * n, 4000)) * np.exp(-t * 14)
+SYN = {'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
+FX = {'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
       'ring': lambda: ring(1.3), 'slap': slap, 'swish': lambda: whoosh(0.25), 'tick': lambda: tone(2600, 0.03, 80), 'bigring': lambda: ring(2.0), 'breath_in': lambda: breath_in(), 'exhale': lambda: exhale(), 'blow': lambda: blow(), 'fan': fan}
 
 add(thump(120, 50, 0.6, 7), S['slam'], 0.3)
-for t0, k, run, g in S.get('steps', []):
+FK = S.get('focusKeys')
+def focused(k, t):
+    if not FK: return True
+    w = None
+    for kt, who in FK:
+        if t >= kt: w = who
+    return w == k
+for t0, k, run, g in [s_ for s_ in S.get('steps', []) if focused(s_[1], s_[0])]:
     add(step(run), t0, 0.09 * g * (1 + 0.6 * run), PAN[k])
 # fala: três sílabas "bip" de desenho animado
 for t0, k in ([] if S.get('noBips') else S.get('talks', [])):
@@ -121,6 +169,7 @@ for t0, k in ([] if S.get('noBips') else S.get('talks', [])):
 for e in S.get('fx', []):
     t0, typ, g, pan = e[:4]; prm = e[4] if len(e) > 4 else None
     if typ == 'slowrip': sig = slowrip(prm)
+    elif typ in SYN: sig = SYN[typ](prm)
     elif '/' in typ: sig = clip(typ, prm or 1.0)
     else: sig = FX[typ]()
     add(sig, t0, g, pan)
