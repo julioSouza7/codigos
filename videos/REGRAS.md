@@ -58,6 +58,10 @@
 - **Os áudios dos dois nunca se sobrepõem**: um age e geme, termina, e só então o outro começa.
   Conferir com a checagem de sobreposição antes de renderizar.
 - Sem "pop" nas palavras da legenda quando houver voz.
+- **Foco alternado** (`focusTrack`): a história é dividida em janelas; em cada uma só um painel fica aceso e só ele
+  tem som (inclusive passos). O outro escurece. A checagem `check_audio.py` roda antes do render e trava se houver
+  sobreposição.
+
 
 ## Formato e som
 - 9:16 (1080×1920), 30 fps, **25 s** (até ~40 s se a história tiver mais ações), sem narração, texto entre y=168 e y=1330 e **fora da coluna de botões** (x>950).
