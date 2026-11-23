@@ -149,13 +149,14 @@ def crunch():
     return (band(n, 800, 6000) * 0.5 + lp(m * n, 4000)) * np.exp(-t * 14)
 
 def ks(f, d=1.8, bright=0.6, damp=0.996):
-    # corda dedilhada (Karplus-Strong em blocos)
-    N = max(2, int(SR / f)); n = int(SR * d); y = np.zeros(n + N + 1)
-    y[:N] = lp(rng.uniform(-1, 1, N * 4), 2000 + 6000 * bright)[:N]
-    for b in range(1, n // N + 1):
-        a, e = b * N, min((b + 1) * N, n + N)
-        y[a:e] = damp * 0.5 * (y[a - N:e - N] + y[a - N - 1:e - N - 1])
-    out = y[:n]; return out * np.minimum(1, np.arange(n) / 30) * np.minimum(1, (n - np.arange(n)) / (0.05 * SR))
+    # corda dedilhada (Karplus-Strong em blocos); y[0] é um zero de folga
+    N = max(2, int(SR / f)); n = int(SR * d); y = np.zeros(n + N + 2)
+    y[1:N + 1] = lp(rng.uniform(-1, 1, N * 4), 2000 + 6000 * bright)[:N]
+    b = 1
+    while b * N + 1 < n + N + 2:
+        a, e = b * N + 1, min((b + 1) * N + 1, n + N + 2)
+        y[a:e] = damp * 0.5 * (y[a - N:e - N] + y[a - N - 1:e - N - 1]); b += 1
+    out = y[1:n + 1]; return out * np.minimum(1, np.arange(n) / 30) * np.minimum(1, (n - np.arange(n)) / (0.05 * SR))
 CHORDS = {'G': [43, 47, 50, 55, 59, 67], 'C': [48, 52, 55, 60, 64], 'D': [50, 57, 62, 66], 'Em': [40, 47, 52, 55, 59, 64], 'Am': [45, 52, 57, 60, 64]}
 def strum(name, d=2.0):
     if '/' in name: name, d = name.split('/')[0], float(name.split('/')[1])
