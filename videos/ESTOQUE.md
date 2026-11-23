@@ -23,3 +23,8 @@ Todos: 25 s, 1080×1920, 4 personagens (1 disciplina, 2 obsessão, 3 motivação
 9. `dinheiro/` — índice de preocupação, 32 s
 10. `curriculo/` — índice de ansiedade, 32 s
 11. `violao/` — índice de frustração, 32 s
+
+## Formato novo (tela única + gancho, 18–21 s) — postar estes primeiro
+1. `cera-quente-v2/`
+2. `dinheiro-v2/`
+3. `prova-v2/`
