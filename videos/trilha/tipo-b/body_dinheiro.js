@@ -76,7 +76,7 @@
   }
   // fatura grande na tela
   function billCard(c, t) { const t0 = 23.9; if (t < t0) return; const s = backE(seg(t, t0, t0 + 0.4));
-    c.save(); c.translate(780, 200); c.rotate(0.05); c.scale(s, s); c.fillStyle = '#f7f0e2'; c.strokeStyle = OUT; c.lineWidth = 4; c.beginPath(); c.roundRect(-120, -64, 240, 128, 8); c.fill(); c.stroke();
+    c.save(); c.translate(W / C_UI - 300, 200); c.rotate(0.05); c.scale(s, s); c.fillStyle = '#f7f0e2'; c.strokeStyle = OUT; c.lineWidth = 4; c.beginPath(); c.roundRect(-120, -64, 240, 128, 8); c.fill(); c.stroke();
     c.fillStyle = '#3a3a40'; c.font = '700 16px "Space Mono", monospace'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('FATURA DO CARTÃO', 0, -38);
     c.fillStyle = '#d03a2e'; c.font = '900 40px Montserrat, sans-serif'; c.fillText('R$ 1.800', 0, 8); c.font = '700 14px "Space Mono", monospace'; c.fillText('VENCE HOJE', 0, 44); c.restore(); }
   const brl = (v) => v.toLocaleString('pt-BR');

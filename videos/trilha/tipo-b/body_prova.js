@@ -185,14 +185,14 @@
     if (k === 'faz') {
       const items = [[3.4, 'CELULAR NA GAVETA'], [11.0, 'CAPÍTULO 1'], [13.9, 'CAPÍTULO 2'], [17.85, 'CAPÍTULO 3'], [MORNING + 0.1, '8H DE SONO']];
       items.forEach(([t0, txt], i) => { if (t >= t0) pill(c, 18, 74 + i * 36, txt, PAL.faz, true, backE(seg(t, t0, t0 + 0.3))); });
-      gradeCard(c, 790, 205, '9,5', true, 26.0, t);
+      gradeCard(c, W / C_UI - 290, 205, '9,5', true, 26.0, t);
     } else {
       const vids = t < 9.7 ? 0 : t < 14.0 ? 1 : Math.min(6, 1 + Math.floor((t - 14.0) / 0.4));
       let y = 74;
       if (vids > 0) { pill(c, 18, y, `"SÓ UM VÍDEO": ${vids}`, PAL.pensa, false); y += 36; }
       if (t > 16.4) { pill(c, 18, y, `PÁGINAS: ${t < 20.4 ? 0 : Math.min(12, Math.floor((t - 20.4) * 2.6))}`, PAL.dor, false); y += 36; }
       if (t >= MORNING) pill(c, 18, y, 'SONO: 3H', PAL.dor, false, backE(seg(t, MORNING + 0.1, MORNING + 0.4)));
-      gradeCard(c, 790, 205, '4,0', false, 27.55, t);
+      gradeCard(c, W / C_UI - 290, 205, '4,0', false, 27.55, t);
     }
     // corte para a manhã
     const a = t - MORNING; if (a >= 0 && a < 0.25) { c.fillStyle = `rgba(255,245,230,${0.7 * (1 - a / 0.25)})`; c.fillRect(0, 0, W, P.h); }

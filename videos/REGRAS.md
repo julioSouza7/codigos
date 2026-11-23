@@ -1,5 +1,19 @@
 # Regras dos vídeos — @stick.obsessao (versão atual)
 
+## Formato atual (a partir de 23/11): TELA ÚNICA + GANCHO, 15–20 s
+- **Frame 1 = o pior momento** do "pensa demais" (a fatura, a nota 4, o grito da cera), com legenda de choque.
+- Logo depois: **"COMO ELE CHEGOU AQUI?"** + rebobinada rápida (efeito de fita, ⏪, som de rebobinar).
+- A história é contada em **cortes alternados em tela cheia** (um personagem por vez, boneco 2× maior,
+  plaquinhas 1,4× maiores), com flash curto em cada troca. Nunca os dois painéis ao mesmo tempo.
+- Trechos acelerados (1,2–2×) para caber em **15–20 s**. Final: quadro congelado escurecido + **uma frase** + chamada.
+- Som: cada efeito é cortado no fim do seu trecho — nada de um personagem vaza no corte do outro.
+- Motor: `SCENE.edit` (lista de cortes `{k, a, b, sp, cap}`) em `trilha/tipo-b/tail.js`; render com `finish_v2.sh`.
+- Os vídeos antigos de dois painéis continuam valendo como estoque, mas os novos saem neste formato.
+
+## Perfil
+- Nome: **Faz × Pensa Demais** · @stick.obsessao · Bio: "Qual dos 2 é você? 👇 Vídeo novo todo dia."
+- Fixar no topo os 3 vídeos com mais views. Usar um som em alta do app por cima, em volume baixo.
+
 ## Dois tipos de vídeo
 ### Tipo A — Obsessão × Disciplina × Motivação × Ego (4 personagens)
 - Elenco e ordem fixa: **1 · DISCIPLINA, 2 · OBSESSÃO, 3 · MOTIVAÇÃO, 4 · EGO**. A **obsessão sempre vence**.

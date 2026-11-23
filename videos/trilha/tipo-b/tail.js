@@ -36,11 +36,11 @@
     const toP = (p) => [fx + (p[0] - fx) * SC * f, fy + (p[1] - fy) * SC];
     return { st, R, head: toP(R.head), hand: toP(R.armF[2]), toP };
   }
-  function bubble(c, x, y, text, col, t0, t1, t, tailX) {
+  function bubble(c, x, y, text, col, t0, t1, t, tailX, s = 1) {
     if (t < t0 || t > t1) return;
     const a = smooth(seg(t, t0, t0 + 0.12)) * (1 - smooth(seg(t, t1 - 0.15, t1)));
     const sc = (1 + 0.4 * Math.exp(-(t - t0) * 12) * Math.cos((t - t0) * 28)) * lerp(0.6, 1, smooth(seg(t, t0, t0 + 0.1)));
-    c.save(); c.globalAlpha = a; c.translate(x, y + 2 * Math.sin((t - t0) * 5)); c.scale(sc, sc);
+    c.save(); c.globalAlpha = a; c.translate(x, y + 2 * Math.sin((t - t0) * 5)); c.scale(sc * s, sc * s);
     c.font = '800 28px "Space Mono", monospace'; const tw = c.measureText(text).width;
     const tx = clamp((tailX ?? x) - x, -tw / 2 + 4, tw / 2 - 16);
     c.beginPath(); c.roundRect(-tw / 2 - 18, -26, tw + 36, 52, 12); c.fillStyle = '#f4ead8'; c.fill(); c.lineWidth = 4; c.strokeStyle = OUT; c.stroke();
@@ -50,7 +50,7 @@
     c.restore();
   }
   function drawMonitor(c, k, t, P) {
-    const y0 = P.h - 66, hh = 56, x0 = 30, x1 = 925;
+    const y0 = P.h - 66, hh = 56, x0 = 30, x1 = Math.min(925, W / C_UI - 140);
     c.fillStyle = 'rgba(10,7,5,0.82)'; c.fillRect(0, y0 - 8, W, hh + 16);
     c.strokeStyle = 'rgba(255,255,255,0.08)'; c.lineWidth = 1;
     for (let i = 1; i < 4; i++) { c.beginPath(); c.moveTo(x0, y0 + hh * i / 4); c.lineTo(x1, y0 + hh * i / 4); c.stroke(); }
@@ -67,17 +67,20 @@
     const hot = val > 40 ? 1 : 0;
     c.fillStyle = hot ? rgb(mixC([255, 255, 255], PAL.dor, 0.6)) : '#fff'; c.font = '800 30px Montserrat, sans-serif'; c.fillText(String(Math.round(totalAt(k, Math.min(t, GT1)))), x1, y0 + 20);
   }
-  function drawPanel(c, k, t) {
-    const P = PANELS[k];
+  // L = layout: dois painéis (padrão) ou tela única (top 470, h 820, interface e boneco maiores)
+  function drawPanel(c, k, t, L, endDim) {
+    const P = L ? { top: L.top, h: L.h } : PANELS[k]; const ui = L ? L.ui : 1, bz = L ? L.bz : 1, sy = L ? L.sy : 200;
     c.save(); c.translate(0, P.top); c.beginPath(); c.rect(0, 0, W, P.h); c.clip();
     const sh = SCENE.shake ? SCENE.shake(k, t) : 0;
     c.translate(sh * Math.sin(t * 70), sh * Math.cos(t * 83));
     // câmera: foco definido pelo roteiro (SCENE.cam) + leve câmera de mão
-    const cam = SCENE.cam ? SCENE.cam(k, t) : { x: 540, y: 200, z: 1 };
+    let cam = SCENE.cam ? SCENE.cam(k, t) : { x: 540, y: 200, z: 1 };
+    // tela única: o boneco já é 2× maior, então o zoom do roteiro entra só em parte; sem câmera, segue o personagem
+    if (L) cam = SCENE.cam ? { x: clamp(cam.x, 400, 680), y: clamp(cam.y, 170, 215), z: 1 + (cam.z - 1) * 0.35 } : { x: clamp(SCENE.state[k](t).x + 100, 400, 680), y: 190, z: 1 };
     const cz = cam.z * (1.03 + 0.012 * Math.sin(t * 0.37 + (k === 'faz' ? 1 : 0)));
     const cx = cam.x + 10 * noise(t * 0.25, k === 'faz' ? 2 : 5), cy = cam.y + 6 * noise(t * 0.3, k === 'faz' ? 8 : 1);
-    const toS = (p) => [540 + (p[0] - cx) * cz, 200 + (p[1] - cy) * cz];
-    c.save(); c.translate(540, 200); c.scale(cz, cz); c.translate(-cx, -cy);
+    const toS = (p) => [540 + (p[0] - cx) * cz * bz, sy + (p[1] - cy) * cz * bz];
+    c.save(); c.translate(540, sy); c.scale(cz * bz, cz * bz); c.translate(-cx, -cy);
     SCENE.drawBack(c, k, t, P);
     const others = (SCENE.others && SCENE.others[k]) || [];
     const drawn = {};
@@ -90,18 +93,23 @@
     for (const b of SCENE.bubbles[k]) {
       const sp = drawn[(b.who || 'main') === 'main' ? 'main' : (b.whoId || 'other')] || main;
       const hs = toS(sp.head);
-      c.font = '800 28px "Space Mono", monospace'; const bw = c.measureText(b.text).width / 2 + 22;
-      const bx = clamp(b.x ?? hs[0] + (b.dx ?? 60), 300 + bw, (SCENE.bubbleMaxX || 1000) - bw);
-      bubble(c, bx, b.y ?? 50, b.text, b.col, b.t0, b.t1, t, hs[0]);
+      c.font = '800 28px "Space Mono", monospace'; const bw = (c.measureText(b.text).width / 2 + 22) * ui;
+      const bx = clamp(b.x !== undefined ? b.x * ui : hs[0] + (b.dx ?? 60) * ui, 300 * ui + bw, (L ? 930 : (SCENE.bubbleMaxX || 1000)) - bw);
+      bubble(c, bx, L ? 138 : (b.y ?? 50), b.text, b.col, b.t0, b.t1, t, hs[0], ui);
     }
-    if (SCENE.drawOverlay) SCENE.drawOverlay(c, k, t, P, drawn, toS);
-    drawMonitor(c, k, t, P);
-    { const fd = SCENE.dimOf && t < GT1 ? SCENE.dimOf(k, t) : 0; if (fd > 0) { c.fillStyle = `rgba(8,5,3,${0.5 * fd})`; c.fillRect(0, 0, W, P.h); } }
+    c.save(); c.scale(ui, ui); const PU = { top: P.top, h: P.h / ui };
+    if (SCENE.drawOverlay) SCENE.drawOverlay(c, k, t, PU, drawn, (p) => toS(p).map((v) => v / ui));
+    drawMonitor(c, k, t, PU);
+    c.restore();
+    { const fd = !L && SCENE.dimOf && t < GT1 ? SCENE.dimOf(k, t) : 0; if (fd > 0) { c.fillStyle = `rgba(8,5,3,${0.5 * fd})`; c.fillRect(0, 0, W, P.h); } }
     const nm = k === 'faz' ? '2 · FAZ' : '1 · PENSA DEMAIS';
+    c.save(); c.scale(ui, ui);
     c.font = '700 22px "Space Mono", monospace'; const tw = c.measureText(nm).width;
     c.beginPath(); c.roundRect(18, 16, tw + 32, 38, 19); c.fillStyle = 'rgba(15,10,7,0.85)'; c.fill(); c.lineWidth = 3; c.strokeStyle = rgb(PAL[k]); c.stroke();
     c.fillStyle = rgb(PAL[k]); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(nm, 34 + tw / 2, 36);
-    const dim = smooth(seg(t, GT1, GT1 + 0.5));
+    c.restore();
+    if (L && L.after) L.after(c, P);
+    const dim = L ? (endDim || 0) : smooth(seg(t, GT1, GT1 + 0.5));
     if (dim > 0) { c.fillStyle = `rgba(8,5,3,${0.78 * dim})`; c.fillRect(0, 0, W, P.h); }
     c.restore();
     c.lineWidth = 5; c.strokeStyle = OUT; c.strokeRect(0, P.top, W, P.h);
@@ -138,6 +146,22 @@
     c.restore();
   }
 
+
+  // ---------- TELA ÚNICA: lista de cortes (SCENE.edit) ----------
+  // cada corte: { k, a, b, sp } (sp<0 = rebobinando) ou { k, a, dur, sp: 0, end: true } (quadro final parado)
+  const EDIT = SCENE.edit || null;
+  const LSINGLE = { top: 470, h: 820, ui: 1.4, bz: 2.0, sy: 400 };
+  let ETOT = 0;
+  if (EDIT) {
+    C_UI = LSINGLE.ui;
+    for (const cl of EDIT) { cl.dur = cl.dur ?? Math.abs((cl.b - cl.a) / cl.sp); cl.T0 = ETOT; ETOT += cl.dur; }
+    // legendas a partir dos cortes: cap = [linha1, linha2]; vale até o próximo corte que tiver legenda
+    const caps = [];
+    EDIT.forEach((cl, i) => { if (!cl.cap) return; let e = ETOT + 99; for (let j = i + 1; j < EDIT.length; j++) if (EDIT[j].cap) { e = EDIT[j].T0; break; }
+      caps.push({ s: cl.T0 - (i === 0 ? 1 : 0), e: cl.end ? 999 : e, center: !!cl.end, lines: [[cl.T0 + (i === 0 ? -1 : 0.02) + (cl.end ? 0.2 : 0), cl.cap[0]], [cl.T0 + (i === 0 ? 0 : 0.32) + (cl.end ? 0.6 : 0), cl.cap[1]]] }); });
+    SCENE.caps = caps;
+  }
+  const mapT = (T) => { let i = 0; while (i < EDIT.length - 1 && T >= EDIT[i + 1].T0) i++; const cl = EDIT[i], u = T - cl.T0; return { cl, i, u, k: cl.k, t: cl.sp === 0 ? cl.a : cl.a + u * cl.sp }; };
   // ---------- legendas: palavras pulando ----------
   // frase final com os segundos de dor de cada um ({faz} / {pensa})
   const SW = SCENE.secsWord || ((n) => `${n} SEGUNDO${n > 1 ? 'S' : ''}`);
@@ -163,7 +187,32 @@
     for (let i = cap.lines.length; i < capLines.length; i++) capLines[i].innerHTML = '';
   }
 
+  function renderSingle(T) {
+    const c = ctx, m = mapT(T);
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    const bg = c.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0f0a07'); bg.addColorStop(0.5, '#1a120c'); bg.addColorStop(1, '#0a0705');
+    c.fillStyle = bg; c.fillRect(0, 0, W, H);
+    const prev = m.i > 0 ? EDIT[m.i - 1] : null;
+    const punch = m.i === 0 || (prev && prev.k !== m.k) ? 0.05 * Math.exp(-m.u * 9) : 0;
+    const z = 1 + punch;
+    c.setTransform(z, 0, 0, z, 540 - 540 * z, 880 - 880 * z);
+    const L = Object.assign({}, LSINGLE, { after: (cc, P) => {
+      if (m.cl.sp < 0) {   // rebobinando: linhas de fita, tom frio e ícone
+        cc.fillStyle = 'rgba(120,150,200,0.16)'; cc.fillRect(0, 0, W, P.h);
+        for (let i = 0; i < 9; i++) { const y = ((i * 97 + T * 1900) % P.h); cc.fillStyle = 'rgba(255,255,255,0.22)'; cc.fillRect(0, y, W, 3 + (i % 3) * 2); }
+        cc.save(); cc.translate(540, P.h / 2); cc.fillStyle = 'rgba(15,10,7,0.8)'; cc.beginPath(); cc.roundRect(-110, -52, 220, 104, 20); cc.fill();
+        cc.fillStyle = '#fff'; for (const dx of [-36, 14]) { cc.beginPath(); cc.moveTo(dx + 30, -28); cc.lineTo(dx - 14, 0); cc.lineTo(dx + 30, 28); cc.closePath(); cc.fill(); } cc.restore();
+      }
+      if (prev && prev.k !== m.k && m.u < 0.14) { cc.fillStyle = `rgba(255,245,230,${0.7 * (1 - m.u / 0.14)})`; cc.fillRect(0, 0, W, P.h); }
+    } });
+    drawPanel(c, m.k, m.t, L, m.cl.end ? 0.8 * smooth(seg(m.u, 0, 0.5)) : 0);
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    const top = c.createLinearGradient(0, 120, 0, 480); top.addColorStop(0, 'rgba(0,0,0,0.5)'); top.addColorStop(1, 'rgba(0,0,0,0)');
+    c.fillStyle = top; c.fillRect(0, 0, W, 480);
+    renderCaptions(T);
+  }
   function renderAt(t) {
+    if (EDIT) return renderSingle(t);
     const c = ctx;
     c.setTransform(1, 0, 0, 1, 0, 0);
     const bg = c.createLinearGradient(0, 0, 0, H); bg.addColorStop(0, '#0f0a07'); bg.addColorStop(0.5, '#1a120c'); bg.addColorStop(1, '#0a0705');
@@ -191,6 +240,24 @@
   const talks = []; for (const k of ['faz', 'pensa']) for (const b of SCENE.bubbles[k]) talks.push([b.t0, k]);
   window.__schedule = Object.assign({ slam: 1.5, report: GT1, words, steps, talks,
     painFaz: SERIES.faz.filter((_, i) => i % 19 === 0).map((x) => +x.toFixed(1)), painPensa: SERIES.pensa.filter((_, i) => i % 19 === 0).map((x) => +x.toFixed(1)) }, SCENE.sched || {});
+  if (EDIT) {
+    // remapeia os efeitos para a linha do tempo dos cortes; cada som é cortado no fim do seu trecho
+    const S0 = window.__schedule, fx = [], st2 = [], hr = [];
+    const side = (pan, k) => (pan === 0 ? true : k === 'faz' ? pan > 0 : pan < 0);
+    for (const cl of EDIT) {
+      const until = +(cl.T0 + cl.dur).toFixed(3);
+      if (cl.sp < 0) { fx.push([cl.T0, 'rewind', 0.4, 0, cl.dur, until + 0.05]); continue; }
+      if (cl.sp === 0) continue;
+      const inC = (x) => x >= cl.a && x < cl.b, toT = (x) => +(cl.T0 + (x - cl.a) / cl.sp).toFixed(3);
+      for (const e of S0.fx || []) if (side(e[3], cl.k) && inC(e[0])) { const n = e.slice(); n[0] = toT(e[0]); n[3] = 0; while (n.length < 5) n.push(null); n[5] = until; fx.push(n); }
+      for (const s of S0.steps || []) if (s[1] === cl.k && inC(s[0])) st2.push([toT(s[0]), s[1], s[2], s[3]]);
+      for (const [h0, h1, pan] of S0.heartReal || []) if (side(pan, cl.k)) { const a = Math.max(h0, cl.a), b = Math.min(h1, cl.b); if (b > a) hr.push([toT(a), toT(b), 0]); }
+    }
+    // corte entre personagens: leve sopro
+    EDIT.forEach((cl, i) => { if (i > 0 && EDIT[i - 1].k !== cl.k && !cl.end) fx.push([cl.T0, 'swish', 0.12, 0, null, cl.T0 + 0.3]); });
+    const endT = EDIT.find((cl) => cl.end).T0;
+    window.__schedule = Object.assign({}, S0, { fx, steps: st2, heartReal: hr, focusKeys: null, words: [], talks: [], slam: 0.02, report: endT, duration: ETOT });
+  }
   window.__renderAt = renderAt;
   window.addEventListener('hf-seek', (e) => renderAt(e.detail.time));
   renderAt(0);

@@ -199,12 +199,20 @@ for t0, k in ([] if S.get('noBips') else S.get('talks', [])):
     base = 330 if k == 'pensa' else 420
     for j in range(3):
         f = base * (1 + 0.25 * rng.random()); add(tone(f, 0.07, 30, 0.006) * (1 + 0.3 * np.sign(np.sin(2 * np.pi * f * 2 * tt(0.07)))), t0 + j * 0.085, 0.045, PAN[k])
+def rewind(d=0.6):
+    t = tt(d); f = 300 + 2600 * (t / d) ** 1.5; ph = np.cumsum(f) / SR
+    s = np.sin(2 * np.pi * ph) * 0.25 + band(rng.standard_normal(len(t)), 1500, 7000) * 0.5 * (0.6 + 0.4 * np.sin(2 * np.pi * 23 * t))
+    return s * np.minimum(1, t / 0.03) * np.minimum(1, (d - t) / 0.05)
+SYN['rewind'] = rewind
 for e in S.get('fx', []):
-    t0, typ, g, pan = e[:4]; prm = e[4] if len(e) > 4 else None
+    t0, typ, g, pan = e[:4]; prm = e[4] if len(e) > 4 else None; until = e[5] if len(e) > 5 else None
     if typ == 'slowrip': sig = slowrip(prm)
     elif typ in SYN: sig = SYN[typ](prm)
     elif '/' in typ: sig = clip(typ, prm or 1.0)
     else: sig = FX[typ]()
+    if until is not None:   # corta o som no fim do trecho (nada vaza para o próximo personagem)
+        n = max(0, int((until - t0) * SR)); sig = sig[:n].copy(); fd = min(len(sig), int(0.06 * SR))
+        if fd > 0: sig[-fd:] *= np.linspace(1, 0, fd)
     add(sig, t0, g, pan)
 # coração gravado acelerando
 for t0, t1, pan in S.get('heartReal', []):
