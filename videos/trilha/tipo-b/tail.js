@@ -23,14 +23,14 @@
   };
   const TALK = { faz: { main: talkOf('faz', 'main'), other: talkOf('faz', 'other') }, pensa: { main: talkOf('pensa', 'main'), other: talkOf('pensa', 'other') } };
 
-  function drawActor(c, st, col, glow, tint) {
+  function drawActor(c, st, col, glow, tint, tintCol) {
     const fx = st.ax ?? st.x, fy = st.ay;
     const f = clamp(st.face ?? 1, -1, 1), sq = st.sq || 0;
     c.save();
     c.translate(fx, fy); c.scale(SC * f * (1 + sq * 0.45), SC * (1 - sq)); c.translate(-fx, -fy);
     const R = rigP(st);
     if (st.behind) st.behind(c, R);
-    drawFigure(c, R, col, glow, tint || 0);
+    drawFigure(c, R, col, glow, tint || 0, tintCol || null);
     if (st.prop) st.prop(c, R);
     c.restore();
     const toP = (p) => [fx + (p[0] - fx) * SC * f, fy + (p[1] - fy) * SC];
@@ -76,7 +76,8 @@
     // câmera: foco definido pelo roteiro (SCENE.cam) + leve câmera de mão
     let cam = SCENE.cam ? SCENE.cam(k, t) : { x: 540, y: 200, z: 1 };
     // tela única: o boneco já é 2× maior, então o zoom do roteiro entra só em parte; sem câmera, segue o personagem
-    if (L) cam = SCENE.cam ? { x: clamp(cam.x, 400, 680), y: clamp(cam.y, 170, 215), z: 1 + (cam.z - 1) * 0.35 } : { x: clamp(SCENE.state[k](t).x + 100, 400, 680), y: 190, z: 1 };
+    if (L && SCENE.minimal) cam = SCENE.cam ? SCENE.cam(k, t) : { x: 560, y: 200, z: 1 };
+    else if (L) cam = SCENE.cam ? { x: clamp(cam.x, 400, 680), y: clamp(cam.y, 170, 215), z: 1 + (cam.z - 1) * 0.35 } : { x: clamp(SCENE.state[k](t).x + 100, 400, 680), y: 190, z: 1 };
     const cz = cam.z * (1.03 + 0.012 * Math.sin(t * 0.37 + (k === 'faz' ? 1 : 0)));
     const cx = cam.x + 10 * noise(t * 0.25, k === 'faz' ? 2 : 5), cy = cam.y + 6 * noise(t * 0.3, k === 'faz' ? 8 : 1);
     const toS = (p) => [540 + (p[0] - cx) * cz * bz, sy + (p[1] - cy) * cz * bz];
@@ -85,7 +86,7 @@
     const others = (SCENE.others && SCENE.others[k]) || [];
     const drawn = {};
     for (const o of others) if (!o.front) drawn[o.id] = drawActor(c, alive(o.fn, t, { seed: o.seed, talk: TALK[k].other, energy: o.energy }), o.col, o.glow ?? 0.4, o.tint);
-    const main = drawActor(c, alive(SCENE.state[k], t, { seed: k === 'faz' ? 2 : 9, talk: TALK[k].main, energy: SCENE.energy ? SCENE.energy(k, t) : 1 }), PAL[k], 0.5);
+    const main = drawActor(c, alive(SCENE.state[k], t, { seed: k === 'faz' ? 2 : 9, talk: TALK[k].main, energy: SCENE.energy ? SCENE.energy(k, t) : 1 }), PAL[k], SCENE.minimal ? 0 : 0.5, SCENE.tint ? SCENE.tint(k, t) : 0, SCENE.tintCol || null);
     drawn.main = main;
     for (const o of others) if (o.front) drawn[o.id] = drawActor(c, alive(o.fn, t, { seed: o.seed, talk: TALK[k].other }), o.col, o.glow ?? 0.4, o.tint);
     if (SCENE.drawFront) SCENE.drawFront(c, k, t, P, drawn);
@@ -95,15 +96,15 @@
       const hs = toS(sp.head);
       c.font = '800 28px "Space Mono", monospace'; const bw = (c.measureText(b.text).width / 2 + 22) * ui;
       const bx = clamp(b.x !== undefined ? b.x * ui : hs[0] + (b.dx ?? 60) * ui, 300 * ui + bw, (L ? 930 : (SCENE.bubbleMaxX || 1000)) - bw);
-      bubble(c, bx, L ? 138 : (b.y ?? 50), b.text, b.col, b.t0, b.t1, t, hs[0], ui);
+      bubble(c, bx, L ? (SCENE.minimal ? clamp(hs[1] - 105 * ui, 100 * ui, P.h - 80) : 138) : (b.y ?? 50), b.text, b.col, b.t0, b.t1, t, hs[0], ui);
     }
     c.save(); c.scale(ui, ui); const PU = { top: P.top, h: P.h / ui };
     if (SCENE.drawOverlay) SCENE.drawOverlay(c, k, t, PU, drawn, (p) => toS(p).map((v) => v / ui));
-    drawMonitor(c, k, t, PU);
+    if (!SCENE.noMonitor) drawMonitor(c, k, t, PU);
     c.restore();
     { const fd = !L && SCENE.dimOf && t < GT1 ? SCENE.dimOf(k, t) : 0; if (fd > 0) { c.fillStyle = `rgba(8,5,3,${0.5 * fd})`; c.fillRect(0, 0, W, P.h); } }
     const nm = k === 'faz' ? '2 · FAZ' : '1 · PENSA DEMAIS';
-    c.save(); c.scale(ui, ui);
+    c.save(); c.scale(ui, ui); if (SCENE.minimal) c.globalAlpha = 0;
     c.font = '700 22px "Space Mono", monospace'; const tw = c.measureText(nm).width;
     c.beginPath(); c.roundRect(18, 16, tw + 32, 38, 19); c.fillStyle = 'rgba(15,10,7,0.85)'; c.fill(); c.lineWidth = 3; c.strokeStyle = rgb(PAL[k]); c.stroke();
     c.fillStyle = rgb(PAL[k]); c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(nm, 34 + tw / 2, 36);
@@ -211,7 +212,21 @@
     c.fillStyle = top; c.fillRect(0, 0, W, 480);
     renderCaptions(T);
   }
+  // ---------- MÉTODO MINIMALISTA: tela dividida que ocupa a tela toda, fundo preto, sem texto por cima ----------
+  const LMIN = { pensa: { top: 150, h: 690, ui: 1.3, bz: 1.7, sy: 345 }, faz: { top: 850, h: 690, ui: 1.3, bz: 1.7, sy: 345 } };
+  function renderMinimal(t) {
+    const c = ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#050506'; c.fillRect(0, 0, W, H);
+    const dim = 0.8 * smooth(seg(t, GT1, GT1 + 0.5));
+    drawPanel(c, 'pensa', t, LMIN.pensa, dim); drawPanel(c, 'faz', t, LMIN.faz, dim);
+    c.setTransform(1, 0, 0, 1, 0, 0);
+    c.fillStyle = '#050506'; c.fillRect(0, 840, W, 10); c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(0, 845); c.lineTo(W, 845); c.stroke();
+    c.font = '700 30px "Space Mono", monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
+    const lab = (txt, y, col) => { c.save(); c.globalAlpha = 1 - dim * 0.6; c.fillStyle = col; let x = 540 - (txt.length - 1) * 11; for (const ch of txt) { c.fillText(ch, x, y); x += 22; } c.restore(); };
+    lab('PENSA DEMAIS', 812, '#f4f2ee'); lab('FAZ', 878, '#f4f2ee');
+    renderCaptions(t);
+  }
   function renderAt(t) {
+    if (SCENE.minimal) return renderMinimal(t);
     if (EDIT) return renderSingle(t);
     const c = ctx;
     c.setTransform(1, 0, 0, 1, 0, 0);

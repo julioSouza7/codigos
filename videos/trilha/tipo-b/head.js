@@ -72,13 +72,13 @@
   }
   const limb = (c, pts, w, col) => { strokePts(c, pts, w + 2 * D.ol, OUT); strokePts(c, pts, w, col); };
   const disc = (c, p, r, col) => { c.fillStyle = col; c.beginPath(); c.arc(p[0], p[1], r, 0, Math.PI * 2); c.fill(); };
-  function drawFigure(c, R, col, glow = 0.5, tint = 0) {
+  function drawFigure(c, R, col, glow = 0.5, tint = 0, tintCol = null) {
     if (col && glow > 0) {
       c.save(); c.globalAlpha = glow; c.filter = 'blur(9px)';
       for (const L of [R.legB, R.armB, R.legF, R.armF, [R.hip, R.sh]]) strokePts(c, L, D.limb + 22, rgb(col));
       disc(c, R.head, D.headR + 12, rgb(col)); c.restore();
     }
-    const f = rgb(mixC(WHITE, col || WHITE, tint)), b = rgb(mixC(BACK, col || BACK, tint * 0.8));
+    const tc = tintCol || col; const f = rgb(mixC(WHITE, tc || WHITE, tint)), b = rgb(mixC(BACK, tc || BACK, tint * 0.8));
     limb(c, R.legB, D.limb, b);
     limb(c, R.armB, D.limb, b);
     strokePts(c, [R.hip, R.sh], D.torsoW + 2 * D.ol, OUT);

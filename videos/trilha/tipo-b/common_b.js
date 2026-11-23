@@ -61,3 +61,19 @@
   function cLaptop(c, x, top, screenFn) { c.fillStyle = '#26262c'; c.strokeStyle = OUT; c.lineWidth = 3; c.beginPath(); c.moveTo(x - 46, top); c.lineTo(x + 46, top); c.lineTo(x + 38, top - 4); c.lineTo(x - 38, top - 4); c.closePath(); c.fill(); c.stroke();
     c.beginPath(); c.roundRect(x - 30, top - 72, 82, 68, 4); c.fill(); c.stroke(); c.save(); c.beginPath(); c.rect(x - 25, top - 67, 72, 58); c.clip(); c.fillStyle = '#e8e4da'; c.fillRect(x - 25, top - 67, 72, 58); if (screenFn) screenFn(c, x - 25, top - 67, 72, 58); c.restore();
     c.save(); c.globalCompositeOperation = 'lighter'; c.filter = 'blur(14px)'; c.fillStyle = 'rgba(160,190,255,0.18)'; c.beginPath(); c.arc(x + 10, top - 38, 46, 0, Math.PI * 2); c.fill(); c.restore(); }
+
+  // palco minimalista (método das referências): preto, uma luminária inclinada no canto e um cone de luz
+  function cStage(c, P, lamp = [140, 20], target = [560, 330], floorY = C_FL) {
+    c.fillStyle = '#08080a'; c.fillRect(-400, -200, W + 800, P.h + 600);
+    c.save(); c.globalCompositeOperation = 'lighter'; c.filter = 'blur(22px)';
+    const dx = target[0] - lamp[0], dy = target[1] - lamp[1], len = Math.hypot(dx, dy), nx = -dy / len, ny = dx / len;
+    const g = c.createLinearGradient(lamp[0], lamp[1], target[0], target[1]); g.addColorStop(0, 'rgba(255,214,160,0.32)'); g.addColorStop(1, 'rgba(255,214,160,0.06)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(lamp[0] + nx * 14, lamp[1] + ny * 14); c.lineTo(lamp[0] - nx * 14, lamp[1] - ny * 14);
+    c.lineTo(target[0] - nx * 260, target[1] - ny * 260 + 60); c.lineTo(target[0] + nx * 260, target[1] + ny * 260 + 60); c.closePath(); c.fill();
+    c.fillStyle = 'rgba(255,214,160,0.10)'; c.beginPath(); c.ellipse(target[0], floorY + 4, 230, 26, 0, 0, Math.PI * 2); c.fill(); c.restore();
+    c.save(); c.translate(lamp[0], lamp[1]); c.rotate(Math.atan2(dy, dx) - Math.PI / 2); c.fillStyle = '#2b2b30'; c.beginPath(); c.moveTo(-26, -6); c.lineTo(26, -6); c.lineTo(16, 18); c.lineTo(-16, 18); c.closePath(); c.fill();
+    c.fillStyle = '#ffe9c4'; c.beginPath(); c.ellipse(0, 18, 16, 5, 0, 0, Math.PI * 2); c.fill(); c.restore();
+    c.strokeStyle = 'rgba(255,255,255,0.10)'; c.lineWidth = 3; c.beginPath(); c.moveTo(-400, floorY); c.lineTo(W + 400, floorY); c.stroke();
+  }
+  // banquinho simples
+  function cStool(c, x, top = C_FL - 66) { c.strokeStyle = '#3a3a40'; c.lineWidth = 7; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - 34, top); c.lineTo(x + 34, top); c.moveTo(x - 26, top); c.lineTo(x - 32, C_FL); c.moveTo(x + 26, top); c.lineTo(x + 32, C_FL); c.moveTo(x - 29, top + 40); c.lineTo(x + 29, top + 40); c.stroke(); }

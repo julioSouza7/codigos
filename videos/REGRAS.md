@@ -1,5 +1,18 @@
 # Regras dos vídeos — @stick.obsessao (versão atual)
 
+## MÉTODO NOVO (23/11, noite) — minimalista, inspirado no Stick to It (sem copiar cenas)
+- **Tela dividida que ocupa a tela toda**: em cima PENSA DEMAIS, embaixo FAZ; só os nomes pequenos na divisória.
+- **Fundo preto**, uma luminária inclinada e um cone de luz. Poucos objetos; o objeto da piada em cor forte.
+- **Nenhum texto por cima durante o vídeo** (sem título, sem pílulas, sem relógio). A ação começa no frame 1.
+- **Piada visual por exagero**: o medo do "pensa demais" aumenta as coisas (plateia vira estádio, prancha vai às
+  nuvens, piscina vira balde com tubarão) e ele fica verde de nervoso; o "faz" já resolveu e está curtindo.
+- Falas de 1–3 palavras. Final: escurece + **uma frase** curta (realidade × medo) + chamada.
+- **Gráfico/índice só quando o tema for dor e ajudar a piada** — nunca em todos.
+- 15–18 s. Som: só efeitos (gemidos pequenos, sem sobreposição) + **som em alta do app** colocado na hora de postar.
+- Legenda do post: 1 frase de efeito + pergunta; **no máximo 5 hashtags**, sem #fyp.
+- Motor: `SCENE.minimal = true` (ver `body_palco.js`, `body_salto.js`).
+- Ver também `PLANO-CANAL.md` (nome, bio, horários, checklist de postagem).
+
 ## Formato atual (a partir de 23/11): TELA ÚNICA + GANCHO, 15–20 s
 - **Frame 1 = o pior momento** do "pensa demais" (a fatura, a nota 4, o grito da cera), com legenda de choque.
 - Logo depois: **"COMO ELE CHEGOU AQUI?"** + rebobinada rápida (efeito de fita, ⏪, som de rebobinar).

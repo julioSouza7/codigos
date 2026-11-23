@@ -180,8 +180,43 @@ def cardbeep():
     out = np.zeros(int(SR * 0.35)); s = tone(2400, 0.12, 4); out[:len(s)] += s; return out * 0.6
 def box():
     return thump(95, 55, 0.35, 12) * 0.8 + lp(rng.standard_normal(int(SR * 0.35)), 1500) * np.exp(-tt(0.35) * 25) * 0.5
-SYN = {'strum': strum, 'pluck': pluck, 'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
-FX = {'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
+
+def clap1():
+    t = tt(0.06); return band(rng.standard_normal(len(t)), 900, 5000) * np.exp(-t * 70)
+def applause(d):
+    out = np.zeros(int(SR * d) + SR // 10); n = int(d * 60)
+    for _ in range(n):
+        x = rng.uniform(0, d); s = clap1() * rng.uniform(0.2, 1.0); i = int(x * SR); out[i:i + len(s)] += s[: len(out) - i]
+    env = np.minimum(1, np.arange(len(out)) / (0.08 * SR)); return out * env * 0.5
+def murmur(d, big=0.0):
+    t = tt(d); out = np.zeros(len(t))
+    for f0, f1 in [(300, 900), (900, 2200), (2200, 3500)]:
+        n = band(rng.standard_normal(len(t)), f0, f1); env = np.convolve(rng.random(len(t)) ** 8, np.ones(int(0.12 * SR)) / (0.12 * SR), 'same'); out += n * (env / (env.max() + 1e-9))
+    out = out * 0.6 + big * lp(rng.standard_normal(len(t)), 1200) * (t / d)
+    return out * np.minimum(1, t / 0.3) * np.minimum(1, (d - t) / 0.3)
+def roar(d): return murmur(d, 1.2) * 0.9
+def crickets(d):
+    out = np.zeros(int(SR * d)); x = 0.1
+    while x < d - 0.2:
+        for j in range(3):
+            s = tone(4600, 0.025, 30, 0.002); i = int((x + j * 0.04) * SR); out[i:i + len(s)] += s[: len(out) - i]
+        x += 0.55
+    return out * 0.5
+def wind(d):
+    t = tt(d); n = lp(rng.standard_normal(len(t)), 700) * (0.6 + 0.4 * np.sin(2 * np.pi * 0.6 * t) ** 2); return n * np.minimum(1, t / 0.4) * np.minimum(1, (d - t) / 0.4)
+def paddle(d):
+    out = np.zeros(int(SR * d) + SR // 4); x = 0.0
+    while x < d:
+        s = lp(rng.standard_normal(int(0.18 * SR)), 1800) * np.exp(-tt(0.18) * 18) * rng.uniform(0.4, 1); i = int(x * SR); out[i:i + len(s)] += s[: len(out) - i]; x += rng.uniform(0.35, 0.6)
+    return out
+def ominous(d):
+    t = tt(d); s = (np.sin(2 * np.pi * 41.2 * t) + 0.5 * np.sin(2 * np.pi * 82.4 * t)) * np.minimum(1, t / 0.6) * np.minimum(1, (d - t) / 0.4); return s * 0.6
+def splashb():
+    t = tt(1.0); return lp(rng.standard_normal(len(t)), 3500) * np.exp(-t * 4) * np.minimum(1, t / 0.005) + thump(80, 35, 0.8, 4)[:len(t)] * 0.6 if False else lp(rng.standard_normal(len(t)), 3500) * np.exp(-t * 4) * np.minimum(1, t / 0.005)
+def splashs():
+    t = tt(0.6); return lp(rng.standard_normal(len(t)), 2600) * np.exp(-t * 7) * np.minimum(1, t / 0.005)
+SYN = {'applause': applause, 'murmur': murmur, 'roar': roar, 'crickets': crickets, 'wind': wind, 'paddle': paddle, 'ominous': ominous, 'strum': strum, 'pluck': pluck, 'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
+FX = {'clap': clap1, 'splash': splashb, 'splash_s': splashs, 'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
       'ring': lambda: ring(1.3), 'slap': slap, 'swish': lambda: whoosh(0.25), 'tick': lambda: tone(2600, 0.03, 80), 'bigring': lambda: ring(2.0), 'breath_in': lambda: breath_in(), 'exhale': lambda: exhale(), 'blow': lambda: blow(), 'fan': fan}
 
 add(thump(120, 50, 0.6, 7), S['slam'], 0.3)
