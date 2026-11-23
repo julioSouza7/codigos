@@ -147,8 +147,40 @@ def ding():
 def crunch():
     t = tt(0.25); n = rng.standard_normal(len(t)); m = (rng.random(len(t)) < 0.02) * 3
     return (band(n, 800, 6000) * 0.5 + lp(m * n, 4000)) * np.exp(-t * 14)
-SYN = {'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
-FX = {'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
+
+def ks(f, d=1.8, bright=0.6, damp=0.996):
+    # corda dedilhada (Karplus-Strong em blocos)
+    N = max(2, int(SR / f)); n = int(SR * d); y = np.zeros(n + N + 1)
+    y[:N] = lp(rng.uniform(-1, 1, N * 4), 2000 + 6000 * bright)[:N]
+    for b in range(1, n // N + 1):
+        a, e = b * N, min((b + 1) * N, n + N)
+        y[a:e] = damp * 0.5 * (y[a - N:e - N] + y[a - N - 1:e - N - 1])
+    out = y[:n]; return out * np.minimum(1, np.arange(n) / 30) * np.minimum(1, (n - np.arange(n)) / (0.05 * SR))
+CHORDS = {'G': [43, 47, 50, 55, 59, 67], 'C': [48, 52, 55, 60, 64], 'D': [50, 57, 62, 66], 'Em': [40, 47, 52, 55, 59, 64], 'Am': [45, 52, 57, 60, 64]}
+def strum(name, d=2.0):
+    if '/' in name: name, d = name.split('/')[0], float(name.split('/')[1])
+    bad = name.endswith('!'); ch = CHORDS[name.rstrip('!')]; out = np.zeros(int(SR * d) + SR // 2)
+    for i, m in enumerate(ch):
+        f = note(m) * (1 + (rng.uniform(-0.04, 0.05) if bad else rng.uniform(-0.002, 0.002)))
+        s = ks(f, d, 0.55, 0.9955 if not bad else 0.985) * (0.8 if not bad else 0.6); k = int(i * (0.03 if bad else 0.016) * SR); out[k:k + len(s)] += s[: len(out) - k]
+    if bad: out += np.concatenate([lp(rng.standard_normal(int(0.06 * SR)), 3000) * 0.3, np.zeros(len(out) - int(0.06 * SR))])
+    return out * 0.35
+def pluck(m):
+    return ks(note(m), 1.4, 0.7) * 0.5
+def doorbell():
+    out = np.zeros(int(SR * 1.6))
+    for i, f in enumerate([659.3, 523.3]):
+        s = bell(f, 1.2, 2.5); k = int(i * 0.45 * SR); out[k:k + len(s)] += s[: len(out) - k]
+    return out * 0.5
+def clank():
+    t = tt(0.8); s = sum(np.sin(2 * np.pi * f * t) * np.exp(-t * dcy) * a for f, dcy, a in [(523, 6, 1), (1291, 9, 0.6), (2317, 12, 0.4), (3711, 16, 0.25)])
+    return (s + band(rng.standard_normal(len(t)), 2000, 8000) * np.exp(-t * 40) * 0.8) * 0.45
+def cardbeep():
+    out = np.zeros(int(SR * 0.35)); s = tone(2400, 0.12, 4); out[:len(s)] += s; return out * 0.6
+def box():
+    return thump(95, 55, 0.35, 12) * 0.8 + lp(rng.standard_normal(int(SR * 0.35)), 1500) * np.exp(-tt(0.35) * 25) * 0.5
+SYN = {'strum': strum, 'pluck': pluck, 'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
+FX = {'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
       'ring': lambda: ring(1.3), 'slap': slap, 'swish': lambda: whoosh(0.25), 'tick': lambda: tone(2600, 0.03, 80), 'bigring': lambda: ring(2.0), 'breath_in': lambda: breath_in(), 'exhale': lambda: exhale(), 'blow': lambda: blow(), 'fan': fan}
 
 add(thump(120, 50, 0.6, 7), S['slam'], 0.3)
