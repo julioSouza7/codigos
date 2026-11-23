@@ -28,3 +28,7 @@ Todos: 25 s, 1080×1920, 4 personagens (1 disciplina, 2 obsessão, 3 motivação
 1. `cera-quente-v2/`
 2. `dinheiro-v2/`
 3. `prova-v2/`
+
+## Método novo (minimalista) — postar às 12h
+1. `apresentacao/`
+2. `salto/`
