@@ -19,3 +19,7 @@ Todos: 25 s, 1080×1920, 4 personagens (1 disciplina, 2 obsessão, 3 motivação
 5. `louca/` — índice de estresse, 32 s
 6. `prova/` — índice de ansiedade, 34 s
 7. `dente/` — índice de dor, 32 s
+8. `treino/` — índice de culpa, 32 s
+9. `dinheiro/` — índice de preocupação, 32 s
+10. `curriculo/` — índice de ansiedade, 32 s
+11. `violao/` — índice de frustração, 32 s
