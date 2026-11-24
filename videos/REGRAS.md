@@ -11,6 +11,15 @@
 - 15–18 s. Som: só efeitos (gemidos pequenos, sem sobreposição) + **som em alta do app** colocado na hora de postar.
 - Legenda do post: 1 frase de efeito + pergunta; **no máximo 5 hashtags**, sem #fyp.
 - Motor: `SCENE.minimal = true` (ver `body_palco.js`, `body_salto.js`).
+- **2.0 (24/11): mais interação e animação — obrigatório daqui pra frente:**
+  - **Os dois painéis conversam**: o FAZ estica o braço pela divisória (oferece celular, café), manda mensagem que
+    vibra no bolso do PENSA, assiste ao drama dele comendo pipoca e rindo (`SCENE.drawGlobal`).
+  - **Ação o tempo todo**: algo se mexe em cada segundo (jogar e pegar objeto, andar de um lado pro outro, esconder
+    atrás de algo, copo tremendo e derramando, relógio girando, cadeados balançando, olhos piscando).
+  - **Terceiros participam**: atendente em balão redondo de ligação, chefe que entrega envelope, plateia que reage.
+  - **Golpes de câmera** nos sustos e conquistas, **confete**, risquinhos de impacto, pulo com "esmagada" no pouso.
+  - 20 s (fim da ação aos 16,5 s). Peças prontas em `common_b.js`: `cConfetti`, `cCallInset`, `cArm`, `cPopcorn`,
+    `cWallClock`, `cBurst`.
 - Ver também `PLANO-CANAL.md` (nome, bio, horários, checklist de postagem).
 
 ## Formato atual (a partir de 23/11): TELA ÚNICA + GANCHO, 15–20 s

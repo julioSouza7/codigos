@@ -77,3 +77,31 @@
   }
   // banquinho simples
   function cStool(c, x, top = C_FL - 66) { c.strokeStyle = '#3a3a40'; c.lineWidth = 7; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - 34, top); c.lineTo(x + 34, top); c.moveTo(x - 26, top); c.lineTo(x - 32, C_FL); c.moveTo(x + 26, top); c.lineTo(x + 32, C_FL); c.moveTo(x - 29, top + 40); c.lineTo(x + 29, top + 40); c.stroke(); }
+
+  // ---------- peças de animação extra (método minimalista 2.0) ----------
+  // confete saindo de um ponto (t0 = início)
+  function cConfetti(c, x, y, t0, t, n = 26) { const a = t - t0; if (a < 0 || a > 1.6) return; const cols = ['#4fbf6a', '#e8c547', '#2f9bff', '#e5483b', '#f2a23a'];
+    for (let i = 0; i < n; i++) { const ang = -Math.PI / 2 + (i / n - 0.5) * 2.2, sp = 260 + (i * 37) % 160; const px = x + Math.cos(ang) * sp * a, py = y + Math.sin(ang) * sp * a + 420 * a * a;
+      c.save(); c.globalAlpha = 1 - a / 1.6; c.translate(px, py); c.rotate(a * 10 + i); c.fillStyle = cols[i % 5]; c.fillRect(-5, -3, 10, 6); c.restore(); } }
+  // balão redondo de ligação com um bonequinho azul do outro lado da linha
+  function cCallInset(c, x, y, t, a = 1, talking = 0, lightsOff = 0) { if (a <= 0) return; const s = backE(clamp(a));
+    c.save(); c.translate(x, y); c.scale(s, s); c.fillStyle = lightsOff > 0.5 ? '#111114' : '#1c2430'; c.strokeStyle = '#f4f2ee'; c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 56, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.save(); c.beginPath(); c.arc(0, 0, 54, 0, Math.PI * 2); c.clip(); c.globalAlpha = 1 - 0.7 * lightsOff;
+    c.strokeStyle = rgb(PAL.azul); c.lineWidth = 9; c.lineCap = 'round'; const bob = talking * 3 * Math.sin(t * 14);
+    c.beginPath(); c.moveTo(0, 6 + bob); c.lineTo(0, 50); c.moveTo(0, 18 + bob); c.lineTo(-22, 34 + talking * 6 * Math.sin(t * 9)); c.moveTo(0, 18 + bob); c.lineTo(22, 30); c.stroke();
+    c.fillStyle = '#f4f2ee'; c.beginPath(); c.arc(0, -12 + bob, 15, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#0e0e10'; c.lineWidth = 3; c.stroke();
+    c.strokeStyle = '#2b2b30'; c.lineWidth = 4; c.beginPath(); c.arc(0, -12 + bob, 18, Math.PI * 1.05, Math.PI * 1.95); c.stroke(); c.beginPath(); c.moveTo(16, -10 + bob); c.lineTo(10, 2 + bob); c.stroke();
+    c.restore(); c.restore(); }
+  // braço branco com contorno (lista de pontos em coordenadas de tela/mundo)
+  function cArm(c, pts, w = 22) { strokePts(c, pts, w + 10, '#0e0e10'); strokePts(c, pts, w, '#f7f7f5'); }
+  // balde de pipoca
+  function cPopcorn(c, p, t) { c.save(); c.translate(p[0], p[1]); c.fillStyle = '#f4ead8'; for (let i = 0; i < 7; i++) { c.beginPath(); c.arc(-14 + (i % 4) * 9, -20 - Math.floor(i / 4) * 7 + Math.sin(t * 3 + i), 6, 0, Math.PI * 2); c.fill(); }
+    c.fillStyle = '#e5483b'; c.strokeStyle = '#0e0e10'; c.lineWidth = 3; c.beginPath(); c.moveTo(-20, -18); c.lineTo(20, -18); c.lineTo(15, 22); c.lineTo(-15, 22); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#fff'; c.fillRect(-12, -14, 5, 34); c.fillRect(2, -14, 5, 34); c.restore(); }
+  // relógio de parede (horas girando rápido quando spin > 0)
+  function cWallClock(c, x, y, t, spin = 0) { c.save(); c.translate(x, y); c.fillStyle = '#efe6d6'; c.strokeStyle = '#0e0e10'; c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 30, 0, Math.PI * 2); c.fill(); c.stroke();
+    const h = 1.2 + spin * t * 2.5, m = 4.2 + spin * t * 30; c.lineCap = 'round'; c.lineWidth = 5; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.sin(h) * 14, -Math.cos(h) * 14); c.stroke();
+    c.lineWidth = 3; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.sin(m) * 22, -Math.cos(m) * 22); c.stroke(); c.restore(); }
+  // risquinhos de susto / impacto em volta de um ponto
+  function cBurst(c, p, t0, t, col = '#fff2d8') { const a = t - t0; if (a < 0 || a > 0.45) return; c.save(); c.globalAlpha = 1 - a / 0.45; c.strokeStyle = col; c.lineWidth = 5;
+    for (let i = 0; i < 8; i++) { const ang = (i / 8) * Math.PI * 2, r0 = 30 + 70 * easeOut(a / 0.45); c.beginPath(); c.moveTo(p[0] + Math.cos(ang) * r0, p[1] + Math.sin(ang) * r0); c.lineTo(p[0] + Math.cos(ang) * (r0 + 22), p[1] + Math.sin(ang) * (r0 + 22)); c.stroke(); } c.restore(); }

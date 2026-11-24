@@ -223,6 +223,7 @@
     c.font = '700 30px "Space Mono", monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
     const lab = (txt, y, col) => { c.save(); c.globalAlpha = 1 - dim * 0.6; c.fillStyle = col; let x = 540 - (txt.length - 1) * 11; for (const ch of txt) { c.fillText(ch, x, y); x += 22; } c.restore(); };
     lab('PENSA DEMAIS', 812, '#f4f2ee'); lab('FAZ', 878, '#f4f2ee');
+    if (SCENE.drawGlobal) { c.save(); SCENE.drawGlobal(c, t, LMIN, dim); c.restore(); }
     renderCaptions(t);
   }
   function renderAt(t) {
