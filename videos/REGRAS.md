@@ -1,5 +1,9 @@
 # Regras dos vídeos — @stick.obsessao (versão atual)
 
+## ESTRATÉGIA ATUAL (24/11): "MESMO X / DIA N" — ver `SERIES.md`
+- Layout B clean: rótulos nas pontas, contador "MESMO X / DIA N" no meio, fundo preto, luminária pendurada,
+  1 cor de destaque, progresso visível de um lado e estagnação do outro. 4 vídeos de cada tema por vez.
+
 ## MÉTODO NOVO (23/11, noite) — minimalista, inspirado no Stick to It (sem copiar cenas)
 - **Tela dividida que ocupa a tela toda**: em cima PENSA DEMAIS, embaixo FAZ; só os nomes pequenos na divisória.
 - **Fundo preto**, uma luminária inclinada e um cone de luz. Poucos objetos; o objeto da piada em cor forte.

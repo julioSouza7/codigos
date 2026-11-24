@@ -105,3 +105,15 @@
   // risquinhos de susto / impacto em volta de um ponto
   function cBurst(c, p, t0, t, col = '#fff2d8') { const a = t - t0; if (a < 0 || a > 0.45) return; c.save(); c.globalAlpha = 1 - a / 0.45; c.strokeStyle = col; c.lineWidth = 5;
     for (let i = 0; i < 8; i++) { const ang = (i / 8) * Math.PI * 2, r0 = 30 + 70 * easeOut(a / 0.45); c.beginPath(); c.moveTo(p[0] + Math.cos(ang) * r0, p[1] + Math.sin(ang) * r0); c.lineTo(p[0] + Math.cos(ang) * (r0 + 22), p[1] + Math.sin(ang) * (r0 + 22)); c.stroke(); } c.restore(); }
+
+  // luminária pendurada no teto (layout B) com cone de luz reto até o chão
+  function cHangLamp(c, x, y = 40, floorY = C_FL, w = 230) {
+    c.save(); c.globalCompositeOperation = 'lighter'; c.filter = 'blur(20px)';
+    const g = c.createLinearGradient(0, y, 0, floorY); g.addColorStop(0, 'rgba(255,214,160,0.30)'); g.addColorStop(1, 'rgba(255,214,160,0.07)');
+    c.fillStyle = g; c.beginPath(); c.moveTo(x - 24, y + 14); c.lineTo(x + 24, y + 14); c.lineTo(x + w, floorY + 20); c.lineTo(x - w, floorY + 20); c.closePath(); c.fill();
+    c.fillStyle = 'rgba(255,214,160,0.12)'; c.beginPath(); c.ellipse(x, floorY + 4, w * 0.95, 22, 0, 0, Math.PI * 2); c.fill(); c.restore();
+    c.strokeStyle = '#2b2b30'; c.lineWidth = 3; c.beginPath(); c.moveTo(x, -400); c.lineTo(x, y - 6); c.stroke();
+    c.fillStyle = '#2b2b30'; c.beginPath(); c.moveTo(x - 10, y - 8); c.lineTo(x + 10, y - 8); c.lineTo(x + 26, y + 12); c.lineTo(x - 26, y + 12); c.closePath(); c.fill();
+    c.fillStyle = '#ffe9c4'; c.beginPath(); c.ellipse(x, y + 12, 20, 5, 0, 0, Math.PI * 2); c.fill();
+  }
+  function cDark(c, P) { c.fillStyle = '#060607'; c.fillRect(-400, -400, W + 800, P.h + 800); c.strokeStyle = 'rgba(255,255,255,0.08)'; c.lineWidth = 3; c.beginPath(); c.moveTo(-400, C_FL); c.lineTo(W + 400, C_FL); c.stroke(); }

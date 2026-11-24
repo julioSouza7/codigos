@@ -232,7 +232,7 @@ def knock():
         s = thump(190, 120, 0.12, 40) + band(rng.standard_normal(int(0.12 * SR)), 400, 3000) * np.exp(-tt(0.12) * 60) * 0.5; i = int(j * 0.16 * SR); out[i:i + len(s)] += s[: len(out) - i]
     return out * 0.8
 SYN = {'applause': applause, 'murmur': murmur, 'roar': roar, 'crickets': crickets, 'wind': wind, 'paddle': paddle, 'ominous': ominous, 'strum': strum, 'pluck': pluck, 'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
-FX = {'tuu': tuu, 'busy': busy, 'knock': knock, 'clap': clap1, 'splash': splashb, 'splash_s': splashs, 'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
+FX = {'brick': lambda: (thump(240, 150, 0.09, 55) + band(rng.standard_normal(int(0.09 * SR)), 800, 4000) * np.exp(-tt(0.09) * 50) * 0.4) * 0.8, 'tuu': tuu, 'busy': busy, 'knock': knock, 'clap': clap1, 'splash': splashb, 'splash_s': splashs, 'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
       'ring': lambda: ring(1.3), 'slap': slap, 'swish': lambda: whoosh(0.25), 'tick': lambda: tone(2600, 0.03, 80), 'bigring': lambda: ring(2.0), 'breath_in': lambda: breath_in(), 'exhale': lambda: exhale(), 'blow': lambda: blow(), 'fan': fan}
 
 add(thump(120, 50, 0.6, 7), S['slam'], 0.3)

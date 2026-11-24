@@ -213,16 +213,25 @@
     renderCaptions(T);
   }
   // ---------- MÉTODO MINIMALISTA: tela dividida que ocupa a tela toda, fundo preto, sem texto por cima ----------
-  const LMIN = { pensa: { top: 150, h: 690, ui: 1.3, bz: 1.7, sy: 345 }, faz: { top: 850, h: 690, ui: 1.3, bz: 1.7, sy: 345 } };
+  // layout B (estratégia "MESMO X / DIA N"): faz em cima, pensa embaixo, faixa do contador no meio
+  const LMIN = SCENE.layoutB ? { faz: { top: 150, h: 650, ui: 1.3, bz: 1.6, sy: 325 }, pensa: { top: 890, h: 650, ui: 1.3, bz: 1.6, sy: 325 } }
+    : { pensa: { top: 150, h: 690, ui: 1.3, bz: 1.7, sy: 345 }, faz: { top: 850, h: 690, ui: 1.3, bz: 1.7, sy: 345 } };
   function renderMinimal(t) {
     const c = ctx; c.setTransform(1, 0, 0, 1, 0, 0); c.fillStyle = '#050506'; c.fillRect(0, 0, W, H);
     const dim = 0.8 * smooth(seg(t, GT1, GT1 + 0.5));
     drawPanel(c, 'pensa', t, LMIN.pensa, dim); drawPanel(c, 'faz', t, LMIN.faz, dim);
     c.setTransform(1, 0, 0, 1, 0, 0);
-    c.fillStyle = '#050506'; c.fillRect(0, 840, W, 10); c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(0, 845); c.lineTo(W, 845); c.stroke();
     c.font = '700 30px "Space Mono", monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
-    const lab = (txt, y, col) => { c.save(); c.globalAlpha = 1 - dim * 0.6; c.fillStyle = col; let x = 540 - (txt.length - 1) * 11; for (const ch of txt) { c.fillText(ch, x, y); x += 22; } c.restore(); };
-    lab('PENSA DEMAIS', 812, '#f4f2ee'); lab('FAZ', 878, '#f4f2ee');
+    const lab = (txt, y, col, sp = 22) => { c.save(); c.globalAlpha = 1 - dim * 0.6; c.fillStyle = col; let x = 540 - (txt.length - 1) * sp / 2; for (const ch of txt) { c.fillText(ch, x, y); x += sp; } c.restore(); };
+    const L1 = SCENE.labels || ['FAZ', 'PENSA DEMAIS'];
+    if (SCENE.layoutB) {
+      c.fillStyle = '#050506'; c.fillRect(0, 800, W, 90);
+      lab(L1[0], 178, '#f4f2ee'); lab(L1[1], 1512, '#f4f2ee');
+      if (SCENE.midLabel) { const [sm, big] = SCENE.midLabel(t); c.font = '700 24px "Space Mono", monospace'; lab(sm, 818, 'rgba(244,242,238,0.75)', 17); c.font = '800 40px "Space Mono", monospace'; lab(big, 862, '#f4f2ee', 28); }
+    } else {
+      c.fillStyle = '#050506'; c.fillRect(0, 840, W, 10); c.strokeStyle = 'rgba(255,255,255,0.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(0, 845); c.lineTo(W, 845); c.stroke();
+      lab('PENSA DEMAIS', 812, '#f4f2ee'); lab('FAZ', 878, '#f4f2ee');
+    }
     if (SCENE.drawGlobal) { c.save(); SCENE.drawGlobal(c, t, LMIN, dim); c.restore(); }
     renderCaptions(t);
   }
