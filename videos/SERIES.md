@@ -11,9 +11,10 @@
 ## Ordem das séries (4 vídeos de cada tema por vez)
 ### Série 1 — FAZ × PENSA DEMAIS (já começou)
 1. **MESMO TERRENO** — um constrói a casa, o outro redesenha a planta. ✅ exemplo pronto (`terreno/`)
-2. **MESMO CANAL** — um posta todo dia (views sobem), o outro edita o vídeo 1 pela 40ª vez.
-3. **MESMA HORTA** — um planta e rega (horta cresce), o outro pesquisa a "semente perfeita".
-4. **MESMO LIVRO** — um lê 10 páginas/dia (pilha de livros lidos), o outro escolhe qual livro ler.
+2. **MESMO CANAL** — um posta todo dia (views sobem), o outro edita o vídeo 1 pela 40ª vez. ✅ (`canal/`)
+3. **MESMA HORTA** — um planta e rega (horta cresce), o outro pesquisa a "semente perfeita". ✅ (`horta/`)
+4. **MESMA ESTANTE** — um lê e a estante enche, o outro compra e deixa na caixa. ✅ (`estante/`)
+5. **MESMO IDIOMA** — um pratica todo dia (A1→B2), o outro compra cursos e fica na lição 1. ✅ (`idioma/`)
 
 ### Série 2 — VOCÊ DO PASSADO × VOCÊ DE AGORA
 1. **MESMO ESPELHO** — o do passado empurra a academia pra segunda; o de agora treina (a silhueta muda).
