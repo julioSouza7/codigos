@@ -261,91 +261,170 @@
   // banquinho simples
   function cStool(c, x, top = C_FL - 66) { c.strokeStyle = '#3a3a40'; c.lineWidth = 7; c.lineCap = 'round'; c.beginPath(); c.moveTo(x - 34, top); c.lineTo(x + 34, top); c.moveTo(x - 26, top); c.lineTo(x - 32, C_FL); c.moveTo(x + 26, top); c.lineTo(x + 32, C_FL); c.moveTo(x - 29, top + 40); c.lineTo(x + 29, top + 40); c.stroke(); }
 
-  // ================= MÉTODO MINIMALISTA: "O AUMENTO" (17 s) =================
-  // piada visual: para quem pensa demais, a porta do chefe vira um portão gigante com cadeados e a sombra de um monstro.
-  const GT = 13.5, FL = C_FL, DOORX = 700;
-  const fear = (t) => (smooth(seg(t, 3.0, 4.8)) * 0.5 + smooth(seg(t, 5.0, 7.4)) * 0.5) * (1 - smooth(seg(t, 9.55, 9.9)));
-  const OPEN_F = 1.5, OPEN_P = 11.35;
-  const openAmt = (k, t) => (k === 'faz' ? smooth(seg(t, OPEN_F, OPEN_F + 0.3)) * (1 - smooth(seg(t, 4.0, 4.3))) : smooth(seg(t, OPEN_P, OPEN_P + 0.3)));
+  // ---------- peças de animação extra (método minimalista 2.0) ----------
+  // confete saindo de um ponto (t0 = início)
+  function cConfetti(c, x, y, t0, t, n = 26) { const a = t - t0; if (a < 0 || a > 1.6) return; const cols = ['#4fbf6a', '#e8c547', '#2f9bff', '#e5483b', '#f2a23a'];
+    for (let i = 0; i < n; i++) { const ang = -Math.PI / 2 + (i / n - 0.5) * 2.2, sp = 260 + (i * 37) % 160; const px = x + Math.cos(ang) * sp * a, py = y + Math.sin(ang) * sp * a + 420 * a * a;
+      c.save(); c.globalAlpha = 1 - a / 1.6; c.translate(px, py); c.rotate(a * 10 + i); c.fillStyle = cols[i % 5]; c.fillRect(-5, -3, 10, 6); c.restore(); } }
+  // balão redondo de ligação com um bonequinho azul do outro lado da linha
+  function cCallInset(c, x, y, t, a = 1, talking = 0, lightsOff = 0) { if (a <= 0) return; const s = backE(clamp(a));
+    c.save(); c.translate(x, y); c.scale(s, s); c.fillStyle = lightsOff > 0.5 ? '#111114' : '#1c2430'; c.strokeStyle = '#f4f2ee'; c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 56, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.save(); c.beginPath(); c.arc(0, 0, 54, 0, Math.PI * 2); c.clip(); c.globalAlpha = 1 - 0.7 * lightsOff;
+    c.strokeStyle = rgb(PAL.azul); c.lineWidth = 9; c.lineCap = 'round'; const bob = talking * 3 * Math.sin(t * 14);
+    c.beginPath(); c.moveTo(0, 6 + bob); c.lineTo(0, 50); c.moveTo(0, 18 + bob); c.lineTo(-22, 34 + talking * 6 * Math.sin(t * 9)); c.moveTo(0, 18 + bob); c.lineTo(22, 30); c.stroke();
+    c.fillStyle = '#f4f2ee'; c.beginPath(); c.arc(0, -12 + bob, 15, 0, Math.PI * 2); c.fill(); c.strokeStyle = '#0e0e10'; c.lineWidth = 3; c.stroke();
+    c.strokeStyle = '#2b2b30'; c.lineWidth = 4; c.beginPath(); c.arc(0, -12 + bob, 18, Math.PI * 1.05, Math.PI * 1.95); c.stroke(); c.beginPath(); c.moveTo(16, -10 + bob); c.lineTo(10, 2 + bob); c.stroke();
+    c.restore(); c.restore(); }
+  // braço branco com contorno (lista de pontos em coordenadas de tela/mundo)
+  function cArm(c, pts, w = 22) { strokePts(c, pts, w + 10, '#0e0e10'); strokePts(c, pts, w, '#f7f7f5'); }
+  // balde de pipoca
+  function cPopcorn(c, p, t) { c.save(); c.translate(p[0], p[1]); c.fillStyle = '#f4ead8'; for (let i = 0; i < 7; i++) { c.beginPath(); c.arc(-14 + (i % 4) * 9, -20 - Math.floor(i / 4) * 7 + Math.sin(t * 3 + i), 6, 0, Math.PI * 2); c.fill(); }
+    c.fillStyle = '#e5483b'; c.strokeStyle = '#0e0e10'; c.lineWidth = 3; c.beginPath(); c.moveTo(-20, -18); c.lineTo(20, -18); c.lineTo(15, 22); c.lineTo(-15, 22); c.closePath(); c.fill(); c.stroke();
+    c.fillStyle = '#fff'; c.fillRect(-12, -14, 5, 34); c.fillRect(2, -14, 5, 34); c.restore(); }
+  // relógio de parede (horas girando rápido quando spin > 0)
+  function cWallClock(c, x, y, t, spin = 0) { c.save(); c.translate(x, y); c.fillStyle = '#efe6d6'; c.strokeStyle = '#0e0e10'; c.lineWidth = 4; c.beginPath(); c.arc(0, 0, 30, 0, Math.PI * 2); c.fill(); c.stroke();
+    const h = 1.2 + spin * t * 2.5, m = 4.2 + spin * t * 30; c.lineCap = 'round'; c.lineWidth = 5; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.sin(h) * 14, -Math.cos(h) * 14); c.stroke();
+    c.lineWidth = 3; c.beginPath(); c.moveTo(0, 0); c.lineTo(Math.sin(m) * 22, -Math.cos(m) * 22); c.stroke(); c.restore(); }
+  // risquinhos de susto / impacto em volta de um ponto
+  function cBurst(c, p, t0, t, col = '#fff2d8') { const a = t - t0; if (a < 0 || a > 0.45) return; c.save(); c.globalAlpha = 1 - a / 0.45; c.strokeStyle = col; c.lineWidth = 5;
+    for (let i = 0; i < 8; i++) { const ang = (i / 8) * Math.PI * 2, r0 = 30 + 70 * easeOut(a / 0.45); c.beginPath(); c.moveTo(p[0] + Math.cos(ang) * r0, p[1] + Math.sin(ang) * r0); c.lineTo(p[0] + Math.cos(ang) * (r0 + 22), p[1] + Math.sin(ang) * (r0 + 22)); c.stroke(); } c.restore(); }
 
-  const knock = (x) => (t) => cStandW(x, 1, 0.05, 0.05, [[x + 70 + 8 * Math.max(0, Math.sin(t * 20)), FL - 160], [x + 20, FL - 110]])(t);
-  const shake = (x) => cStandW(x, 1, 0.08, 0.05, [[x + 66, FL - 118], [x + 40, FL - 112]]);
-  const scared = (x, tr) => (t) => cStandW(x, 1, -0.05, 0.2, [[x + 30 + tr * 3 * Math.sin(t * 41), FL - 140], [x + 14, FL - 132]])(t);
-  const fazKeys = [[0, cStand(420)], [0.2, cWalk(420, 620, 0.2, 1.0), 0.2], [1.0, knock(620), 0.25], [1.5, cStand(620), 0.3], [3.4, shake(620), 0.3], [4.1, cStand(620, -1), 0.25], [4.2, cWalk(620, -150, 4.2, 5.3, -1), 0.2]];
+  // ================= MÉTODO MINIMALISTA 2.0: "A LIGAÇÃO" (20 s) — mais interação e animação =================
+  const GT = 16.5, FL = C_FL, SX = 520, STOOL_Y = FL - 66;
+  const fear = (t) => (smooth(seg(t, 3.0, 4.6)) * 0.45 + smooth(seg(t, 8.0, 11.0)) * 0.55) * (1 - smooth(seg(t, 11.9, 12.2)));
+  const seatSt = (x, lean, head, hands, extra) => (t) => { const st = Object.assign(cSeatSt(x, 1, lean, head), extra || {}); const hw = typeof hands === 'function' ? hands(t) : hands; st.hands = hw.map((p) => toRig(st, p)); return st; };
+  const EAR = [SX + 8, FL - 152];
+
+  // ---------- 2 · FAZ ----------
+  const TOSS1 = 0.4, TOSS2 = 4.0, REACH0 = 6.0, REACH1 = 7.9, POP0 = 8.4;
+  const fazKeys = [
+    [0, seatSt(SX, 0.1, 0.1, [[SX + 44, FL - 104], [SX + 30, FL - 100]])],
+    [TOSS1, seatSt(SX, -0.05, -0.3, (t) => [[SX + 50, FL - 150 - 40 * Math.sin(Math.PI * seg(t, TOSS1, TOSS1 + 0.45))], [SX + 30, FL - 100]]), 0.15],   // joga o celular pro alto
+    [0.9, seatSt(SX, 0.25, 0.4, (t) => [[SX + 50 + 3 * Math.sin(t * 20), FL - 118], [SX + 44, FL - 112]]), 0.2],   // disca
+    [1.35, seatSt(SX, 0.05, -0.05, [EAR, [SX + 30, FL - 100]], { gesture: true }), 0.25],
+    [3.3, seatSt(SX, -0.05, -0.1, [EAR, [SX + 60, FL - 170]], { prefB: 'down' }), 0.2],   // joinha
+    [TOSS2, seatSt(SX, -0.1, -0.35, (t) => [[SX + 46, FL - 160 - 60 * Math.sin(Math.PI * seg(t, TOSS2, TOSS2 + 0.5))], [SX + 30, FL - 110]]), 0.15],   // gira o celular no ar
+    [4.6, seatSt(SX, -0.15, -0.1, [[SX - 20, FL - 166], [SX - 34, FL - 160]], { prefF: 'back', prefB: 'back' }), 0.35],   // relaxa
+    [5.4, seatSt(SX, -0.05, -0.6, [[SX - 20, FL - 166], [SX - 34, FL - 160]], { prefF: 'back', prefB: 'back' }), 0.4],   // olha pra cima: "?"
+    [REACH0, (t) => { const st = pose(SX + 10, STOOL_Y, STAND_L, -0.05, -0.5, handsDown(SX + 10, C_HY), { gesture: false, noWalk: true }); st.hands = [toRig(st, [SX + 70, -40]), toRig(st, [SX - 10, STOOL_Y - 80])]; st.prefF = 'down'; return st; }, 0.3],
+    [REACH1, seatSt(SX, 0.05, -0.2, [[SX + 44, FL - 104], [SX + 30, FL - 100]]), 0.35],
+    [POP0, (t) => { const u = 0.5 - 0.5 * Math.cos((t - POP0) * Math.PI * 2 / 0.9); const laugh = t > 14.8 ? Math.abs(Math.sin(t * 16)) : 0;
+      const st = seatSt(SX, 0.05 - 0.2 * laugh, -0.45 + 0.2 * u, [P2([SX + 40, FL - 112], [SX + 24, FL - 150], u), [SX + 34, FL - 100]])(t); st.hipY -= 6 * laugh; return st; }, 0.35],
+  ];
   const fazState = (t) => seq(fazKeys, t);
-  const pensaKeys = [[0, scared(430, 1)], [5.0, scared(430, 2)], [9.6, scared(430, 1), 0.3], [10.0, cWalk(430, 620, 10.0, 10.9), 0.2], [10.9, knock(620), 0.25], [11.4, cStand(620), 0.3]];
-  const pensaState = (t) => seq(pensaKeys, t);
-  // chefe (azul)
-  const boss = (k) => (t) => {
-    const o = openAmt(k, t);
-    if (k === 'faz') { if (o < 0.5) return pose(-600, FL, STAND_L, 0, 0, handsDown(-600, C_HY), { noWalk: true });
-      return t > 3.4 && t < 4.0 ? cStandW(760, -1, 0.08, 0.05, [[690, FL - 112], [740, FL - 100]])(t) : cStand(760, -1)(t); }
-    if (t < OPEN_P + 0.15) return pose(-600, FL, STAND_L, 0, 0, handsDown(-600, C_HY), { noWalk: true });
-    if (t < 12.6) return cStandW(760, -1, 0.02, 0.05, [[730, FL - 100], [748, FL - 96]])(t);
-    return cWalk(760, 1250, 12.6, 13.6, 1)(t);
-  };
 
-  function drawDoor(c, k, t) {
-    const g = k === 'pensa' ? fear(t) : 0, s = 1 + 1.6 * g, o = openAmt(k, t);
-    c.save(); c.translate(DOORX, FL); c.scale(s, s);
-    // vão escuro e batente
-    c.fillStyle = '#0b0b0d'; c.fillRect(-10, -230, 120, 230); c.strokeStyle = '#3a3a40'; c.lineWidth = 8; c.strokeRect(-10, -230, 120, 230);
-    // porta (abre girando)
-    const w = 100 * (1 - 0.85 * o); c.fillStyle = mixC([92, 64, 40], [60, 40, 30], g).map(Math.round).reduce((a, v, i) => a + (i ? ',' : '') + v, 'rgb(') + ')';
-    c.fillRect(0, -222, w, 222); c.strokeStyle = '#0e0e10'; c.lineWidth = 4; c.strokeRect(0, -222, w, 222);
-    if (o < 0.3) {
-      c.fillStyle = '#e8c547'; c.beginPath(); c.arc(w - 14, -110, 5, 0, Math.PI * 2); c.fill();
-      // janelinha fosca com a sombra do "monstro"
-      c.fillStyle = 'rgba(220,220,200,0.25)'; c.fillRect(20, -200, 60, 60);
-      if (g > 0.2) { c.save(); c.beginPath(); c.rect(20, -200, 60, 60); c.clip(); const u = smooth(seg(g, 0.2, 0.9)); c.fillStyle = 'rgba(10,10,12,0.9)'; c.beginPath(); c.arc(50, -150 + 30 * (1 - u), 24 + 30 * u, 0, Math.PI * 2); c.fill();
-        c.fillStyle = rgb(PAL.dor); c.beginPath(); c.arc(42, -162, 3 + 2 * u, 0, Math.PI * 2); c.arc(58, -162, 3 + 2 * u, 0, Math.PI * 2); c.fill(); c.restore(); }
-      // placa e cadeados
-      c.fillStyle = '#e8dcc6'; c.fillRect(25, -130, 50, 16); c.fillStyle = '#1a1a1a'; c.font = '800 10px Montserrat'; c.textAlign = 'center'; c.fillText('CHEFE', 50, -118);
-      if (g > 0.5) { const u = smooth(seg(g, 0.5, 1)); for (let i = 0; i < 3; i++) { c.save(); c.globalAlpha = u; c.strokeStyle = '#9a9aa2'; c.lineWidth = 4; c.beginPath(); c.moveTo(-6, -40 - i * 50); c.lineTo(106, -60 - i * 50); c.stroke();
-        c.fillStyle = '#e8c547'; c.strokeStyle = '#0e0e10'; c.lineWidth = 2; c.fillRect(42, -62 - i * 50, 16, 14); c.strokeRect(42, -62 - i * 50, 16, 14); c.restore(); } }
-    }
-    c.restore();
+  // ---------- 1 · PENSA DEMAIS ----------
+  const poke = (t) => { const u = Math.max(0, Math.sin((t - 0.2) * 3.2)); return [[SX + 84 + 26 * u, FL - 128 - 4 * u], [SX + 50 + 20 * u + 3 * Math.sin(t * 41), FL - 104]]; };   // dedo vai e volta da tela
+  const pace = (t) => { const x = 470 + 130 * Math.sin((t - 5.2) * 1.6); const st = pose(x, FL, STAND_L, 0.12, 0.3, handsDown(x, C_HY), { face: Math.cos((t - 5.2) * 1.6) >= 0 ? 1 : -1, run: 0, gesture: false }); st.hands = [toRig(st, [x + 40 * (st.face), FL - 140]), toRig(st, [x + 20 * st.face, FL - 120])]; st.armFree = 0.2; return st; };
+  const startle = (t) => { const st = pose(560, FL, CROUCH_L, -0.3, -0.4, handsDown(560, C_HY), { gesture: false, noWalk: true }); st.hands = [toRig(st, [600, FL - 220]), toRig(st, [520, FL - 210])]; st.prefF = 'up'; st.prefB = 'up'; st.hipY -= 40 * Math.sin(Math.PI * clamp((t - 6.6) / 0.35)); return st; };
+  const readScroll = (t) => cStandW(560, 1, 0.15, 0.45, [[620, FL - 130], [590, FL - 126]])(t);
+  const drink = (t) => cStandW(560, 1, -0.05, -0.35, [[580 + 3 * Math.sin(t * 40), FL - 176], [590, FL - 120]])(t);
+  const checkWatch = (t) => cStandW(560, -1, 0.1, 0.2, [[528, FL - 140], [540, FL - 132]])(t);
+  const melt = (t) => { const u = smooth(seg(t, 14.3, 14.8)); const st = seatSt(SX, lerp(0.45, -0.3, u), lerp(0.6, 0.2, u), [[SX + 30, FL - 150 + 120 * u], [SX + 22, FL - 146 + 120 * u]])(t); st.hipY = lerp(st.hipY, FL - 15 - 16, u); st.ay = FL; st.x = lerp(SX, SX + 40, u); st.legs = { fT: 1.5, fS: 1.55, bT: 1.45, bS: 1.5 }; return st; };
+  const pensaKeys = [
+    [0, seatSt(SX, -0.1, 0.25, poke)],
+    [3.0, seatSt(SX, -0.35, -0.1, (t) => [[SX + 90 + 3 * Math.sin(t * 41), FL - 128], [SX + 60, FL - 100]]), 0.3],   // se afasta do celular gigante
+    [5.2, pace, 0.35],
+    [6.6, startle, 0.08], [7.1, cStandW(560, 1, -0.1, 0.1, (t) => [[610 + 20 * Math.sin(t * 9), FL - 150], [540, FL - 140]], { gesture: false }), 0.25],   // "NÃO! EU CONSIGO!"
+    [8.0, readScroll, 0.3], [9.2, drink, 0.3], [10.0, checkWatch, 0.3],
+    [12.0, seatSt(SX, 0.25, 0.4, (t) => [[SX + 50 + 3 * Math.sin(t * 20), FL - 118], [SX + 44, FL - 112]]), 0.3],
+    [12.6, seatSt(SX, 0.05, -0.05, [EAR, [SX + 30, FL - 100]]), 0.25],
+    [14.0, seatSt(SX, 0.45, 0.6, [[SX + 30, FL - 150], [SX + 22, FL - 146]]), 0.3],
+    [14.3, melt, 0.1],
+  ];
+  const pensaState = (t) => { const st = seq(pensaKeys, t); if (t >= 6.6 && t < 6.95) st.sq = -0.12 * Math.sin(Math.PI * (t - 6.6) / 0.35); return st; };
+
+  // ---------- cenário ----------
+  function drawBack(c, k, t, P) {
+    cStage(c, P, [330, 30], [540, 330]); cStool(c, SX + 10, STOOL_Y);
+    if (k === 'pensa') cWallClock(c, 760, 90, t, t > 10 && t < 11.9 ? 1 : 0);
   }
-  function drawBack(c, k, t, P) { cStage(c, P, [330, 30], [600, 330]); drawDoor(c, k, t); }
+  function phone(c, p, s, ring) { c.save(); c.translate(p[0], p[1]); c.scale(s, s); c.rotate(ring ? 0.06 * Math.sin(ring * 60) : 0);
+    c.fillStyle = '#16161a'; c.strokeStyle = '#0e0e10'; c.lineWidth = 3 / Math.sqrt(s); c.beginPath(); c.roundRect(-9, -16, 18, 32, 4); c.fill(); c.stroke(); c.fillStyle = '#6fa8ff'; c.fillRect(-7, -13, 14, 24); c.restore(); }
   function drawFront(c, k, t, P, drawn) {
-    if (k === 'faz' && t > 3.7 && t < 6) { const hd = drawn.main.head, a = t - 3.7; c.save(); c.globalAlpha = Math.min(1, a * 3) * (1 - smooth(seg(t, 5.3, 6))); c.fillStyle = rgb(PAL.faz); c.font = '900 30px Montserrat'; c.textAlign = 'center'; c.fillText('+20%', hd[0] + 40, hd[1] - 20 - a * 12); c.restore(); }
-    if (k === 'pensa' && fear(t) > 0.3) cSweat(c, drawn.main.head, t);
-    // casaco do chefe indo embora
-    if (k === 'pensa' && t > OPEN_P + 0.15 && drawn.other) { const hp = drawn.other.hand; c.fillStyle = '#4a4a52'; c.strokeStyle = '#0e0e10'; c.lineWidth = 3; c.beginPath(); c.roundRect(hp[0] - 12, hp[1] - 4, 24, 34, 5); c.fill(); c.stroke(); }
+    const hp = drawn.main.hand, R = drawn.main.R, toP = drawn.main.toP;
+    if (k === 'faz') {
+      // celular voando nas jogadas
+      let pp = hp, rot = 0;
+      for (const [t0, h] of [[TOSS1, 90], [TOSS2, 130]]) { const a = seg(t, t0 + 0.1, t0 + 0.55); if (a > 0 && a < 1) { pp = [hp[0], hp[1] - h * Math.sin(Math.PI * a)]; rot = a * Math.PI * 4; } }
+      if (t < POP0 && !(t > REACH0 && t < REACH1)) { c.save(); c.translate(pp[0], pp[1] - 8); c.rotate(rot); phone(c, [0, 0], 1, 0); c.restore(); }
+      cConfetti(c, SX + 40, FL - 200, 4.3, t);
+      if (t > 4.3 && t < 5.4) { const a = t - 4.3; c.save(); c.globalAlpha = Math.min(1, a * 4) * (1 - smooth(seg(t, 5.0, 5.4))); c.strokeStyle = rgb(PAL.faz); c.lineWidth = 10; c.lineCap = 'round'; const cx = SX + 120, cy = FL - 230 - a * 10;
+        c.beginPath(); c.moveTo(cx - 22, cy); c.lineTo(cx - 6, cy + 16); c.lineTo(cx + 24, cy - 18); c.stroke(); c.restore(); }
+      if (t > 5.4 && t < 6.0) { const hd = drawn.main.head; c.fillStyle = '#f4f2ee'; c.font = '900 40px Montserrat'; c.textAlign = 'center'; c.fillText('?', hd[0] + 10, hd[1] - 50 - 6 * Math.sin(t * 8)); }
+      if (t >= POP0) { cPopcorn(c, toP(R.armB[2]), t); if (t > 14.8 && t < 16.4) { const hd = drawn.main.head; c.fillStyle = 'rgba(244,242,238,0.9)'; c.font = '800 20px "Space Mono"'; c.textAlign = 'center'; c.fillText('HAHA', hd[0] + 50, hd[1] - 30 - 10 * Math.abs(Math.sin(t * 8))); } }
+      // atendente do outro lado da linha
+      const ins = t < 1.6 ? 0 : t < 3.9 ? smooth(seg(t, 1.6, 1.9)) : 1 - smooth(seg(t, 3.9, 4.1));
+      cCallInset(c, 755, 105, t, ins, t > 2.5 && t < 3.2 ? 1 : 0);
+    } else {
+      const g = fear(t), onPhone = t < 5.2 || t >= 12.0;
+      if (onPhone) { const s = 1 + 4.5 * g; phone(c, [hp[0] + 4 + 30 * g, hp[1] - 8 - 100 * g], s, g > 0.2 ? t : 0); }
+      else if (g > 0.2) { const s = 1 + 4.5 * g; phone(c, [760, 260 - 100 * g], s, t); }   // o celular gigante continua lá, vibrando
+      // rolo do roteiro
+      if (t > 5.2 && t < 9.2) { const u = smooth(seg(t, 5.2, 8.6)), hb = toP(R.armB[2]); const len = 30 + 200 * u;
+        c.fillStyle = '#f4ead8'; c.strokeStyle = '#0e0e10'; c.lineWidth = 3; c.beginPath(); c.moveTo(hb[0] - 12, hb[1]); c.lineTo(hb[0] + 12, hb[1]); c.lineTo(hb[0] + 16, Math.min(FL, hb[1] + len)); c.lineTo(hb[0] - 8, Math.min(FL, hb[1] + len)); c.closePath(); c.fill(); c.stroke();
+        if (hb[1] + len > FL) { c.beginPath(); c.roundRect(hb[0] - 8, FL - 9, hb[1] + len - FL + 20, 9, 4); c.fill(); c.stroke(); } }
+      // copo tremendo e derramando
+      if (t > 9.2 && t < 10.0) { const p = add(hp, [2, -6]); c.save(); c.translate(p[0] + 2 * Math.sin(t * 40), p[1]); c.rotate(-0.8); c.strokeStyle = 'rgba(240,245,250,0.95)'; c.lineWidth = 3; c.beginPath(); c.moveTo(-10, -14); c.lineTo(-8, 14); c.lineTo(8, 14); c.lineTo(10, -14); c.stroke(); c.fillStyle = 'rgba(120,180,230,0.85)'; c.fillRect(-8, 0, 16, 14); c.restore();
+        for (let i = 0; i < 4; i++) { const a = ((t * 2 + i / 4) % 1); c.fillStyle = 'rgba(120,180,230,0.85)'; c.beginPath(); c.arc(p[0] + 12, p[1] + a * 120, 3, 0, Math.PI * 2); c.fill(); } }
+      cBurst(c, drawn.main.head, 6.6, t);
+      cCallInset(c, 740, 105, t, t < 13.0 ? 0 : t < 14.3 ? smooth(seg(t, 13.0, 13.3)) : 1 - smooth(seg(t, 14.3, 14.5)), t > 13.2 && t < 14.0 ? 1 : 0, smooth(seg(t, 13.9, 14.1)));
+      if (g > 0.3 || (t > 9 && t < 12)) cSweat(c, drawn.main.head, t);
+    }
+  }
+  // braço do FAZ atravessando a divisória para oferecer o celular
+  function drawGlobal(c, t, LM, dim) {
+    const u = smooth(seg(t, REACH0 + 0.2, REACH0 + 0.6)) * (1 - smooth(seg(t, REACH1 - 0.4, REACH1)));
+    if (u <= 0) return; const x0 = 640, y0 = 860, x1 = 690, y1 = lerp(860, 690, u);
+    c.save(); c.beginPath(); c.rect(0, 150, W, 860 - 150); c.clip(); cArm(c, [[x0, y0], [lerp(x0, 660, u), lerp(y0, 760, u)], [x1, y1]], 30);
+    c.fillStyle = '#f7f7f5'; c.strokeStyle = '#0e0e10'; c.lineWidth = 5; c.beginPath(); c.arc(x1, y1, 20, 0, Math.PI * 2); c.fill(); c.stroke();
+    c.save(); c.translate(x1 + 4, y1 - 30); c.rotate(0.2); c.fillStyle = '#16161a'; c.beginPath(); c.roundRect(-14, -26, 28, 50, 6); c.fill(); c.stroke(); c.fillStyle = '#6fa8ff'; c.fillRect(-11, -22, 22, 40); c.restore();
+    c.restore();
   }
 
   const SCENE = {
-    minimal: true, noMonitor: true, metricLabel: '', totalLabel: '', reportT: GT, noReport: true,
+    minimal: true, noMonitor: true, metricLabel: '', totalLabel: '', reportT: GT, noReport: true, drawGlobal,
     tint: (k, t) => (k === 'pensa' ? 0.55 * fear(t) : 0), tintCol: [150, 205, 150],
     secsText: (n) => `${n}`,
     state: { faz: fazState, pensa: pensaState },
-    others: { faz: [{ id: 'other', fn: boss('faz'), col: PAL.azul, seed: 51, glow: 0 }], pensa: [{ id: 'other', fn: boss('pensa'), col: PAL.azul, seed: 53, glow: 0 }] },
     drawBack, drawFront,
-    cam: (k, t) => ({ x: 600, y: 185, z: k === 'pensa' ? 1.15 - 0.3 * fear(t) : 1.15 }),
+    cam: (k, t) => (k === 'faz' ? { x: 590, y: 185, z: 1.15 + 0.08 * Math.exp(-Math.max(0, t - 4.3) * 5) * (t > 4.3 ? 1 : 0) } : { x: 580, y: 185, z: 1.15 - 0.2 * fear(t) + 0.1 * Math.exp(-Math.max(0, t - 6.6) * 6) * (t > 6.6 ? 1 : 0) }),
     pain: { faz: () => 0, pensa: () => 0 },
     bubbles: {
       faz: [
-        { t0: 1.8, t1: 2.8, text: 'QUERO UM AUMENTO.' },
-        { t0: 2.95, t1: 3.6, text: 'FECHADO.', col: PAL.azul, who: 'other' },
+        { t0: 1.6, t1: 2.4, text: 'OI! QUERO MARCAR.' },
+        { t0: 2.5, t1: 3.2, text: 'SEXTA, 10H?', col: PAL.azul, x: 600 },
+        { t0: 3.3, t1: 3.95, text: 'PERFEITO.', col: PAL.faz },
       ],
       pensa: [
-        { t0: 1.6, t1: 2.8, text: 'E SE ELE GRITAR?' },
-        { t0: 5.2, t1: 6.3, text: 'E SE ME DEMITIR?' },
-        { t0: 7.6, t1: 8.8, text: 'VOU AMANHÃ...' },
-        { t0: 11.7, t1: 12.8, text: 'FALA AMANHÃ, TÔ INDO.', col: PAL.azul, who: 'other' },
+        { t0: 1.0, t1: 2.6, text: 'E SE ATENDEREM?' },
+        { t0: 6.15, t1: 6.6, text: 'QUER QUE EU LIGUE?', col: PAL.faz, x: 430 },
+        { t0: 7.1, t1: 7.9, text: 'NÃO! EU CONSIGO!' },
+        { t0: 8.2, t1: 9.0, text: 'PÁGINA 47...' },
+        { t0: 13.2, t1: 14.1, text: 'JÁ FECHAMOS.', col: PAL.azul, x: 560 },
       ],
     },
-    shake: () => 0,
+    shake: (k, t) => (k === 'pensa' ? 7 * (t >= 6.6 ? Math.exp(-(t - 6.6) * 8) : 0) + 5 * (t >= 14.55 ? Math.exp(-(t - 14.55) * 8) : 0) : 0),
     caps: [
-      { s: GT + 0.1, e: 99, center: true, lines: [[GT + 0.3, [['O SIM VEIO EM '], ['2 SEGUNDOS.', 'faz']]], [GT + 0.9, [['O MEDO DUROU '], ['MESES.', 'dor']]]] },
+      { s: GT + 0.1, e: 99, center: true, lines: [[GT + 0.3, [['A LIGAÇÃO: '], ['30 SEGUNDOS.', 'faz']]], [GT + 0.9, [['O ENSAIO: '], ['O DIA TODO.', 'dor']]]] },
     ],
     sched: {
-      noBips: true, noPops: true, music: 0.18, focusKeys: [[0, 'faz'], [5.4, 'pensa']],
+      noBips: true, noPops: true, music: 0.18, focusKeys: [[0, 'faz'], [2.65, 'pensa'], [4.0, 'faz'], [6.5, 'pensa']],
       fx: [
-        [1.05, 'knock', 0.6, 0.35], [OPEN_F, 'foley/porta', 0.5, 0.35], [3.45, 'foley/cloth_04', 0.3, 0.35], [3.8, 'chime', 0.14, 0.35],
-        [5.5, 'ominous', 0.42, -0.35, 1.4], [7.5, 'exhale', 0.2, -0.35], [9.6, 'pop', 0.25, -0.35], [10.95, 'knock', 0.6, -0.35], [OPEN_P, 'foley/porta', 0.5, -0.35], [13.0, 'exhale', 0.22, -0.35],
+        // FAZ
+        [TOSS1, 'whoosh', 0.22, 0.35], [0.85, 'foley/cloth_05', 0.2, 0.35], ...[0.95, 1.05, 1.15, 1.25].map((x) => [x, 'foley/toque_tela', 0.4, 0.35]), [1.35, 'tuu', 0.35, 0.35],
+        // PENSA: celular cresce
+        [2.7, 'ominous', 0.4, -0.35, 1.2],
+        // FAZ: gira o celular, confete, checa
+        [TOSS2, 'whoosh', 0.25, 0.35], [4.5, 'foley/talher_3', 0.3, 0.35, 1.4], [4.35, 'chime', 0.16, 0.35], [6.0, 'foley/cloth_04', 0.3, 0.35],
+        // PENSA
+        [6.6, 'thud', 0.22, -0.35], [6.62, 'voz_pensa/dor_02', 0.3, -0.35, 1.3], [8.2, 'foley/pagina_1', 0.45, -0.35], [9.25, 'foley/gole_1', 0.5, -0.35], [9.6, 'foley/gole_2', 0.5, -0.35],
+        ...Array.from({ length: 18 }, (_, i) => [10.0 + i * 0.1, 'tick', 0.08, -0.35]), [12.0, 'pop', 0.25, -0.35], ...[12.15, 12.3, 12.45].map((x) => [x, 'foley/toque_tela', 0.4, -0.35]),
+        [12.65, 'busy', 0.38, -0.35], [14.5, 'thud', 0.2, -0.35], [14.55, 'foley/cloth_05', 0.3, -0.35],
+        // FAZ ri da cena
+        [15.1, 'voz_faz/yell6', 0.3, 0.35],
       ],
-      heartReal: [[8.0, 9.5, -0.35]],
+      heartReal: [[10.0, 11.9, -0.35]],
     },
   };
 
@@ -573,6 +652,7 @@
     c.font = '700 30px "Space Mono", monospace'; c.textAlign = 'center'; c.textBaseline = 'middle';
     const lab = (txt, y, col) => { c.save(); c.globalAlpha = 1 - dim * 0.6; c.fillStyle = col; let x = 540 - (txt.length - 1) * 11; for (const ch of txt) { c.fillText(ch, x, y); x += 22; } c.restore(); };
     lab('PENSA DEMAIS', 812, '#f4f2ee'); lab('FAZ', 878, '#f4f2ee');
+    if (SCENE.drawGlobal) { c.save(); SCENE.drawGlobal(c, t, LMIN, dim); c.restore(); }
     renderCaptions(t);
   }
   function renderAt(t) {

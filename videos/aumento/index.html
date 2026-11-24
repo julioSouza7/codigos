@@ -88,8 +88,8 @@
     </style>
   </head>
   <body>
-    <div id="root" data-composition-id="main" data-start="0" data-duration="17" data-width="1080" data-height="1920">
-      <canvas id="gl" class="clip" width="1080" height="1920" data-start="0" data-duration="17" data-track-index="0"></canvas>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="20" data-width="1080" data-height="1920">
+      <canvas id="gl" class="clip" width="1080" height="1920" data-start="0" data-duration="20" data-track-index="0"></canvas>
       <div id="vignette"></div>
       <div id="flash"></div>
       <div id="flashw"></div>
@@ -100,7 +100,7 @@
 
       <div id="wm" style="display:none">@stick.obsessao</div>
 
-      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="17" data-track-index="4" data-volume="1"></audio>
+      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="20" data-track-index="4" data-volume="1"></audio>
     </div>
 
     <script>
@@ -108,20 +108,20 @@
       // golpe do gancho e jorro de água
       tl.fromTo("#flash", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none" }, 1.5);
       tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, 1.56);
-      tl.fromTo("#flashw", { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "none" }, 13.5);
-      tl.to("#flashw", { opacity: 0, duration: 0.8, ease: "power2.out" }, 13.58);
+      tl.fromTo("#flashw", { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "none" }, 16.5);
+      tl.to("#flashw", { opacity: 0, duration: 0.8, ease: "power2.out" }, 16.58);
       // contador de dias (time-lapse)
       const day = document.getElementById("day");
       const dd = { v: 1 };
       tl.fromTo(dd, { v: 1 }, { v: 365, duration: 16.0, ease: "power2.in", onUpdate: () => { day.textContent = String(Math.round(dd.v)).padStart(3, "0"); } }, 3.0);
-      tl.fromTo("#hdr .v", { color: "#f4f2ee" }, { color: "#ff4a3a", duration: 0.4, ease: "power2.out" }, 13.5);
+      tl.fromTo("#hdr .v", { color: "#f4f2ee" }, { color: "#ff4a3a", duration: 0.4, ease: "power2.out" }, 16.5);
       // chamada final
-      tl.fromTo("#cta", { opacity: 0, y: 18, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 14.4);
+      tl.fromTo("#cta", { opacity: 0, y: 18, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 17.4);
       tl.fromTo("#wm", { opacity: 0.45 }, { opacity: 0, duration: 0.3, ease: "power1.out" }, 21.9);
       tl.fromTo(".lab .n", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.out" }, 22.1);
       window.__timelines["main"] = tl;
       tl.seek(0);
     </script>
-    <script src="assets/aumento.js"></script>
+    <script src="assets/aumento2.js"></script>
   </body>
 </html>
