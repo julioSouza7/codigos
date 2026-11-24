@@ -18,6 +18,8 @@
     atrás de algo, copo tremendo e derramando, relógio girando, cadeados balançando, olhos piscando).
   - **Terceiros participam**: atendente em balão redondo de ligação, chefe que entrega envelope, plateia que reage.
   - **Golpes de câmera** nos sustos e conquistas, **confete**, risquinhos de impacto, pulo com "esmagada" no pouso.
+  - **Medida certa = "O Aumento"** (aprovado). "A Ligação" com relógio + copo + roteiro + confete ao mesmo tempo ficou
+    poluída: **no máximo 1 gag extra por vez em cada painel**, cada objeto entra, faz a piada e sai.
   - 20 s (fim da ação aos 16,5 s). Peças prontas em `common_b.js`: `cConfetti`, `cCallInset`, `cArm`, `cPopcorn`,
     `cWallClock`, `cBurst`.
 - Ver também `PLANO-CANAL.md` (nome, bio, horários, checklist de postagem).
