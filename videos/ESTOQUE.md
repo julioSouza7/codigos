@@ -32,3 +32,5 @@ Todos: 25 s, 1080×1920, 4 personagens (1 disciplina, 2 obsessão, 3 motivação
 ## Método novo (minimalista) — postar às 12h
 1. `apresentacao/`
 2. `salto/`
+3. `ligacao/`
+4. `aumento/`

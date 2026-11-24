@@ -215,8 +215,24 @@ def splashb():
     t = tt(1.0); return lp(rng.standard_normal(len(t)), 3500) * np.exp(-t * 4) * np.minimum(1, t / 0.005) + thump(80, 35, 0.8, 4)[:len(t)] * 0.6 if False else lp(rng.standard_normal(len(t)), 3500) * np.exp(-t * 4) * np.minimum(1, t / 0.005)
 def splashs():
     t = tt(0.6); return lp(rng.standard_normal(len(t)), 2600) * np.exp(-t * 7) * np.minimum(1, t / 0.005)
+
+def tuu():
+    out = np.zeros(int(SR * 1.3))
+    for k0 in (0.0, 0.7):
+        s = tone(425, 0.45, 0.5, 0.01) * np.minimum(1, (0.45 - tt(0.45)) / 0.02); i = int(k0 * SR); out[i:i + len(s)] += s[: len(out) - i]
+    return out * 0.35
+def busy():
+    out = np.zeros(int(SR * 1.2))
+    for j in range(4):
+        s = tone(425, 0.18, 0.5, 0.005) * np.minimum(1, (0.18 - tt(0.18)) / 0.01); i = int(j * 0.3 * SR); out[i:i + len(s)] += s[: len(out) - i]
+    return out * 0.35
+def knock():
+    out = np.zeros(int(SR * 0.5))
+    for j in range(2):
+        s = thump(190, 120, 0.12, 40) + band(rng.standard_normal(int(0.12 * SR)), 400, 3000) * np.exp(-tt(0.12) * 60) * 0.5; i = int(j * 0.16 * SR); out[i:i + len(s)] += s[: len(out) - i]
+    return out * 0.8
 SYN = {'applause': applause, 'murmur': murmur, 'roar': roar, 'crickets': crickets, 'wind': wind, 'paddle': paddle, 'ominous': ominous, 'strum': strum, 'pluck': pluck, 'slowrip': None, 'water': water, 'scrub': scrub, 'buzz': buzz, 'scribble': scribble, 'typing': typing, 'drill': drill}
-FX = {'clap': clap1, 'splash': splashb, 'splash_s': splashs, 'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
+FX = {'tuu': tuu, 'busy': busy, 'knock': knock, 'clap': clap1, 'splash': splashb, 'splash_s': splashs, 'doorbell': doorbell, 'clank': clank, 'cardbeep': cardbeep, 'box': box, 'ding': ding, 'crunch': crunch, 'scroll': scrollsw, 'birds': lambda: birds(10.5), 'whoosh': lambda: whoosh(), 'chime': chime, 'pop': pop, 'beep': beep2, 'thud': lambda: thump(90, 38, 0.6, 6), 'sad': sad, 'rain': lambda: rain(2.0),
       'ring': lambda: ring(1.3), 'slap': slap, 'swish': lambda: whoosh(0.25), 'tick': lambda: tone(2600, 0.03, 80), 'bigring': lambda: ring(2.0), 'breath_in': lambda: breath_in(), 'exhale': lambda: exhale(), 'blow': lambda: blow(), 'fan': fan}
 
 add(thump(120, 50, 0.6, 7), S['slam'], 0.3)

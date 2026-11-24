@@ -1,7 +1,7 @@
 """Confere se os efeitos do faz (pan>0) e do pensa demais (pan<0) se sobrepõem. Uso: python3 check_audio.py schedule.json"""
 import json, sys, wave, os
 S = json.load(open(sys.argv[1])); SONS = '/home/user/codigos/videos/trilha/sons'
-SY = {'clap': 0.06, 'splash': 1.0, 'splash_s': 0.6, 'doorbell': 1.6, 'clank': 0.8, 'cardbeep': 0.35, 'box': 0.35, 'crunch': 0.25, 'ding': 0.9, 'breath_in': 0.38, 'exhale': 0.9, 'beep': 0.3, 'fan': 1.2, 'thud': 0.6, 'blow': 1.0, 'ring': 1.3, 'bigring': 2.0, 'swish': 0.25, 'whoosh': 0.45, 'pop': 0.08, 'scroll': 0.09, 'tick': 0.03, 'chime': 1.4, 'sad': 2.2, 'rain': 2.0, 'slap': 0.12}
+SY = {'tuu': 1.3, 'busy': 1.2, 'knock': 0.5, 'clap': 0.06, 'splash': 1.0, 'splash_s': 0.6, 'doorbell': 1.6, 'clank': 0.8, 'cardbeep': 0.35, 'box': 0.35, 'crunch': 0.25, 'ding': 0.9, 'breath_in': 0.38, 'exhale': 0.9, 'beep': 0.3, 'fan': 1.2, 'thud': 0.6, 'blow': 1.0, 'ring': 1.3, 'bigring': 2.0, 'swish': 0.25, 'whoosh': 0.45, 'pop': 0.08, 'scroll': 0.09, 'tick': 0.03, 'chime': 1.4, 'sad': 2.2, 'rain': 2.0, 'slap': 0.12}
 ev = []
 for e in S['fx']:
     t0, typ, g, pan = e[:4]; prm = e[4] if len(e) > 4 else None
