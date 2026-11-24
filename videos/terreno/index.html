@@ -1,0 +1,127 @@
+<!doctype html>
+<html
+  lang="pt-BR"
+  data-resolution="portrait"
+  data-composition-variables='[
+    {"id":"color-ground","type":"color","label":"Fundo","default":"#060607"},
+    {"id":"color-ink","type":"color","label":"Texto","default":"#F4F2EE"},
+    {"id":"color-accent","type":"color","label":"Obsessão","default":"#FF4A3A"},
+    {"id":"font-display","type":"string","label":"Fonte de título","default":"Montserrat"}
+  ]'
+>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700;800;900&family=Space+Mono:wght@700&display=block" rel="stylesheet" />
+    <script src="assets/vendor/gsap.min.js"></script>
+    <style>
+      /* LOOK (@stick.obsessao): 2D vetorial, bonecos brancos de perfil com contorno preto grosso; corte lateral do chão
+         com faz x pensa demais com índice de dor, uma cor viva por personagem e feixes de luz do alto; preto e cinza + UMA cor de destaque (vermelho = obsessão).
+         Texto digitando em maiúsculas (Montserrat 800); rótulos em pílulas Space Mono. Regra: a obsessão vence. */
+      :root {
+        --color-ground: #060607;
+        --color-ink: #f4f2ee;
+        --color-accent: #e5483b;
+        --font-display: "Montserrat", sans-serif;
+        --font-mono: "Space Mono", monospace;
+        --fg: var(--color-ink);
+        --brand: var(--color-accent);
+        --font-body: var(--font-display);
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body { margin: 0; width: 1080px; height: 1920px; overflow: hidden; background: var(--color-ground); }
+      #root { position: relative; width: 100%; height: 100%; background: var(--color-ground); overflow: hidden; }
+      #gl { position: absolute; inset: 0; width: 1080px; height: 1920px; display: block; }
+      #vignette { position: absolute; inset: 0; pointer-events: none;
+        background: radial-gradient(120% 80% at 50% 50%, rgba(0,0,0,0) 62%, rgba(0,0,0,0.5) 100%); }
+      #hdr { position: absolute; left: 0; right: 0; top: 176px; text-align: center; color: var(--color-ink);
+        font-family: var(--font-mono); font-weight: 700; }
+      #hdr .k { display: block; font-size: 24px; letter-spacing: 0.42em; padding-left: 0.42em; opacity: 0.6; }
+      #hdr .v { display: block; font-size: 42px; letter-spacing: 0.24em; padding-left: 0.24em; margin-top: 2px; }
+      .cap { position: absolute; left: 60px; right: 60px; top: 300px; text-align: center; color: var(--color-ink);
+        font-family: var(--font-display); font-weight: 800; font-size: 58px; line-height: 1.14; letter-spacing: 0.01em;
+        text-transform: uppercase; text-shadow: 0 4px 24px rgba(0,0,0,0.9); }
+      .cap.center { top: 630px; font-size: 52px; }
+      .cap.big { font-size: 76px; font-weight: 900; letter-spacing: -0.01em; }
+      .cap .l1, .cap .l2 { min-height: 1.14em; white-space: nowrap; }
+      .cap .hl { color: var(--color-accent); }
+      .cap .cur { display: inline-block; width: 0.42em; height: 0.82em; margin-left: 0.08em; background: var(--color-ink);
+        vertical-align: -0.06em; }
+      #cta { position: absolute; left: 0; right: 0; top: 1214px; text-align: center; opacity: 0; }
+      #cta .pill { display: inline-block; background: #f4f2ee; color: #0b0b0c; border-radius: 999px; padding: 8px 26px 9px;
+        font-family: var(--font-display); font-weight: 900; font-size: 34px; letter-spacing: 0.02em; }
+      #cta .pill b { color: var(--color-accent); font-weight: 900; }
+      #cta .sub { display: block; margin-top: 8px; font-family: var(--font-mono); font-weight: 700; font-size: 26px; letter-spacing: 0.12em; color: var(--color-ink); }
+      #cta .handle { display: block; margin-top: 4px; font-family: var(--font-mono); font-weight: 700; font-size: 20px;
+        letter-spacing: 0.08em; color: var(--color-ink); opacity: 0.85; }
+      .lab { position: absolute; top: 1160px; width: 240px; margin-left: -120px; text-align: center; }
+      .lab .nm { display: inline-block; font-family: var(--font-mono); font-weight: 700; font-size: 18px; letter-spacing: 0.14em;
+        padding: 5px 10px 5px 13px; border: 2px solid rgba(244,242,238,0.55); border-radius: 999px; color: var(--color-ink); }
+      .lab .n { display: block; margin-top: 8px; font-family: var(--font-display); font-weight: 800; font-size: 46px; line-height: 1;
+        color: var(--color-ink); }
+      .cap .w { display: inline-block; transform-origin: 50% 80%; }
+      .cap .c-obs { color: #e5483b; text-shadow: 0 0 24px rgba(255,59,48,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      .cap .c-disc { color: #2f9bff; text-shadow: 0 0 24px rgba(47,155,255,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      .cap .c-ego { color: #b85cff; text-shadow: 0 0 24px rgba(184,92,255,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      #lab-disc .nm { border-color: #2f9bff; color: #2f9bff; }
+      #lab-disc .n { color: #2f9bff; }
+      #lab-ego .nm { border-color: #b85cff; color: #b85cff; }
+      #lab-motiv .nm { border-color: #ffcc00; color: #ffcc00; }
+      #lab-motiv .n { color: #ffcc00; }
+      .cap .c-faz { color: #4fbf6a; text-shadow: 0 0 24px rgba(79,191,106,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      .cap .c-pensa { color: #f2a23a; text-shadow: 0 0 24px rgba(242,162,58,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      .cap .c-dor { color: #e5483b; text-shadow: 0 0 24px rgba(229,72,59,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      #hdr .v { display: none; }
+      .cap .c-motiv { color: #ffcc00; text-shadow: 0 0 24px rgba(255,204,0,0.6), 0 4px 24px rgba(0,0,0,0.9); }
+      #lab-ego .n { color: #b85cff; }
+      #lab-obs .nm { background: rgba(255,59,48,0.15); }
+      #lab-obs .nm { border-color: var(--color-accent); color: var(--color-accent); }
+      #lab-obs .n { color: var(--color-accent); }
+      #wm { position: absolute; left: 0; right: 0; top: 1296px; text-align: center; font-family: var(--font-mono); font-weight: 700;
+        font-size: 22px; letter-spacing: 0.1em; color: var(--color-ink); opacity: 0.45; }
+      #flash, #flashw { position: absolute; inset: 0; pointer-events: none; opacity: 0; }
+      #flash { background: radial-gradient(90% 60% at 50% 45%, rgba(255,70,50,0.6) 0%, rgba(255,40,30,0.22) 55%, rgba(0,0,0,0) 100%); }
+      #flashw { background: radial-gradient(80% 55% at 50% 60%, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.12) 55%, rgba(0,0,0,0) 100%); }
+      #hdr { display: none !important; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="17" data-width="1080" data-height="1920">
+      <canvas id="gl" class="clip" width="1080" height="1920" data-start="0" data-duration="17" data-track-index="0"></canvas>
+      <div id="vignette"></div>
+      <div id="flash"></div>
+      <div id="flashw"></div>
+
+      <div id="hdr"><span class="k">FAZ × PENSA DEMAIS</span><span class="v">DIA <span id="day">001</span></span></div>
+      <div id="cap" class="cap"><div class="l1"></div><div class="l2"></div></div>
+      <div id="cta"><span class="pill">QUAL DOS 2 É <b>VOCÊ?</b></span><span class="sub">COMENTA <b style="color:#f2a23a">1</b> OU <b style="color:#4fbf6a">2</b></span><span class="handle">@stick.obsessao</span></div>
+
+      <div id="wm" style="display:none">@stick.obsessao</div>
+
+      <audio id="music" class="clip" src="assets/music.wav" data-start="0" data-duration="17" data-track-index="4" data-volume="1"></audio>
+    </div>
+
+    <script>
+      const tl = gsap.timeline({ paused: true });
+      // golpe do gancho e jorro de água
+      tl.fromTo("#flash", { opacity: 0 }, { opacity: 1, duration: 0.05, ease: "none" }, 1.5);
+      tl.to("#flash", { opacity: 0, duration: 0.6, ease: "power2.out" }, 1.56);
+      tl.fromTo("#flashw", { opacity: 0 }, { opacity: 1, duration: 0.06, ease: "none" }, 13.5);
+      tl.to("#flashw", { opacity: 0, duration: 0.8, ease: "power2.out" }, 13.58);
+      // contador de dias (time-lapse)
+      const day = document.getElementById("day");
+      const dd = { v: 1 };
+      tl.fromTo(dd, { v: 1 }, { v: 365, duration: 16.0, ease: "power2.in", onUpdate: () => { day.textContent = String(Math.round(dd.v)).padStart(3, "0"); } }, 3.0);
+      tl.fromTo("#hdr .v", { color: "#f4f2ee" }, { color: "#ff4a3a", duration: 0.4, ease: "power2.out" }, 13.5);
+      // chamada final
+      tl.fromTo("#cta", { opacity: 0, y: 18, scale: 0.92 }, { opacity: 1, y: 0, scale: 1, duration: 0.45, ease: "back.out(1.8)" }, 14.4);
+      tl.fromTo("#wm", { opacity: 0.45 }, { opacity: 0, duration: 0.3, ease: "power1.out" }, 21.9);
+      tl.fromTo(".lab .n", { autoAlpha: 1 }, { autoAlpha: 0, duration: 0.3, ease: "power1.out" }, 22.1);
+      window.__timelines["main"] = tl;
+      tl.seek(0);
+    </script>
+    <script src="assets/terreno.js"></script>
+  </body>
+</html>
