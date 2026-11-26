@@ -104,7 +104,7 @@
     c.fillStyle = 'rgba(255,255,255,0.5)'; c.beginPath(); c.moveTo(36, -36); c.quadraticCurveTo(48, -2, 36, 34); c.lineTo(32, 30); c.quadraticCurveTo(42, -2, 31, -32); c.closePath(); c.fill();
     c.restore();
   }
-  function drawFigure(c, R, light, hammer, col) {
+  function drawFigure(c, R, light, hammer, col, arm) {
     const f = rgb(mixC(DARK, WHITE, light)), b = rgb(mixC(DARKB, BACK, light));
     if (col && light > 0.5) {
       c.save(); c.globalAlpha = 0.55 * (light - 0.5) * 2; c.filter = 'blur(8px)';
@@ -118,7 +118,10 @@
     strokePts(c, [R.hip, R.sh], D.torsoW, f);
     strokePts(c, R.legF, D.limb, f);
     if (hammer) drawHammer(c, hammer.g, hammer.a, hammer.col);
-    limb(c, R.armF, D.limb, f);
+    if (arm && arm.a > 0.001) {
+      if (arm.g > 0.01) { c.save(); c.globalAlpha = arm.g; c.filter = 'blur(10px)'; strokePts(c, R.armF, D.limb + 26, rgb(ACC)); c.restore(); }
+      limb(c, R.armF, D.limb, rgb(mixC(mixC(DARK, WHITE, light), mixC(DARK, ACC, light), arm.a)));
+    } else limb(c, R.armF, D.limb, f);
     disc(c, R.head, D.headR + D.ol, OUT); disc(c, R.head, D.headR, f);
   }
 
@@ -241,6 +244,10 @@
   const STRIKES = { motiv: [], ego: [], disc: [], obs: [] };
   for (const k of KS) for (let n = 0; ; n++) { const ts = T0 + RUN[k].P * (n + 0.5); if (ts >= RUN[k].end) break; STRIKES[k].push(ts); }
   const IMPACT_Y = standHipY(SWING_L) + 8 - 112;
+  const PAIN0 = 15.7, PAIN1 = 16.9;
+  const hurtOf = (t) => smooth(seg(t, PAIN0, PAIN1));
+  const lastStrike = (k, t) => { let ls = -9; for (const x of STRIKES[k]) if (x <= t) ls = x; return ls; };
+  const MOANS = STRIKES.obs.filter((x) => x > 16.3 && x < 18.8).filter((_, i) => i % 2 === 0);
   const impact = (k) => [wallFace(k), IMPACT_Y];
 
   // ---------- parede de pedra com rachaduras ----------
@@ -386,7 +393,7 @@
     { s: 11.3, e: 13.9, lines: [[11.3, [['A DISCIPLINA']]], [11.65, [['BATE NO RITMO.']]]] },
     { s: 14.0, e: 14.95, lines: [[14.0, [['BATE A META']]], [14.3, [['E PARA.']]]] },
     { s: 15.1, e: 17.0, lines: [[15.1, [['A OBSESSÃO']]], [15.45, [['PASSA DA META.']]]] },
-    { s: 17.1, e: 18.95, lines: [[17.1, [['CANSADA,']]], [17.45, [['BATE DE NOVO.']]]] },
+    { s: 17.1, e: 18.95, lines: [[17.1, [['O BRAÇO '], ['DÓI.', 'obs']]], [17.45, [['ELA BATE DE NOVO.']]]] },
     { s: 21.0, e: 99, big: true, lines: [[21.0, [['NÃO PARE NA META.']]]] },
   ];
   const capEl = document.getElementById('cap');
@@ -446,10 +453,16 @@
       c.save(); c.translate(st.x + 10, FLOOR + 2); c.scale(1, 0.16);
       const sg = c.createRadialGradient(0, 0, 0, 0, 0, 80); sg.addColorStop(0, 'rgba(0,0,0,0.5)'); sg.addColorStop(1, 'rgba(0,0,0,0)');
       c.fillStyle = sg; c.beginPath(); c.arc(0, 0, 80, 0, Math.PI * 2); c.fill(); c.restore();
+      let arm = null, sd = 9;
+      if (k === 'obs') { const h = hurtOf(t); sd = t - lastStrike('obs', t); const th = sd < 1 ? Math.exp(-sd * 7) : 0;
+        if (t < BREAK_T) { st.head = (st.head || 0) + 0.24 * h * th; st.lean = (st.lean || 0) + 0.05 * h * th; }
+        arm = { a: h * (0.8 + 0.2 * th), g: h * (0.1 + 0.32 * th) * clamp(light) }; }
       const R = rigP(st);
       if (st.hammer) st.hammer.col = COL[k];
-      if (st.hammer && st.hammer.loose) { drawHammer(c, st.hammer.g, st.hammer.a, COL[k]); drawFigure(c, R, light, null, COL[k]); }
-      else drawFigure(c, R, light, st.hammer, COL[k]);
+      if (st.hammer && st.hammer.loose) { drawHammer(c, st.hammer.g, st.hammer.a, COL[k]); drawFigure(c, R, light, null, COL[k], arm); }
+      else drawFigure(c, R, light, st.hammer, COL[k], arm);
+      if (arm && arm.a > 0.4 && sd >= 0 && sd < 0.34 && t < BREAK_T + 0.1) { const E = R.arm, u = sd / 0.34; c.save(); c.strokeStyle = rgb(ACC, 1, (1 - u) * arm.a * light); c.lineWidth = 6; c.lineCap = 'round';
+        for (let i = -1; i <= 1; i++) { const an = -2.5 + i * 0.42, r0 = 44 + 16 * easeOut(u), r1 = r0 + 18; c.beginPath(); c.moveTo(E[0] + Math.cos(an) * r0, E[1] + Math.sin(an) * r0); c.lineTo(E[0] + Math.cos(an) * r1, E[1] + Math.sin(an) * r1); c.stroke(); } c.restore(); }
     }
     // poeira dos golpes
     for (const k of KS) for (const t0 of [1.5, ...STRIKES[k]]) {
@@ -524,7 +537,7 @@
 
   const typing = [];
   for (const cap of CAPS) for (const [ls, segs] of cap.lines) wordsOf(segs).forEach((w, j) => { const tt = ls + j * WSTEP; if (tt >= 0 && tt < cap.e) typing.push(+tt.toFixed(3)); });
-  window.__schedule = { shots: SHOTS, slam: 1.5, motivQuit: RUN.motiv.end, egoQuit: RUN.ego.end, motivSit: 6.6, egoSit: 11.0, meta: RUN.disc.end, payoff: BREAK_T, strikes: STRIKES, crowd: [7.8, 9.7], words: typing };
+  window.__schedule = { moans: MOANS, shots: SHOTS, slam: 1.5, motivQuit: RUN.motiv.end, egoQuit: RUN.ego.end, motivSit: 6.6, egoSit: 11.0, meta: RUN.disc.end, payoff: BREAK_T, strikes: STRIKES, crowd: [7.8, 9.7], words: typing };
   window.__renderAt = renderAt;
   window.addEventListener('hf-seek', (e) => renderAt(e.detail.time));
   renderAt(0);

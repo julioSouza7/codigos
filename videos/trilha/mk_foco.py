@@ -62,6 +62,33 @@ s = s[:a] + '''  const CAPS = [
   ];
 ''' + s[b:]
 s = re.sub(r"window\.__schedule = \{ slam", "window.__schedule = { shots: SHOTS, slam", s)
+
+# ---- ÊNFASE NA OBSESSÃO: o braço da frente fica vermelho (dói), ela faz careta a cada golpe e não para ----
+s = R(s, "  function drawFigure(c, R, light, hammer, col) {", "  function drawFigure(c, R, light, hammer, col, arm) {")
+s = R(s, "    if (hammer) drawHammer(c, hammer.g, hammer.a, hammer.col);\n    limb(c, R.armF, D.limb, f);",
+         "    if (hammer) drawHammer(c, hammer.g, hammer.a, hammer.col);\n"
+         "    if (arm && arm.a > 0.001) {\n"
+         "      if (arm.g > 0.01) { c.save(); c.globalAlpha = arm.g; c.filter = 'blur(10px)'; strokePts(c, R.armF, D.limb + 26, rgb(ACC)); c.restore(); }\n"
+         "      limb(c, R.armF, D.limb, rgb(mixC(mixC(DARK, WHITE, light), mixC(DARK, ACC, light), arm.a)));\n"
+         "    } else limb(c, R.armF, D.limb, f);")
+s = R(s, "  const IMPACT_Y = standHipY(SWING_L) + 8 - 112;",
+         "  const IMPACT_Y = standHipY(SWING_L) + 8 - 112;\n"
+         "  const PAIN0 = 15.7, PAIN1 = 16.9;\n"
+         "  const hurtOf = (t) => smooth(seg(t, PAIN0, PAIN1));\n"
+         "  const lastStrike = (k, t) => { let ls = -9; for (const x of STRIKES[k]) if (x <= t) ls = x; return ls; };\n"
+         "  const MOANS = STRIKES.obs.filter((x) => x > 16.3 && x < 18.8).filter((_, i) => i % 2 === 0);")
+s = R(s, "      const R = rigP(st);\n      if (st.hammer) st.hammer.col = COL[k];\n      if (st.hammer && st.hammer.loose) { drawHammer(c, st.hammer.g, st.hammer.a, COL[k]); drawFigure(c, R, light, null, COL[k]); }\n      else drawFigure(c, R, light, st.hammer, COL[k]);",
+         "      let arm = null, sd = 9;\n"
+         "      if (k === 'obs') { const h = hurtOf(t); sd = t - lastStrike('obs', t); const th = sd < 1 ? Math.exp(-sd * 7) : 0;\n"
+         "        if (t < BREAK_T) { st.head = (st.head || 0) + 0.24 * h * th; st.lean = (st.lean || 0) + 0.05 * h * th; }\n"
+         "        arm = { a: h * (0.8 + 0.2 * th), g: h * (0.1 + 0.32 * th) * clamp(light) }; }\n"
+         "      const R = rigP(st);\n      if (st.hammer) st.hammer.col = COL[k];\n"
+         "      if (st.hammer && st.hammer.loose) { drawHammer(c, st.hammer.g, st.hammer.a, COL[k]); drawFigure(c, R, light, null, COL[k], arm); }\n"
+         "      else drawFigure(c, R, light, st.hammer, COL[k], arm);\n"
+         "      if (arm && arm.a > 0.4 && sd >= 0 && sd < 0.34 && t < BREAK_T + 0.1) { const E = R.arm, u = sd / 0.34; c.save(); c.strokeStyle = rgb(ACC, 1, (1 - u) * arm.a * light); c.lineWidth = 6; c.lineCap = 'round';\n"
+         "        for (let i = -1; i <= 1; i++) { const an = -2.5 + i * 0.42, r0 = 44 + 16 * easeOut(u), r1 = r0 + 18; c.beginPath(); c.moveTo(E[0] + Math.cos(an) * r0, E[1] + Math.sin(an) * r0); c.lineTo(E[0] + Math.cos(an) * r1, E[1] + Math.sin(an) * r1); c.stroke(); } c.restore(); }")
+s = R(s, "[[17.1, [['CANSADA,']]], [17.45, [['BATE DE NOVO.']]]]", "[[17.1, [['O BRAÇO '], ['DÓI.', 'obs']]], [17.45, [['ELA BATE DE NOVO.']]]]")
+s = R(s, "window.__schedule = { shots: SHOTS, slam", "window.__schedule = { moans: MOANS, shots: SHOTS, slam")
 if os.path.exists(P): shutil.rmtree(P)
 os.makedirs(P + '/assets'); shutil.copytree('gelo/assets/vendor', P + '/assets/vendor'); shutil.copy('gelo/hyperframes.json', P + '/')
 open(P + '/meta.json', 'w').write('{"id":"foco","name":"foco","createdAt":"2026-11-26T00:00:00.000Z"}')

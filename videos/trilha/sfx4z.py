@@ -92,6 +92,17 @@ for k, times in sched['strikes'].items():
         f = focus_at(t0)
         g = (0.2 if k in ('obs', 'disc') else 0.17) if f in (None, k) else 0.045   # no zoom, só quem está em foco aparece
         add(hit(k), t0, g, 0.0 if f == k else PAN[k])
+# obsessão: o braço dói -> pequenos gemidos, só dela (ninguém mais soa no zoom dela)
+import os
+SONS = '/home/user/codigos/videos/trilha/sons'
+def wclip(name):
+    with wave.open(os.path.join(SONS, name + '.wav')) as w:
+        x = np.frombuffer(w.readframes(w.getnframes()), dtype=np.int16) / 32768.0
+        if w.getnchannels() > 1: x = x.reshape(-1, w.getnchannels()).mean(1)
+        if w.getframerate() != SR: x = np.interp(np.arange(0, len(x), w.getframerate() / SR), np.arange(len(x)), x)
+    return x
+for i, t0 in enumerate(sched.get('moans', [])):
+    add(wclip(['voz_pensa/dor_10', 'voz_pensa/dor_02', 'voz_pensa/dor_14'][i % 3]), t0 + 0.07, 0.42, 0.0)
 # motivação cansa e senta
 t = tt(0.7); f = 420 * np.exp(-t * 3) + 60
 add(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 3) * np.minimum(1, t / 0.02), sched['motivQuit'], 0.13, PAN['motiv'])
