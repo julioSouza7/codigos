@@ -45,7 +45,8 @@
   const OUT = '#0e0e10';
   const WHITE = [247, 247, 245], BACK = [196, 196, 200], DARK = [88, 88, 94], DARKB = [62, 62, 68];
   const RED = [255, 59, 48];
-  const COL = { disc: [47, 155, 255], obs: [255, 59, 48], motiv: [255, 204, 0], ego: [184, 92, 255] };
+  const NEU = [214, 212, 206], ACC = [214, 80, 66];
+  const COL = { disc: NEU, obs: NEU, motiv: NEU, ego: NEU };
   const KS = ['disc', 'obs', 'motiv', 'ego'];
   const HX = { disc: 70, obs: 405, motiv: 740, ego: 1075 };
   const WALL_T = 66;
@@ -268,7 +269,7 @@
     const fall = k === 'obs' ? easeIn(seg(t, BREAK_T, BREAK_T + FALL_DUR)) : 0;
     const lit = 0.65 + 0.35 * Math.min(1, lv);
     const bark = (yTop, yBot) => {
-      const g = c.createLinearGradient(x0, 0, x1, 0); g.addColorStop(0, rgb([150, 100, 62], lit)); g.addColorStop(1, rgb([104, 68, 42], lit));
+      const g = c.createLinearGradient(x0, 0, x1, 0); g.addColorStop(0, rgb([128, 116, 104], lit)); g.addColorStop(1, rgb([92, 84, 76], lit));
       c.fillStyle = g; c.fillRect(x0, yTop, WALL_T, yBot - yTop);
       c.strokeStyle = 'rgba(0,0,0,0.28)'; c.lineWidth = 3;
       for (let i = 0; i < 4; i++) { const bx = x0 + 10 + i * 14; c.beginPath(); for (let y = yTop; y < yBot; y += 40) { c.moveTo(bx + ((y * 13) % 7) - 3, y); c.lineTo(bx + ((y * 7) % 5) - 2, y + 26); } c.stroke(); }
@@ -279,7 +280,7 @@
     c.beginPath(); c.moveTo(x0, FLOOR); c.lineTo(x0, I[1] + half); c.lineTo(x0 + depth, I[1]); c.lineTo(x1, I[1]); c.lineTo(x1, FLOOR); c.lineWidth = 5; c.strokeStyle = OUT; c.stroke();
     // raízes
     c.beginPath(); c.moveTo(x0 - 26, FLOOR); c.quadraticCurveTo(x0 - 4, FLOOR - 8, x0, FLOOR - 40); c.lineTo(x1, FLOOR - 40); c.quadraticCurveTo(x1 + 4, FLOOR - 8, x1 + 26, FLOOR); c.closePath();
-    c.fillStyle = rgb([110, 72, 44], lit); c.fill(); c.lineWidth = 4; c.strokeStyle = OUT; c.stroke();
+    c.fillStyle = rgb([98, 90, 82], lit); c.fill(); c.lineWidth = 4; c.strokeStyle = OUT; c.stroke();
     // parte de cima (cai na vez da obsessão)
     c.save();
     if (fall > 0) { c.translate(x1, I[1]); c.rotate(fall * 1.45); c.translate(-x1, -I[1]); }
@@ -288,12 +289,12 @@
     c.beginPath(); c.moveTo(x0, -900); c.lineTo(x0, I[1] - half); c.lineTo(x0 + depth, I[1]); c.lineTo(x1, I[1]); c.lineTo(x1, -900); c.lineWidth = 5; c.strokeStyle = OUT; c.stroke();
     // galhos com folhas aparecendo quando cai
     if (fall > 0) {
-      for (let i = 0; i < 9; i++) { const yy = I[1] - 420 - i * 60, sx = i % 2 ? -1 : 1; c.beginPath(); c.ellipse(x0 + WALL_T / 2 + sx * 70, yy, 90, 54, sx * 0.3, 0, Math.PI * 2); c.fillStyle = rgb([58, 150, 88]); c.fill(); c.lineWidth = 4; c.strokeStyle = OUT; c.stroke(); }
+      for (let i = 0; i < 9; i++) { const yy = I[1] - 420 - i * 60, sx = i % 2 ? -1 : 1; c.beginPath(); c.ellipse(x0 + WALL_T / 2 + sx * 70, yy, 90, 54, sx * 0.3, 0, Math.PI * 2); c.fillStyle = rgb([88, 96, 90]); c.fill(); c.lineWidth = 4; c.strokeStyle = OUT; c.stroke(); }
     }
     c.restore();
     // miolo claro do corte
     c.beginPath(); c.moveTo(x0, I[1] - half * (1 - fall)); c.lineTo(x0 + depth, I[1]); c.lineTo(x0, I[1] + half); c.closePath();
-    c.fillStyle = '#e8b878'; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OUT; c.stroke();
+    c.fillStyle = '#cfc6b8'; c.fill(); c.lineWidth = 3.5; c.strokeStyle = OUT; c.stroke();
     // poeira e lascas da queda
     if (k === 'obs' && t >= BREAK_T + FALL_DUR) {
       const d = t - BREAK_T - FALL_DUR;
@@ -308,7 +309,7 @@
     for (let i = 0; i < cnt; i++) {
       const s = 7 + r() * 10, x = x0 - 12 - r() * 70 + (k === 'obs' && i > 5 ? 120 + r() * 60 : 0);
       c.beginPath(); c.ellipse(x, FLOOR - s * 0.5, s, s * 0.6, r() * 0.6, 0, Math.PI * 2);
-      c.fillStyle = '#d9a86c'; c.fill(); c.lineWidth = 3; c.strokeStyle = OUT; c.stroke();
+      c.fillStyle = '#b8b0a4'; c.fill(); c.lineWidth = 3; c.strokeStyle = OUT; c.stroke();
     }
   }
   // plateia do ego
@@ -378,13 +379,13 @@
   // ---------- texto: palavras pulando, palavra-chave na cor do personagem ----------
   const CAPS = [
     { s: -1, e: 2.85, lines: [[-1, [['QUATRO MACHADOS.']]], [0.3, [['SÓ '], ['UMA', 'obs'], [' ÁRVORE CAI.']]]] },
-    { s: 3.0, e: 5.5, lines: [[3.0, [['A '], ['MOTIVAÇÃO', 'motiv']]], [3.35, [['COMEÇA A MIL.']]]] },
+    { s: 3.0, e: 5.5, lines: [[3.0, [['A MOTIVAÇÃO']]], [3.35, [['COMEÇA A MIL.']]]] },
     { s: 5.6, e: 6.85, lines: [[5.6, [['E APAGA NO']]], [5.95, [['PRIMEIRO CANSAÇO.']]]] },
-    { s: 7.0, e: 9.7, lines: [[7.0, [['O '], ['EGO', 'ego']]], [7.35, [['BATE PRA SER VISTO.']]]] },
+    { s: 7.0, e: 9.7, lines: [[7.0, [['O EGO']]], [7.35, [['BATE PRA SER VISTO.']]]] },
     { s: 9.8, e: 11.1, lines: [[9.8, [['SEM PLATEIA,']]], [10.15, [['LARGA O MACHADO.']]]] },
-    { s: 11.3, e: 13.9, lines: [[11.3, [['A '], ['DISCIPLINA', 'disc']]], [11.65, [['BATE NO RITMO.']]]] },
+    { s: 11.3, e: 13.9, lines: [[11.3, [['A DISCIPLINA']]], [11.65, [['BATE NO RITMO.']]]] },
     { s: 14.0, e: 14.95, lines: [[14.0, [['BATE A META']]], [14.3, [['E PARA.']]]] },
-    { s: 15.1, e: 17.0, lines: [[15.1, [['A '], ['OBSESSÃO', 'obs']]], [15.45, [['PASSA DA META.']]]] },
+    { s: 15.1, e: 17.0, lines: [[15.1, [['A OBSESSÃO']]], [15.45, [['PASSA DA META.']]]] },
     { s: 17.1, e: 18.95, lines: [[17.1, [['CANSADA,']]], [17.45, [['BATE DE NOVO.']]]] },
     { s: 21.0, e: 99, big: true, lines: [[21.0, [['NÃO PARE NA META.']]]] },
   ];
@@ -462,7 +463,7 @@
         const px = I[0] + Math.cos(ang) * sp * a, py = I[1] + Math.sin(ang) * sp * a + 0.5 * 1400 * a * a;
         if (a > 0.4) continue;
         c.save(); c.translate(px, py); c.rotate(a * 12 + i);
-        c.fillStyle = i % 2 ? '#e8b878' : rgb(COL[k]); c.fillRect(-6, -3, 12, 6); c.lineWidth = 2; c.strokeStyle = OUT; c.strokeRect(-6, -3, 12, 6); c.restore();
+        c.fillStyle = i % 2 ? '#cfc6b8' : rgb(COL[k]); c.fillRect(-6, -3, 12, 6); c.lineWidth = 2; c.strokeStyle = OUT; c.strokeRect(-6, -3, 12, 6); c.restore();
       }
     }
   }
@@ -474,6 +475,7 @@
   }
 
   function renderAt(t) {
+    COL.obs = mixC(NEU, ACC, smooth(seg(t, BREAK_T - 0.2, BREAK_T + 0.4)));
     const C = camAt(t);
     const lv = { disc: level.disc(t), obs: level.obs(t), motiv: level.motiv(t), ego: level.ego(t) };
     const SH = shotAt(t); if (SH.k) for (const k of KS) if (k !== SH.k) lv[k] *= 1 - 0.7 * SH.amt;
