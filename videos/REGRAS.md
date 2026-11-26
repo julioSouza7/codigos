@@ -50,6 +50,10 @@
 - Cenários variados, nunca o mesmo tipo de ação seguido. Impacto (bater/quebrar) foi o que mais rendeu views.
 - Placar embaixo com os 4 números; chamada "QUAL DOS 4 É VOCÊ? COMENTA 1, 2, 3 OU 4".
 
+- **Tipo A com câmera por personagem (26/11):** abre largo com os 4, depois dá zoom em um de cada vez na ordem
+  em que falham (motivação → ego → disciplina → obsessão), quem está fora de foco fica na sombra e quase sem som,
+  e abre de novo no fim. Frase final simples, em branco, sem cor (ex.: "NÃO PARE NA META."). Gerador: `trilha/mk_foco.py`.
+
 ### Tipo B — Faz × Pensa demais (2 personagens, tela dividida)
 - Dois painéis empilhados: **1 · PENSA DEMAIS** (em cima) e **2 · FAZ** (embaixo), mesmo cenário nos dois.
 - **Índice de dor**: monitor vermelho no pé de cada painel, com curva de dor e **DOR TOTAL** somando ao vivo.
