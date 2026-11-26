@@ -40,17 +40,23 @@ s = R(s, a, "    const SHL = shotAt(t);\n    const fadeLab = (id, a, b, d) => { 
 # ---- placa META some no zoom (a meta aparece no rótulo da disciplina) ----
 s = R(s, "  function drawMeta(c, t) {\n", "  function drawMeta(c, t) {\n    const MA = 1 - shotAt(t).amt; if (MA <= 0.01) return; c.save(); c.globalAlpha = MA; drawMeta0(c, t); c.restore();\n  }\n  function drawMeta0(c, t) {\n")
 s = R(s, "n = k === 'disc' && t >= RUN.disc.end ? `${fmt(hits(k, t))} ✓` : fmt(hits(k, t));\n      c.save(); c.globalAlpha = SHL.amt;", "n = k === 'disc' ? (t >= RUN.disc.end ? `${fmt(hits(k, t))} ✓ META` : `${fmt(hits(k, t))} / 1.000`) : fmt(hits(k, t));\n      c.save(); c.globalAlpha = SHL.amt;")
+# ---- PALETA MINIMALISTA: tudo neutro; a obsessão só ganha o vermelho na queda da árvore ----
+s = R(s, "  const COL = { disc: [47, 155, 255], obs: [255, 59, 48], motiv: [255, 204, 0], ego: [184, 92, 255] };",
+         "  const NEU = [214, 212, 206], ACC = [214, 80, 66];\n  const COL = { disc: NEU, obs: NEU, motiv: NEU, ego: NEU };")
+s = R(s, "  function renderAt(t) {\n", "  function renderAt(t) {\n    COL.obs = mixC(NEU, ACC, smooth(seg(t, BREAK_T - 0.2, BREAK_T + 0.4)));\n")
+s = s.replace("rgb([150, 100, 62], lit)", "rgb([128, 116, 104], lit)").replace("rgb([104, 68, 42], lit)", "rgb([92, 84, 76], lit)").replace("rgb([110, 72, 44], lit)", "rgb([98, 90, 82], lit)")
+s = s.replace("rgb([58, 150, 88])", "rgb([88, 96, 90])").replace("'#e8b878'", "'#cfc6b8'").replace("'#d9a86c'", "'#b8b0a4'")
 # ---- legendas ----
 a = s.index('  const CAPS = ['); b = s.index('  const capEl')
 s = s[:a] + '''  const CAPS = [
     { s: -1, e: 2.85, lines: [[-1, [['QUATRO MACHADOS.']]], [0.3, [['SÓ '], ['UMA', 'obs'], [' ÁRVORE CAI.']]]] },
-    { s: 3.0, e: 5.5, lines: [[3.0, [['A '], ['MOTIVAÇÃO', 'motiv']]], [3.35, [['COMEÇA A MIL.']]]] },
+    { s: 3.0, e: 5.5, lines: [[3.0, [['A MOTIVAÇÃO']]], [3.35, [['COMEÇA A MIL.']]]] },
     { s: 5.6, e: 6.85, lines: [[5.6, [['E APAGA NO']]], [5.95, [['PRIMEIRO CANSAÇO.']]]] },
-    { s: 7.0, e: 9.7, lines: [[7.0, [['O '], ['EGO', 'ego']]], [7.35, [['BATE PRA SER VISTO.']]]] },
+    { s: 7.0, e: 9.7, lines: [[7.0, [['O EGO']]], [7.35, [['BATE PRA SER VISTO.']]]] },
     { s: 9.8, e: 11.1, lines: [[9.8, [['SEM PLATEIA,']]], [10.15, [['LARGA O MACHADO.']]]] },
-    { s: 11.3, e: 13.9, lines: [[11.3, [['A '], ['DISCIPLINA', 'disc']]], [11.65, [['BATE NO RITMO.']]]] },
+    { s: 11.3, e: 13.9, lines: [[11.3, [['A DISCIPLINA']]], [11.65, [['BATE NO RITMO.']]]] },
     { s: 14.0, e: 14.95, lines: [[14.0, [['BATE A META']]], [14.3, [['E PARA.']]]] },
-    { s: 15.1, e: 17.0, lines: [[15.1, [['A '], ['OBSESSÃO', 'obs']]], [15.45, [['PASSA DA META.']]]] },
+    { s: 15.1, e: 17.0, lines: [[15.1, [['A OBSESSÃO']]], [15.45, [['PASSA DA META.']]]] },
     { s: 17.1, e: 18.95, lines: [[17.1, [['CANSADA,']]], [17.45, [['BATE DE NOVO.']]]] },
     { s: 21.0, e: 99, big: true, lines: [[21.0, [['NÃO PARE NA META.']]]] },
   ];
@@ -61,4 +67,17 @@ os.makedirs(P + '/assets'); shutil.copytree('gelo/assets/vendor', P + '/assets/v
 open(P + '/meta.json', 'w').write('{"id":"foco","name":"foco","createdAt":"2026-11-26T00:00:00.000Z"}')
 open(P + '/assets/foco.js', 'w').write(s)
 html4('MESMA ÁRVORE', 'QUATRO MACHADOS.', {'disc': 115, 'obs': 365, 'motiv': 615, 'ego': 860}, P + '/index.html', 'assets/foco.js')
+h = open(P + '/index.html').read()
+css = """
+      /* paleta minimalista */
+      .lab .nm, #lab-disc .nm, #lab-obs .nm, #lab-motiv .nm, #lab-ego .nm { border-color: rgba(244,242,238,0.55) !important; color: #f4f2ee !important; background: rgba(10,10,12,0.6) !important; }
+      .lab .n, #lab-disc .n, #lab-obs .n, #lab-motiv .n, #lab-ego .n { color: #f4f2ee !important; }
+      .cap .c-motiv, .cap .c-ego, .cap .c-disc { color: #f4f2ee !important; text-shadow: 0 4px 24px rgba(0,0,0,0.9) !important; }
+      .cap .c-obs { color: #d65042 !important; text-shadow: 0 4px 24px rgba(0,0,0,0.9) !important; }
+      #cta .sub b { color: #f4f2ee !important; }
+      #cta .pill b { color: #d65042 !important; }
+      #flash { background: radial-gradient(90% 60% at 50% 45%, rgba(255,255,255,0.45) 0%, rgba(255,255,255,0.12) 55%, rgba(0,0,0,0) 100%) !important; }
+    </style>"""
+h = h.replace("    </style>", css, 1)
+open(P + '/index.html', 'w').write(h)
 print('ok')

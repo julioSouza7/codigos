@@ -1,5 +1,10 @@
 # Regras dos vídeos — @stick.obsessao (versão atual)
 
+## PALETA (26/11): MINIMALISTA EM TODOS OS VÍDEOS
+- Bonecos brancos/cinza, fundo preto/cinza, objetos em tons neutros e dessaturados (madeira cinza-amarronzada).
+- **Uma cor de destaque só**, e de preferência só no momento da virada (ex.: a obsessão fica vermelha quando a árvore cai).
+- Legendas e rótulos em branco; nada de uma cor por personagem.
+
 ## ESTRATÉGIA ATUAL (24/11): "MESMO X / DIA N" — ver `SERIES.md`
 - Layout B clean: rótulos nas pontas, contador "MESMO X / DIA N" no meio, fundo preto, luminária pendurada,
   1 cor de destaque, progresso visível de um lado e estagnação do outro. 4 vídeos de cada tema por vez.
