@@ -9,32 +9,24 @@ L = lambda a, b: '\n'.join(foco[a - 1:b])          # linhas a..b (1-based, inclu
 assert foco[54].startswith('  function ikP') and foco[90].startswith('  const disc'), (foco[54], foco[90])
 assert foco[398].startswith('  const capEl') and foco[421].startswith('  const fmt'), (foco[398], foco[421])
 
+DUEL = """
+    { s: 3.0, e: 5.5, lines: [[3.0, [['A MOTIVAÇÃO']]], [3.35, [['COMEÇA A MIL.']]]] },
+    { s: 5.6, e: 6.5, lines: [[5.6, [['E PARA NO']]], [5.85, [['PRIMEIRO CANSAÇO.']]]] },
+    { s: 6.8, e: 9.9, lines: [[6.8, [['A DISCIPLINA']]], [7.15, [['FAZ NO RITMO.']]]] },
+    { s: 10.0, e: 10.75, lines: [[10.0, [['BATE A META']]], [10.25, [['@DOWN@']]]] },
+    { s: 10.9, e: 12.3, lines: [[10.9, [['O EGO E A OBSESSÃO']]], [11.4, [['PASSAM DA META.']]]] },
+    { s: 12.4, e: 13.72, lines: [[12.4, [['OS BRAÇOS DELA']]], [12.8, [['DOEM.', 'obs']]]] },
+    { s: 13.8, e: 14.6, lines: [[13.8, [['ELA PARA']]], [14.0, [['PRIMEIRO.']]]] },
+    { s: 14.65, e: REGRAB_T - 0.1, lines: [[14.65, [['O EGO PASSA']]], [14.9, [['NA FRENTE.']]]] },
+    { s: REGRAB_T - 0.05, e: 16.6, lines: [[REGRAB_T - 0.05, [['MAS ELA']]], [REGRAB_T + 0.2, [['@BACK@']]]] },
+    { s: 16.65, e: Math.min(17.6, PASS_T - 0.25), lines: [[16.65, [['SEM PLATEIA,']]], [16.95, [['@QUIT@']]]] },
+    { s: Math.min(17.6, PASS_T - 0.25) + 0.05, e: 18.95, lines: [[Math.min(17.6, PASS_T - 0.25) + 0.05, [['E ELA']]], [PASS_T - 0.05, [['PASSA O EGO.']]]] },"""
 CAPS = {
     'barra': """
-    { s: -1, e: 2.85, lines: [[-1, [['QUATRO BARRAS.']]], [0.3, [['SÓ '], ['UM', 'obs'], [' PASSA POR CIMA.']]]] },
-    { s: 3.0, e: 5.5, lines: [[3.0, [['A MOTIVAÇÃO']]], [3.35, [['COMEÇA A MIL.']]]] },
-    { s: 5.6, e: 6.85, lines: [[5.6, [['E SOLTA NO']]], [5.95, [['PRIMEIRO CANSAÇO.']]]] },
-    { s: 7.0, e: 9.7, lines: [[7.0, [['O EGO']]], [7.35, [['PUXA PRA SER VISTO.']]]] },
-    { s: 9.8, e: 11.1, lines: [[9.8, [['SEM PLATEIA,']]], [10.15, [['SOLTA A BARRA.']]]] },
-    { s: 11.3, e: 13.9, lines: [[11.3, [['A DISCIPLINA']]], [11.65, [['PUXA NO RITMO.']]]] },
-    { s: 14.0, e: 14.95, lines: [[14.0, [['BATE A META']]], [14.3, [['E DESCE.']]]] },
-    { s: 15.1, e: 16.3, lines: [[15.1, [['A OBSESSÃO']]], [15.45, [['PASSA DA META.']]]] },
-    { s: 16.35, e: 17.2, lines: [[16.35, [['OS BRAÇOS']]], [16.6, [['DOEM.', 'obs']]]] },
-    { s: 17.25, e: 18.0, lines: [[17.25, [['ELA CAI.']]]] },
-    { s: 18.05, e: 18.95, lines: [[18.05, [['E VOLTA']]], [18.3, [['PRA BARRA.']]]] },
+    { s: -1, e: 2.85, lines: [[-1, [['QUATRO BARRAS.']]], [0.3, [['SÓ '], ['UM', 'obs'], [' PASSA POR CIMA.']]]] },""" + DUEL.replace('@BACK@', 'VOLTA PRA BARRA.').replace('@QUIT@', 'O EGO SOLTA.').replace('@DOWN@', 'E DESCE.') + """
     { s: 21.0, e: 99, big: true, lines: [[21.0, [['CAIU? SOBE DE NOVO.']]]] },""",
     'flexao': """
-    { s: -1, e: 2.85, lines: [[-1, [['QUATRO FLEXÕES.']]], [0.3, [['SÓ '], ['UM', 'obs'], [' NÃO PARA.']]]] },
-    { s: 3.0, e: 5.5, lines: [[3.0, [['A MOTIVAÇÃO']]], [3.35, [['COMEÇA A MIL.']]]] },
-    { s: 5.6, e: 6.85, lines: [[5.6, [['E DEITA NO']]], [5.95, [['PRIMEIRO CANSAÇO.']]]] },
-    { s: 7.0, e: 9.7, lines: [[7.0, [['O EGO']]], [7.35, [['TREINA PRA SER VISTO.']]]] },
-    { s: 9.8, e: 11.1, lines: [[9.8, [['SEM PLATEIA,']]], [10.15, [['DESISTE.']]]] },
-    { s: 11.3, e: 13.9, lines: [[11.3, [['A DISCIPLINA']]], [11.65, [['FAZ NO RITMO.']]]] },
-    { s: 14.0, e: 14.95, lines: [[14.0, [['BATE A META']]], [14.3, [['E PARA.']]]] },
-    { s: 15.1, e: 16.3, lines: [[15.1, [['A OBSESSÃO']]], [15.45, [['PASSA DA META.']]]] },
-    { s: 16.35, e: 17.2, lines: [[16.35, [['OS BRAÇOS']]], [16.6, [['DOEM.', 'obs']]]] },
-    { s: 17.25, e: 18.0, lines: [[17.25, [['ELA DESABA.']]]] },
-    { s: 18.05, e: 18.95, lines: [[18.05, [['E EMPURRA']]], [18.3, [['DE NOVO.']]]] },
+    { s: -1, e: 2.85, lines: [[-1, [['QUATRO FLEXÕES.']]], [0.3, [['SÓ '], ['UM', 'obs'], [' NÃO DESISTE.']]]] },""" + DUEL.replace('@BACK@', 'EMPURRA DE NOVO.').replace('@QUIT@', 'O EGO DESISTE.').replace('@DOWN@', 'E PARA.') + """
     { s: 21.0, e: 99, big: true, lines: [[21.0, [['DOEU? CONTINUA.']]]] },""",
 }[TH]
 HEAD = {'barra': ('MESMA BARRA', 'QUATRO BARRAS.'), 'flexao': ('MESMO TREINO', 'QUATRO FLEXÕES.')}[TH]
@@ -47,14 +39,14 @@ consts = f"""  // ---------- boneco de perfil ----------
   const NEU = [214, 212, 206], ACC = [214, 80, 66], ACCB = [168, 62, 52];
   const COL = {{ disc: NEU, obs: NEU, motiv: NEU, ego: NEU }};
   const KS = ['disc', 'obs', 'motiv', 'ego'];
-  const HX = BAR ? {{ disc: 70, obs: 405, motiv: 740, ego: 1075 }} : {{ disc: -45, obs: 340, motiv: 725, ego: 1110 }};
-  const CX = (k) => HX[k] + (BAR ? 85 : 150);
+  const HX = BAR ? {{ motiv: 210, disc: 510, ego: 810, obs: 1110 }} : {{ motiv: -45, disc: 340, ego: 725, obs: 1110 }};
+  const CX = (k) => HX[k] + (BAR ? 0 : 150);
 """
 rig = L(55, 91).replace("fwd: (c) => c[0] - 0.2 * c[1] };", "fwd: (c) => c[0] - 0.2 * c[1], fdown: (c) => 0.6 * c[0] + c[1] };")
 assert 'fdown' in rig
 caps = "  // ---------- texto ----------\n  const CAPS = [" + CAPS + "\n  ];\n" + L(399, 422)
 js = ("// Treino (" + TH + "): Disciplina x Obsessão x Motivação x Ego — 2D vetorial, função pura do tempo.\n"
-      "// Regras do canal (@stick.obsessao): a OBSESSÃO sempre vence; paleta minimalista, vermelho só na obsessão; 25 s.\n"
+      "// Disputa final EGO x OBSESSÃO: ela para primeiro (dor), o ego passa na frente, ela volta e passa o ego. Paleta minimalista; 25 s.\n"
       + L(3, 42) + '\n' + consts + rig + '\n' + open(HF + '/reps_body.js').read() + caps + '\n' + open(HF + '/reps_tail.js').read())
 
 if os.path.exists(HF + '/' + P): shutil.rmtree(HF + '/' + P)
@@ -63,11 +55,13 @@ open(HF + '/' + P + '/meta.json', 'w').write('{"id":"%s","name":"%s","createdAt"
 open(HF + '/' + P + '/assets/' + P + '.js', 'w').write(js)
 h = open(HF + '/foco/index.html').read()
 h = h.replace('MESMA ÁRVORE', HEAD[0]).replace('QUATRO MACHADOS.', HEAD[1]).replace('assets/foco.js', 'assets/%s.js' % P)
-WIDE = {'barra': (667, 0.86, 85), 'flexao': (692, 0.64, 150)}[TH]
-HXs = {'barra': {'disc': 70, 'obs': 405, 'motiv': 740, 'ego': 1075}, 'flexao': {'disc': -45, 'obs': 340, 'motiv': 725, 'ego': 1110}}[TH]
+WIDE = {'barra': (660, 0.88, 0), 'flexao': (692, 0.64, 150)}[TH]
+HXs = {'barra': {'motiv': 210, 'disc': 510, 'ego': 810, 'obs': 1110}, 'flexao': {'motiv': -45, 'disc': 340, 'ego': 725, 'obs': 1110}}[TH]
 for k, x in HXs.items():
     lx = round(540 + (x + WIDE[2] - WIDE[0]) * WIDE[1])
     h, n = re.subn(r'(<div id="lab-%s" class="lab" style="left: )\d+px' % k, lambda m: m.group(1) + '%dpx' % lx, h); assert n == 1
 h = h.replace('n">0 M<', 'n">0<')
+for a_, b_ in [('1 · DISCIPLINA', '2 · DISCIPLINA'), ('2 · OBSESSÃO', '4 · OBSESSÃO'), ('3 · MOTIVAÇÃO', '1 · MOTIVAÇÃO'), ('4 · EGO', '3 · EGO')]:
+    assert h.count('>' + a_ + '<') == 1, a_; h = h.replace('>' + a_ + '<', '>' + b_ + '<')
 open(HF + '/' + P + '/index.html', 'w').write(h)
 print('ok', P)

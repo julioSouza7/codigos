@@ -95,14 +95,21 @@ def rep_snd():
 def thud(size):
     return mx(thump(85, 38, 0.45, 8), 0.45 * gravel(0.22, 1400)) * (0.4 + 0.6 * size)
 SHOTS = sched.get('shots')
+FOCUS = sched.get('focus', {})
 def focus_at(t):
     cur = None
     for ts, n in SHOTS:
         if t >= ts: cur = n
-    return None if cur == 'wide' else cur
+    return None if cur == 'wide' else FOCUS.get(cur, [cur])
+DUEL_PAN = {'ego': -0.3, 'obs': 0.3}
+MOAN_WIN = [(m, m + 0.75) for m in sched['moans']]
 def gain_for(k, t0, base):
     f = focus_at(t0)
-    return (base if f in (None, k) else base * 0.22), (0.0 if f == k else PAN[k])
+    if f is None: return base, PAN[k]
+    if k not in f: return base * 0.22, PAN[k]
+    g = base
+    if k != 'obs' and any(a - 0.05 <= t0 <= b for a, b in MOAN_WIN): g *= 0.2   # gemido dela nunca disputa com o som do outro
+    return g, (DUEL_PAN[k] if len(f) > 1 else 0.0)
 # gancho: os quatro juntos
 for k, p in PAN.items(): add(rep_snd(), sched['slam'] + 0.004 * p, 0.32, p)
 add(thump(70, 32, 0.8, 5), sched['slam'], 0.22)
@@ -112,11 +119,13 @@ for k, times in sched['reps'].items():
 for t0, size, k in sched['thuds']:
     g, pn = gain_for(k, t0, 0.3); add(thud(size), t0, g, pn)
 # plateia do ego
-c0, c1 = sched['crowd']; x = c0
+c0, c1 = sched['crowd']; h0, h1 = sched['cheer']; x = c0
 while x < c1 + 0.3:
     fade = 1.0 if x < c1 else max(0.0, 1 - (x - c1) / 0.3)
-    add(clap(), x + rng.uniform(0, 0.02), rng.uniform(0.04, 0.08) * fade, rng.uniform(0.3, 0.9)); x += rng.uniform(0.03, 0.07)
-for key in ('motivQuit', 'egoQuit'):   # suspiro de desistência
+    hot = 1.8 if h0 <= x < h1 else 1.0
+    quiet = 0.25 if any(a <= x <= b for a, b in MOAN_WIN) else 1.0
+    add(clap(), x + rng.uniform(0, 0.02), rng.uniform(0.03, 0.06) * fade * hot * quiet, rng.uniform(-0.8, -0.2)); x += rng.uniform(0.03, 0.07) / hot
+for key in ('motivQuit', 'egoQuit'):   # (o do ego cai entre os gemidos dela)   # suspiro de desistência
     t = tt(0.7); f = 400 * np.exp(-t * 3) + 55
     add(np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-t * 3) * np.minimum(1, t / 0.02), sched[key], 0.11, 0.0)
 for i, m in enumerate([79, 84, 88, 91]): add(bell(note(m), 1.2, 3), sched['meta'] + 0.06 * i, 0.08, 0.0)
