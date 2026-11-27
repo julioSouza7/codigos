@@ -42,7 +42,7 @@
 
   // ---------- boneco de perfil ----------
   const THEME = 'barra', BAR = THEME === 'barra';
-  const D = { headR: 31, limb: 26, torsoW: 30, ol: 5, torso: 100, uArm: 60, fArm: 56, thigh: 82, shin: 78, foot: 20 };
+  const D = { headR: 30, limb: 22, torsoW: 25, ol: 5, torso: 100, uArm: 60, fArm: 56, thigh: 82, shin: 78, foot: 20 };
   const OUT = '#0e0e10';
   const WHITE = [247, 247, 245], BACK = [196, 196, 200], DARK = [88, 88, 94], DARKB = [62, 62, 68];
   const NEU = [214, 212, 206], ACC = [214, 80, 66], ACCB = [168, 62, 52];
@@ -97,10 +97,10 @@
     const bA = ra > 0.001 ? rgb(mixC(mixC(DARKB, BACK, light), mixC(DARKB, ACCB, light), ra)) : b;
     if (col && light > 0.5) {
       c.save(); c.globalAlpha = 0.55 * (light - 0.5) * 2; c.filter = 'blur(8px)';
-      for (const L of [R.legB, R.armB, R.legF, R.armF, [R.hip, R.sh]]) strokePts(c, L, D.limb + 22, rgb(col));
-      disc(c, R.head, D.headR + 12, rgb(col)); c.restore();
+      for (const L of [R.legB, R.armB, R.legF, R.armF, [R.hip, R.sh]]) strokePts(c, L, D.limb + 14, rgb(col));
+      disc(c, R.head, D.headR + 9, rgb(col)); c.restore();
     }
-    if (arm && arm.g > 0.01) { c.save(); c.globalAlpha = arm.g; c.filter = 'blur(10px)'; strokePts(c, R.armB, D.limb + 26, rgb(ACC)); strokePts(c, R.armF, D.limb + 26, rgb(ACC)); c.restore(); }
+    if (arm && arm.g > 0.01) { c.save(); c.globalAlpha = arm.g; c.filter = 'blur(10px)'; strokePts(c, R.armB, D.limb + 20, rgb(ACC)); strokePts(c, R.armF, D.limb + 20, rgb(ACC)); c.restore(); }
     limb(c, R.legB, D.limb, b);
     limb(c, R.armB, D.limb, bA);
     strokePts(c, [R.hip, R.sh], D.torsoW + 2 * D.ol, OUT);
@@ -113,7 +113,7 @@
     if (armUp) limb(c, R.armF, D.limb, fA);
   }
   // ---------- boneco de frente (barra) ----------
-  const FW = { shW: 26, hipW: 14 };
+  const FW = { shW: 23, hipW: 11 };
   const PREF_OUT = [(c) => -c[0] + 0.25 * c[1], (c) => c[0] + 0.25 * c[1]];
   const PREF_UP = [(c) => -0.4 * c[0] - c[1], (c) => 0.4 * c[0] - c[1]];
   function rigF(st) {
@@ -135,10 +135,10 @@
     const fA = ra > 0.001 ? rgb(mixC(mixC(DARK, WHITE, light), mixC(DARK, ACC, light), ra)) : f;
     if (col && light > 0.5) {
       c.save(); c.globalAlpha = 0.55 * (light - 0.5) * 2; c.filter = 'blur(8px)';
-      for (const L of [...R.legs, ...R.arms, [R.hip, R.neck], R.sh]) strokePts(c, L, D.limb + 22, rgb(col));
-      disc(c, R.head, D.headR + 12, rgb(col)); c.restore();
+      for (const L of [...R.legs, ...R.arms, [R.hip, R.neck], R.sh]) strokePts(c, L, D.limb + 14, rgb(col));
+      disc(c, R.head, D.headR + 9, rgb(col)); c.restore();
     }
-    if (arm && arm.g > 0.01) { c.save(); c.globalAlpha = arm.g; c.filter = 'blur(10px)'; for (const L of R.arms) strokePts(c, L, D.limb + 26, rgb(ACC)); c.restore(); }
+    if (arm && arm.g > 0.01) { c.save(); c.globalAlpha = arm.g; c.filter = 'blur(10px)'; for (const L of R.arms) strokePts(c, L, D.limb + 20, rgb(ACC)); c.restore(); }
     const legs = () => { for (const L of R.legs) strokePts(c, L, D.limb + 2 * D.ol, OUT); for (const L of R.legs) strokePts(c, L, D.limb, f); };
     if (!R.kneeUp) legs();
     strokePts(c, [R.hip, R.neck], D.torsoW + 2 * D.ol, OUT); strokePts(c, R.sh, D.limb + 2 * D.ol, OUT);
@@ -153,21 +153,21 @@
   const RUN = {
     motiv: { P: 0.42, end: 5.6, rate: 300 },
     disc: { P: 0.85, end: 10.0, rate: 1000 / 7 },
-    ego: { P: 0.62, end: 16.8, rate: 145 },
-    obs: { P: 0.66, end: BREAK_T, rate: 150 },
+    ego: { P: 0.62, end: 17.3, rate: 145 },
+    obs: { P: 0.66, end: BREAK_T, rate: 150, rate2: 330 },
   };
   const FALL_T = 13.8;                                   // a obsessão para primeiro (dor)
   const FALL_HIT = BAR ? 14.1 : 14.0;                    // impacto no chão
   const REGRAB_T = 15.4;                    // volta a fazer
-  const RESUME_T = BAR ? REGRAB_T : 16.0, PER2 = BAR ? 0.775 : 0.767, CLIMB_T = BAR ? 18.5 : 18.3;
-  const SIT_EGO = 17.4, CROWD = [10.9, 16.1];
+  const RESUME_T = BAR ? REGRAB_T : 15.75, PER2 = BAR ? 3.1 / 8 : 2.55 / 7, CLIMB_T = BAR ? 18.5 : 18.3;   // volta acelerada
+  const SIT_EGO = 17.9, CROWD = [10.9, 16.5];
   const PAIN0 = 11.6, PAIN1 = 13.0;
   const hurtOf = (t) => smooth(seg(t, PAIN0, PAIN1));
   const hits = (k, t) => (k !== 'obs' ? RUN[k].rate * clamp(t - T0, 0, RUN[k].end - T0)
-    : RUN.obs.rate * (clamp(t, T0, FALL_T) - T0 + clamp(t - REGRAB_T, 0, BREAK_T - REGRAB_T)));
+    : RUN.obs.rate * (clamp(t, T0, FALL_T) - T0) + RUN.obs.rate2 * clamp(t - REGRAB_T, 0, BREAK_T - REGRAB_T));
   const EGO_FINAL = hits('ego', 99);
   const EGO_PASS = T0 + hits('obs', FALL_T) / RUN.ego.rate;                                   // o ego passa na frente
-  const PASS_T = REGRAB_T + (EGO_FINAL - hits('obs', FALL_T)) / RUN.obs.rate;                  // a obsessão passa o ego
+  const PASS_T = (hits('obs', FALL_T) - RUN.obs.rate2 * REGRAB_T + RUN.ego.rate * T0) / (RUN.ego.rate - RUN.obs.rate2);   // a obsessão passa o ego (ele ainda puxando)
 
   // ---------- poses de perfil ----------
   const STAND_L = { fT: 0.06, fS: -0.02, bT: -0.1, bS: -0.06 };
@@ -313,7 +313,7 @@
   REPS.obs.push(BAR ? 18.72 : 18.75);
   const PAIN_EV = [...REPS.obs, FALL_HIT].sort((a, b) => a - b);
   const lastOf = (arr, t) => { let ls = -9; for (const x of arr) if (x <= t) ls = x; return ls; };
-  const MOANS = [lastOf(REPS.obs, 13.35) + 0.02, FALL_HIT + 0.04, BAR ? 15.27 : 15.5, lastOf(REPS.obs, 18.1) + 0.02];
+  const MOANS = [lastOf(REPS.obs, 13.35) + 0.02, FALL_HIT + 0.04, BAR ? 15.27 : 15.45, lastOf(REPS.obs, 18.4) + 0.02];
   const THUDS = BAR
     ? [[RUN.motiv.end + 0.24, 0.5, 'motiv'], [6.9, 0.35, 'motiv'], [RUN.disc.end + 0.24, 0.5, 'disc'], [FALL_T + 0.18, 0.6, 'obs'], [FALL_HIT, 1.0, 'obs'], [RUN.ego.end + 0.24, 0.5, 'ego']]
     : [[RUN.motiv.end + 0.22, 0.7, 'motiv'], [RUN.disc.end + 0.3, 0.35, 'disc'], [FALL_HIT, 1.0, 'obs'], [RUN.ego.end + 0.3, 0.4, 'ego'], [19.25, 0.7, 'obs']];
@@ -377,7 +377,7 @@
   const level = {
     motiv: track([[0, 1.0], [3.0, 1.0], [3.2, 1.3], [5.5, 1.3], [6.2, 0.5], [6.9, 0.08]]),
     disc: track([[0, 1.0], [3.0, 1.0], [3.3, 0.7], [6.5, 0.7], [6.7, 1.1], [10.4, 1.1], [11.0, 0.55]]),
-    ego: track([[0, 1.0], [3.0, 1.0], [3.3, 0.7], [10.5, 0.7], [10.8, 1.15], [16.7, 1.15], [17.3, 0.45], [18.0, 0.2]]),
+    ego: track([[0, 1.0], [3.0, 1.0], [3.3, 0.7], [10.5, 0.7], [10.8, 1.15], [17.2, 1.15], [17.8, 0.45], [18.5, 0.2]]),
     obs: track([[0, 1.0], [3.0, 1.0], [3.3, 0.7], [10.5, 0.7], [10.8, 1.15], [13.9, 1.15], [14.2, 0.72], [15.1, 0.72], [15.5, 1.2], [18.9, 1.2], [19.05, 1.6], [20.4, 1.3]]),
   };
 
@@ -385,7 +385,7 @@
   const SHOTS = [[0, 'wide'], [2.9, 'motiv'], [6.6, 'disc'], [10.6, 'duel'], [19.6, 'wide']];
   const FOCUS = { motiv: ['motiv'], disc: ['disc'], duel: ['ego', 'obs'] };
   const WIDE = BAR ? { cx: 660, cy: 960, s: 0.88, sy: 950 } : { cx: 692, cy: 960, s: 0.64, sy: 985 };
-  const bias = track([[0, 0], [13.7, 0], [14.0, 1], [15.5, 1], [16.4, 0], [16.6, -1], [17.4, -1], [17.8, 0], [18.3, 0], [18.6, 1]]);
+  const bias = track([[0, 0], [13.7, 0], [14.0, 1], [15.5, 1], [16.6, 0], [17.1, -1], [17.9, -1], [18.25, 0], [18.6, 1]]);
   function frameOf(n, t) {
     if (n === 'wide') return WIDE;
     if (n === 'duel') {
@@ -428,9 +428,10 @@
     { s: 12.4, e: 13.72, lines: [[12.4, [['OS BRAÇOS DELA']]], [12.8, [['DOEM.', 'obs']]]] },
     { s: 13.8, e: 14.6, lines: [[13.8, [['ELA PARA']]], [14.0, [['PRIMEIRO.']]]] },
     { s: 14.65, e: REGRAB_T - 0.1, lines: [[14.65, [['O EGO PASSA']]], [14.9, [['NA FRENTE.']]]] },
-    { s: REGRAB_T - 0.05, e: 16.6, lines: [[REGRAB_T - 0.05, [['MAS ELA']]], [REGRAB_T + 0.2, [['VOLTA PRA BARRA.']]]] },
-    { s: 16.65, e: Math.min(17.6, PASS_T - 0.25), lines: [[16.65, [['SEM PLATEIA,']]], [16.95, [['O EGO SOLTA.']]]] },
-    { s: Math.min(17.6, PASS_T - 0.25) + 0.05, e: 18.95, lines: [[Math.min(17.6, PASS_T - 0.25) + 0.05, [['E ELA']]], [PASS_T - 0.05, [['PASSA O EGO.']]]] },
+    { s: REGRAB_T - 0.05, e: PASS_T - 0.1, lines: [[REGRAB_T - 0.05, [['MAS ELA VOLTA']]], [REGRAB_T + 0.3, [['MAIS RÁPIDO.']]]] },
+    { s: PASS_T - 0.05, e: 17.2, lines: [[PASS_T - 0.05, [['E PASSA']]], [PASS_T + 0.2, [['O EGO.']]]] },
+    { s: 17.3, e: 18.2, lines: [[17.3, [['SEM PLATEIA,']]], [17.6, [['O EGO SOLTA.']]]] },
+    { s: 18.25, e: 18.95, lines: [[18.25, [['ELA NÃO PARA.']]]] },
     { s: 21.0, e: 99, big: true, lines: [[21.0, [['CAIU? SOBE DE NOVO.']]]] },
   ];
   const capEl = document.getElementById('cap');
@@ -512,7 +513,7 @@
     let n = fmt(hits(k, t)); if (k === 'disc') n = t >= RUN.disc.end ? `${n} ✓ META` : `${n} / 1.000`;
     const popT = k === 'obs' ? PASS_T : k === 'ego' ? EGO_PASS : -9, pop = t >= popT ? 1 + 0.35 * Math.exp(-(t - popT) * 7) : 1;
     const red = k === 'obs' ? smooth(seg(t, PASS_T, PASS_T + 0.2)) : 0, dim = k === 'ego' ? 1 - 0.5 * smooth(seg(t, RUN.ego.end, RUN.ego.end + 0.5)) : 1;
-    if (BAR && k === 'ego') alpha *= 1 - smooth(seg(t, 18.4, 18.65));
+    if (BAR && k === 'ego') alpha *= 1 - smooth(seg(t, 18.45, 18.7));
     c.save(); c.globalAlpha = alpha * dim; c.font = '700 24px "Space Mono", monospace'; const tw = c.measureText(nm).width;
     c.beginPath(); c.roundRect(x - tw / 2 - 16, 1178, tw + 32, 40, 20); c.fillStyle = 'rgba(12,12,14,0.85)'; c.fill(); c.lineWidth = 3; c.strokeStyle = 'rgba(244,242,238,0.8)'; c.stroke();
     c.fillStyle = '#f4f2ee'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(nm, x, 1199);
@@ -565,7 +566,7 @@
       if (fresh && t < SH.ts + 0.3) pills(SH.pk, SH.amt * (1 - smooth(seg(t, SH.ts, SH.ts + 0.25))));
       pills(SH.k, SH.amt * (fresh ? smooth(seg(t, SH.ts + 0.35, SH.ts + 0.6)) : 1));
     }
-    fadeLab('lab-motiv', 6.2, 6.8, 0.6); fadeLab('lab-disc', 11.0, 11.6, 0.4); fadeLab('lab-ego', 17.4, 18.0, 0.6);
+    fadeLab('lab-motiv', 6.2, 6.8, 0.6); fadeLab('lab-disc', 11.0, 11.6, 0.4); fadeLab('lab-ego', 17.9, 18.5, 0.6);
   }
 
   const typing = [];
