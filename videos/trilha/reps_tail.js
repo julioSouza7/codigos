@@ -53,7 +53,7 @@
     let n = fmt(hits(k, t)); if (k === 'disc') n = t >= RUN.disc.end ? `${n} ✓ META` : `${n} / 1.000`;
     const popT = k === 'obs' ? PASS_T : k === 'ego' ? EGO_PASS : -9, pop = t >= popT ? 1 + 0.35 * Math.exp(-(t - popT) * 7) : 1;
     const red = k === 'obs' ? smooth(seg(t, PASS_T, PASS_T + 0.2)) : 0, dim = k === 'ego' ? 1 - 0.5 * smooth(seg(t, RUN.ego.end, RUN.ego.end + 0.5)) : 1;
-    if (BAR && k === 'ego') alpha *= 1 - smooth(seg(t, 18.4, 18.65));
+    if (BAR && k === 'ego') alpha *= 1 - smooth(seg(t, 18.45, 18.7));
     c.save(); c.globalAlpha = alpha * dim; c.font = '700 24px "Space Mono", monospace'; const tw = c.measureText(nm).width;
     c.beginPath(); c.roundRect(x - tw / 2 - 16, 1178, tw + 32, 40, 20); c.fillStyle = 'rgba(12,12,14,0.85)'; c.fill(); c.lineWidth = 3; c.strokeStyle = 'rgba(244,242,238,0.8)'; c.stroke();
     c.fillStyle = '#f4f2ee'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(nm, x, 1199);
@@ -106,7 +106,7 @@
       if (fresh && t < SH.ts + 0.3) pills(SH.pk, SH.amt * (1 - smooth(seg(t, SH.ts, SH.ts + 0.25))));
       pills(SH.k, SH.amt * (fresh ? smooth(seg(t, SH.ts + 0.35, SH.ts + 0.6)) : 1));
     }
-    fadeLab('lab-motiv', 6.2, 6.8, 0.6); fadeLab('lab-disc', 11.0, 11.6, 0.4); fadeLab('lab-ego', 17.4, 18.0, 0.6);
+    fadeLab('lab-motiv', 6.2, 6.8, 0.6); fadeLab('lab-disc', 11.0, 11.6, 0.4); fadeLab('lab-ego', 17.9, 18.5, 0.6);
   }
 
   const typing = [];

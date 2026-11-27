@@ -18,9 +18,10 @@ DUEL = """
     { s: 12.4, e: 13.72, lines: [[12.4, [['OS BRAÇOS DELA']]], [12.8, [['DOEM.', 'obs']]]] },
     { s: 13.8, e: 14.6, lines: [[13.8, [['ELA PARA']]], [14.0, [['PRIMEIRO.']]]] },
     { s: 14.65, e: REGRAB_T - 0.1, lines: [[14.65, [['O EGO PASSA']]], [14.9, [['NA FRENTE.']]]] },
-    { s: REGRAB_T - 0.05, e: 16.6, lines: [[REGRAB_T - 0.05, [['MAS ELA']]], [REGRAB_T + 0.2, [['@BACK@']]]] },
-    { s: 16.65, e: Math.min(17.6, PASS_T - 0.25), lines: [[16.65, [['SEM PLATEIA,']]], [16.95, [['@QUIT@']]]] },
-    { s: Math.min(17.6, PASS_T - 0.25) + 0.05, e: 18.95, lines: [[Math.min(17.6, PASS_T - 0.25) + 0.05, [['E ELA']]], [PASS_T - 0.05, [['PASSA O EGO.']]]] },"""
+    { s: REGRAB_T - 0.05, e: PASS_T - 0.1, lines: [[REGRAB_T - 0.05, [['MAS ELA VOLTA']]], [REGRAB_T + 0.3, [['MAIS RÁPIDO.']]]] },
+    { s: PASS_T - 0.05, e: 17.2, lines: [[PASS_T - 0.05, [['E PASSA']]], [PASS_T + 0.2, [['O EGO.']]]] },
+    { s: 17.3, e: 18.2, lines: [[17.3, [['SEM PLATEIA,']]], [17.6, [['@QUIT@']]]] },
+    { s: 18.25, e: 18.95, lines: [[18.25, [['ELA NÃO PARA.']]]] },"""
 CAPS = {
     'barra': """
     { s: -1, e: 2.85, lines: [[-1, [['QUATRO BARRAS.']]], [0.3, [['SÓ '], ['UM', 'obs'], [' PASSA POR CIMA.']]]] },""" + DUEL.replace('@BACK@', 'VOLTA PRA BARRA.').replace('@QUIT@', 'O EGO SOLTA.').replace('@DOWN@', 'E DESCE.') + """
@@ -33,7 +34,7 @@ HEAD = {'barra': ('MESMA BARRA', 'QUATRO BARRAS.'), 'flexao': ('MESMO TREINO', '
 
 consts = f"""  // ---------- boneco de perfil ----------
   const THEME = '{TH}', BAR = THEME === 'barra';
-  const D = {{ headR: 31, limb: 26, torsoW: 30, ol: 5, torso: 100, uArm: 60, fArm: 56, thigh: 82, shin: 78, foot: 20 }};
+  const D = {{ headR: 30, limb: 22, torsoW: 25, ol: 5, torso: 100, uArm: 60, fArm: 56, thigh: 82, shin: 78, foot: 20 }};
   const OUT = '#0e0e10';
   const WHITE = [247, 247, 245], BACK = [196, 196, 200], DARK = [88, 88, 94], DARKB = [62, 62, 68];
   const NEU = [214, 212, 206], ACC = [214, 80, 66], ACCB = [168, 62, 52];
