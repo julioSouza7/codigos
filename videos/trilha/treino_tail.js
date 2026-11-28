@@ -21,14 +21,14 @@
       let hurt = null, sd = 9;
       if (k === 'obs') {
         const h = hurtOf(t); sd = t - lastOf(PAIN_EV, t); const th = sd < 1 ? Math.exp(-sd * 7) : 0;
-        if (t < BREAK_T) { if (st.front) st.nod = (st.nod || 0) + 9 * h * th; else { st.head = (st.head || 0) + 0.24 * h * th; st.lean = (st.lean || 0) + 0.04 * h * th; } }
+        { if (st.front) st.nod = (st.nod || 0) + 9 * h * th; else { st.head = (st.head || 0) + 0.24 * h * th; st.lean = (st.lean || 0) + 0.04 * h * th; } }
         hurt = { a: h * (0.8 + 0.2 * th), g: h * (0.1 + 0.32 * th) * clamp(light) };
       }
       const R = st.front ? rigF(st) : rigP(st);
       TH.drawBack(c, k, t, lv[k], st, R);
       if (st.front) drawFigF(c, R, light, COL[k], hurt); else drawFigure(c, R, light, COL[k], hurt);
       TH.drawFront(c, k, t, lv[k], st, R);
-      if (hurt && hurt.a > 0.4 && sd >= 0 && sd < 0.34 && t < BREAK_T + 0.1) {   // tracinhos de dor
+      if (hurt && hurt.a > 0.4 && sd >= 0 && sd < 0.34) {   // tracinhos de dor
         const u = sd / 0.34; c.save(); c.strokeStyle = rgb(ACC, 1, (1 - u) * hurt.a * light); c.lineWidth = 6; c.lineCap = 'round';
         for (const [E, a0] of TH.painSpots(R)) for (let i = -1; i <= 1; i++) { const an = a0 + i * 0.42, r0 = 40 + 16 * easeOut(u), r1 = r0 + 18; c.beginPath(); c.moveTo(E[0] + Math.cos(an) * r0, E[1] + Math.sin(an) * r0); c.lineTo(E[0] + Math.cos(an) * r1, E[1] + Math.sin(an) * r1); c.stroke(); }
         c.restore();

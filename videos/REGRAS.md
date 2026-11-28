@@ -1,5 +1,11 @@
 # Regras dos vídeos — @stick.obsessao (versão atual)
 
+## FORMATO TREINO (28/11): DISPUTA FINAL EGO x OBSESSÃO
+- Ordem: 1 Motivação, 2 Disciplina, 3 Ego, 4 Obsessão. Zoom na motivação e na disciplina; no fim, o ego e a obsessão lado a lado com o placar dos dois.
+- A obsessão sente dor (braços/pernas ficam vermelhos), **para primeiro**, o ego passa na frente; ela volta **muito mais rápida**, passa o ego; sem plateia, o ego para.
+- **A obsessão nunca para: depois do clímax ela continua fazendo o exercício até o último frame do vídeo** (o placar dela segue subindo).
+- Bonecos finos (membro 22, tronco 25); barra fixa vista de frente.
+
 ## PALETA (26/11): MINIMALISTA EM TODOS OS VÍDEOS
 - Bonecos brancos/cinza, fundo preto/cinza, objetos em tons neutros e dessaturados (madeira cinza-amarronzada).
 - **Uma cor de destaque só**, e de preferência só no momento da virada (ex.: a obsessão fica vermelha quando a árvore cai).
