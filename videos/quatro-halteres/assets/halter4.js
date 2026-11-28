@@ -154,7 +154,7 @@
   const hurtOf = (t) => smooth(seg(t, PAIN0, PAIN1));
   const RUN = { motiv: { end: 5.6, rate: 300 }, disc: { end: 10.0, rate: 1000 / 7 }, ego: { end: 17.3, rate: 145 }, obs: { end: BREAK_T, rate: 150, rate2: 330 } };
   const hits = (k, t) => (k !== 'obs' ? RUN[k].rate * clamp(t - T0, 0, RUN[k].end - T0)
-    : RUN.obs.rate * (clamp(t, T0, FALL_T) - T0) + RUN.obs.rate2 * clamp(t - REGRAB_T, 0, BREAK_T - REGRAB_T));
+    : RUN.obs.rate * (clamp(t, T0, FALL_T) - T0) + RUN.obs.rate2 * clamp(t - REGRAB_T, 0, 25 - REGRAB_T));
   const EGO_FINAL = hits('ego', 99);
   const EGO_PASS = T0 + hits('obs', FALL_T) / RUN.ego.rate;
   const PASS_T = (hits('obs', FALL_T) - RUN.obs.rate2 * REGRAB_T + RUN.ego.rate * T0) / (RUN.ego.rate - RUN.obs.rate2);
@@ -230,6 +230,7 @@
     const quit = (k, sitAt) => { const x = HX[k], e = RUN[k].end; return (t) => seqSt([[0, cyc(k)], [e, () => withProp(slumpF(x), floorBar(x)), 0.35, easeIn], [sitAt, () => withProp(sitF(x), floorBar(x)), 0.8]], t); };
     const xd = HX.disc, xo = HX.obs;
     const airOf = (t) => (Math.abs(t - 19.0) < 0.16 ? 74 * (1 - ((t - 19.0) / 0.16) ** 2) : 0);
+    const CONT_T = 19.5, CONT0 = CONT_T;
     const jump = (t) => {
       let d;
       if (t < 18.72) d = easeInOut(seg(t, CLIMB_T, 18.72));
@@ -251,6 +252,7 @@
         [15.05, () => squatF(xo, 0.35), 0.33],
         [REGRAB_T, (tt) => squatF(xo, sqD(phOf(tt, REGRAB_T, PER2))), 0.08],
         [CLIMB_T, jump, 0.01],
+        [CONT_T, (tt) => squatF(xo, sqD(phOf(tt, CONT_T, PER2)), { sag: tt > 19.16 ? 16 * Math.exp(-(tt - 19.16) * 5) * Math.cos((tt - 19.16) * 28) : 0 }), 0.15],
       ], t),
     };
     function drawBar(c, p, lit) {
@@ -260,7 +262,7 @@
       for (const s of [-1, 1]) { const px = x + s * 106, py = y + sag * 0.9; c.fillStyle = plateC(lit); c.strokeStyle = OUT; c.lineWidth = 4; c.beginPath(); c.roundRect(px - 13, py - 44, 26, 88, 6); c.fill(); c.stroke(); c.fillStyle = metalC(lit); c.fillRect(px - s * 22 - 4, py - 10, 8, 20); }
     }
     return {
-      view: 'front', part: 'legs', HX, CX: (k) => HX[k], P, PER2, repPh: [0.55], payRep: 18.86, stateOf, cam: FRONT_CAM,
+      view: 'front', part: 'legs', HX, CX: (k) => HX[k], P, PER2, repPh: [0.55], payRep: 18.86, contT: CONT_T, cont0: CONT0, stateOf, cam: FRONT_CAM,
       crowdX: [632, 690, 748], crowdSc: 0.85, metaY: FLOOR - 470,
       drawBack(c, k, t, lv, st) { drawBar(c, st.prop, litOf(lv)); },
       drawFront() {},
@@ -287,6 +289,7 @@
     const restF = (s) => withProp(s, [REST, 1, 0]);
     const quit = (k, sitAt) => { const x = HX[k], e = RUN[k].end; return (t) => seqSt([[0, cyc(k)], [e, () => restF(landF(x)), 0.3], [e + 0.6, () => restF(slumpF(x)), 0.4], [sitAt, () => restF(sitF(x)), 0.8]], t); };
     const xd = HX.disc, xo = HX.obs;
+    const TH1 = thAt(18.84, REGRAB_T, PER2) + 2 * TAU, CONT_T = 19.16, CONT0 = CONT_T - PER2 * (TH1 - REST) / TAU;
     const dbl = (t) => {   // pulo duplo: a corda passa duas vezes num pulo só
       const th0 = thAt(18.84, REGRAB_T, PER2);
       if (t < 18.84) return skipF(xo, thAt(t, REGRAB_T, PER2));
@@ -308,6 +311,7 @@
         [15.15, () => restF(skipF(xo, REST, { hop: 0 })), 0.2],
         [REGRAB_T, (tt) => skipF(xo, thAt(tt, REGRAB_T, PER2)), 0.08],
         [CLIMB_T, dbl, 0.01],
+        [CONT_T, (tt) => skipF(xo, thAt(tt, CONT0, PER2)), 0.04],
       ], t),
     };
     function rope(c, R, th, lit, front, alpha = 1) {
@@ -319,7 +323,7 @@
     }
     const blur = (t, k) => (k === 'obs' && t > 18.84 && t < 19.16 ? [[-0.6, 0.35], [-1.2, 0.18]] : []);
     return {
-      view: 'front', part: 'legs', HX, CX: (k) => HX[k], P, PER2, repPh: [(TAU - 0.9) / TAU], payRep: 19.0, stateOf, cam: FRONT_CAM,
+      view: 'front', part: 'legs', HX, CX: (k) => HX[k], P, PER2, repPh: [(TAU - 0.9) / TAU], payRep: 19.0, contT: CONT_T, cont0: CONT0, stateOf, cam: FRONT_CAM,
       crowdX: [632, 690, 748], crowdSc: 0.85, metaY: FLOOR - 470,
       drawBack(c, k, t, lv, st, R) { const lit = litOf(lv); rope(c, R, st.prop[0], lit, false); for (const [d, a] of blur(t, k)) rope(c, R, st.prop[0] + d, lit, false, a); },
       drawFront(c, k, t, lv, st, R) { const lit = litOf(lv); rope(c, R, st.prop[0], lit, true); for (const [d, a] of blur(t, k)) rope(c, R, st.prop[0] + d, lit, true, a);
@@ -346,10 +350,11 @@
     const quit = (k, sitAt) => { const x = HX[k], e = RUN[k].end; return (t) => seqSt([[0, cyc(k)], [e, () => withProp(slumpF(x), floorDB(x)), 0.35, easeIn], [sitAt, () => withProp(sitF(x), floorDB(x)), 0.8]], t); };
     const xd = HX.disc, xo = HX.obs;
     const sides = (x) => { const s = standF(x); return withProp(s, [...s.hands[0], ...s.hands[1]]); };
+    const CONT_T = 19.3, CONT0 = CONT_T - 0.41 * PER2;
     const fin = (t) => {
       if (t < 18.7) return pressF(xo, 1 - easeInOut(seg(t, CLIMB_T, 18.7)));
       if (t < 18.95) return pressF(xo, easeInOut(seg(t, 18.7, 18.95)));
-      const cl = t < 19.0 ? 22 * easeIn(seg(t, 18.95, 19.0)) : 22 * (1 - easeOut(seg(t, 19.0, 19.3))) + 2;
+      const cl = t < 19.0 ? 22 * easeIn(seg(t, 18.95, 19.0)) : 22 * (1 - easeOut(seg(t, 19.0, 19.3)));
       return pressF(xo, 1, { clink: cl, nod: -4 });
     };
     const stateOf = {
@@ -364,6 +369,7 @@
         [15.22, () => pressF(xo, 0), 0.18],
         [REGRAB_T, (tt) => pressF(xo, prU(phOf(tt, REGRAB_T, PER2))), 0.06],
         [CLIMB_T, fin, 0.01],
+        [CONT_T, (tt) => pressF(xo, prU(phOf(tt, CONT0, PER2))), 0.1],
       ], t),
     };
     function dumbbell(c, p, lit) {
@@ -372,7 +378,7 @@
       for (const s of [-1, 1]) { c.fillStyle = plateC(lit); c.strokeStyle = OUT; c.lineWidth = 4; c.beginPath(); c.roundRect(x + s * 22 - 8, y - 18, 16, 36, 5); c.fill(); c.stroke(); }
     }
     return {
-      view: 'front', part: 'arms', HX, CX: (k) => HX[k], P, PER2, repPh: [0.3], payRep: 18.9, stateOf, cam: FRONT_CAM,
+      view: 'front', part: 'arms', HX, CX: (k) => HX[k], P, PER2, repPh: [0.3], payRep: 18.9, contT: CONT_T, cont0: CONT0, stateOf, cam: FRONT_CAM,
       crowdX: [632, 690, 748], crowdSc: 0.85, metaY: FLOOR - 470,
       drawBack() {},
       drawFront(c, k, t, lv, st) { const lit = litOf(lv), p = st.prop; dumbbell(c, [p[0], p[1]], lit); dumbbell(c, [p[2], p[3]], lit); },
@@ -400,6 +406,7 @@
     const cyc = (k) => (t) => (t < T0 ? fightSt(k, 0, hookJ(t), { dy: t < 1.2 ? 0.5 * breathe(t, HX[k] * 0.01) : 0 }) : combo(k, t, T0, P[k]));
     const quit = (k, sitAt) => { const x = HX[k], e = RUN[k].end; return (t) => seqSt([[0, cyc(k)], [e, () => standP(x, { lean: 0.2, head: 0.3 }), 0.4], [e + 0.45, (tt) => slumpP(x), 0.4], [sitAt, () => sitP(x), 0.8]], t); };
     const xd = HX.disc, xo = HX.obs;
+    const CONT_T = 19.25, CONT0 = CONT_T - 0.66 * PER2;
     const fin = (t) => {
       if (t < 18.85) { const w = easeInOut(seg(t, CLIMB_T, 18.85)), ar = armRoot(xo, standHipY(STANCE_L), 0.12); return fightSt('obs', 0, 0, { lean: -0.1 * w, dx: -8 * w, back: P2([ar[0] + 24, ar[1] + 20], [ar[0] - 26, ar[1] + 14], w) }); }
       if (t < 19.3) return fightSt('obs', 0, easeIn(seg(t, 18.85, 19.0)), { lean: 0.1, dx: 12 });
@@ -417,6 +424,7 @@
         [15.15, () => fightSt('obs', 0, 0), 0.22],
         [REGRAB_T, (tt) => combo('obs', tt, REGRAB_T, PER2), 0.06],
         [CLIMB_T, fin, 0.01],
+        [CONT_T, (tt) => combo('obs', tt, CONT0, PER2), 0.12],
       ], t),
     };
     let REPS_REF = null;
@@ -439,7 +447,7 @@
       c.fillStyle = rgb([58, 58, 63], lit); c.fillRect(-BAG_W / 2 + 3, BAG_H / 2 - 18, BAG_W - 6, 36); c.restore();
     }
     return {
-      view: 'side', part: 'arms', HX, CX: (k) => HX[k] + 105, P, PER2, repPh: [0.11, 0.61], payRep: 19.0, stateOf,
+      view: 'side', part: 'arms', HX, CX: (k) => HX[k] + 105, P, PER2, repPh: [0.11, 0.61], payRep: 19.0, contT: CONT_T, cont0: CONT0, stateOf,
       setReps(R) { REPS_REF = R; },
       cam: { wide: { cx: 650, cy: 960, s: 0.82, sy: 950 }, single: { cy: FLOOR - 230, s: 1.5, sy: 830 }, duel: { cy: FLOOR - 230, s: 1.42, sy: 820, bias: 30 } },
       crowdX: [625, 668, 735], crowdSc: 0.85, metaY: FLOOR - 540,
@@ -464,6 +472,7 @@
   for (const k of KS) { const end = k === 'obs' ? FALL_T : RUN[k].end; for (let n = 0; n < 400; n++) { const ev = TH.repPh.map((ph) => T0 + RUN[k].P * (n + ph)).filter((x) => x < end); if (!ev.length) break; REPS[k].push(...ev.map((x) => +x.toFixed(3))); } }
   for (let n = 0; n < 400; n++) { const ev = TH.repPh.map((ph) => REGRAB_T + PER2 * (n + ph)).filter((x) => x < CLIMB_T); if (!ev.length) break; REPS.obs.push(...ev.map((x) => +x.toFixed(3))); }
   REPS.obs.push(TH.payRep);
+  for (let n = 0; n < 400; n++) { const ev = TH.repPh.map((ph) => TH.cont0 + PER2 * (n + ph)).filter((x) => x >= TH.contT + 0.02 && x < 25); if (TH.cont0 + PER2 * n > 25) break; REPS.obs.push(...ev.map((x) => +x.toFixed(3))); }
   if (TH.setReps) TH.setReps(REPS);
   const PAIN_EV = [...REPS.obs, FALL_HIT].sort((a, b) => a - b);
   const lastOf = (arr, t) => { let ls = -9; for (const x of arr) if (x <= t) ls = x; return ls; };
@@ -615,14 +624,14 @@
       let hurt = null, sd = 9;
       if (k === 'obs') {
         const h = hurtOf(t); sd = t - lastOf(PAIN_EV, t); const th = sd < 1 ? Math.exp(-sd * 7) : 0;
-        if (t < BREAK_T) { if (st.front) st.nod = (st.nod || 0) + 9 * h * th; else { st.head = (st.head || 0) + 0.24 * h * th; st.lean = (st.lean || 0) + 0.04 * h * th; } }
+        { if (st.front) st.nod = (st.nod || 0) + 9 * h * th; else { st.head = (st.head || 0) + 0.24 * h * th; st.lean = (st.lean || 0) + 0.04 * h * th; } }
         hurt = { a: h * (0.8 + 0.2 * th), g: h * (0.1 + 0.32 * th) * clamp(light) };
       }
       const R = st.front ? rigF(st) : rigP(st);
       TH.drawBack(c, k, t, lv[k], st, R);
       if (st.front) drawFigF(c, R, light, COL[k], hurt); else drawFigure(c, R, light, COL[k], hurt);
       TH.drawFront(c, k, t, lv[k], st, R);
-      if (hurt && hurt.a > 0.4 && sd >= 0 && sd < 0.34 && t < BREAK_T + 0.1) {   // tracinhos de dor
+      if (hurt && hurt.a > 0.4 && sd >= 0 && sd < 0.34) {   // tracinhos de dor
         const u = sd / 0.34; c.save(); c.strokeStyle = rgb(ACC, 1, (1 - u) * hurt.a * light); c.lineWidth = 6; c.lineCap = 'round';
         for (const [E, a0] of TH.painSpots(R)) for (let i = -1; i <= 1; i++) { const an = a0 + i * 0.42, r0 = 40 + 16 * easeOut(u), r1 = r0 + 18; c.beginPath(); c.moveTo(E[0] + Math.cos(an) * r0, E[1] + Math.sin(an) * r0); c.lineTo(E[0] + Math.cos(an) * r1, E[1] + Math.sin(an) * r1); c.stroke(); }
         c.restore();
